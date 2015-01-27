@@ -1,6 +1,5 @@
 syntax: glob
 *.root
-*.pkl
 *.aux
 *.log
 *.nav
@@ -16,11 +15,4 @@ syntax: glob
 *.tex
 *.d
 *.so
-Crosschecks/tab/*
-Crosschecks/cfg/*
-Crosschecks/shelves/*
-Crosschecks/eventLists/*
-EdgeFitter/shelves/*
-DataMC/shelves/*
-DataMC/tab/*
-TriggerEfficiencies/shelves/*
+

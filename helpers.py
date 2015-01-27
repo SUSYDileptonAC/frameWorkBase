@@ -90,7 +90,7 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 	if source == "PFHT":
 		source = "HT_"
 
-
+	# This is even more stupid and tries to deal with uncleaned datasets. This has to improve otherwise it will drive you crazy at some point!
 	for filePath in glob("%s/sw538*.root"%path):
 		if source == "":
 			sampleName = match(".*sw538v.*\.processed.*\.(.*).root", filePath).groups()[0]		
@@ -130,7 +130,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	#but that would make this less readable
 	name = "%x"%(randint(0, maxint))
 	
-	if len(binning) == 0:
+	if binning == []:
 		result = TH1F(name, "", nBins, firstBin, lastBin)
 	else:
 		result = TH1F(name, "", len(binning)-1, array("f",binning))
@@ -198,7 +198,6 @@ class Process:
 
 		
 	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,TopWeightUp=False,TopWeightDown=False,signal=False,doTopReweighting=True):
-		
 		if len(plot.binning) == 0:
 			self.histo = TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
 		else:

@@ -598,7 +598,7 @@ class Regions:
 		name = "ZPeak"
 		logY = True
 	
-	class DrellYanControlZPeak(Region):
+	class ZPeakControl(Region):
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
@@ -606,7 +606,7 @@ class Regions:
 		latex = "Drell-Yan Enhanced"
 		name = "ZPeakControl"
 		logY = True
-	class DrellYanControlZPeakCentral(Region):
+	class ZPeakControlCentral(Region):
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
@@ -614,7 +614,7 @@ class Regions:
 		latex = "Drell-Yan Enhanced Central"
 		name = "ZPeakControlCentral"
 		logY = True
-	class DrellYanControlZPeakForward(Region):
+	class ZPeakControlForward(Region):
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
