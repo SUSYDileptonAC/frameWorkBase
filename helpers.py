@@ -369,6 +369,28 @@ def getDataHist(plot,tree1,tree2="None"):
 				histo2 = createHistoFromTree(tree, plot.variable , plot.cuts , plot.nBins, plot.firstBin, plot.lastBin,binning=plot.binning)
 				histo.Add(histo2.Clone())
 	return histo	
+	
+def getDataTrees(path):
+
+	result = {}
+	
+	treesEE = readTrees(path,"EE")
+	treesEM = readTrees(path,"EMu")
+	treesMM = readTrees(path,"MuMu")
+		
+
+	dataname = "MergedData"	
+	for name, tree in treesEE.iteritems():
+		if name == dataname:
+			result["EE"] = tree
+	for name, tree in treesMM.iteritems():
+		if name == dataname:
+			result["MM"] = tree
+	for name, tree in treesEM.iteritems():
+		if name == dataname:
+			result["EM"] = tree
+			
+	return result
 				
 def getTotalTopWeight(genPt1,genPt2):
 	from math import exp,sqrt

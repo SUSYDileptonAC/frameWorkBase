@@ -236,11 +236,11 @@ class theCuts:
 			label = "0.8 < |#eta| < 1.4"
 			name = "CentralBarrel"
 
-
-	class TightIso:
-		cut = "id1 < 0.05 && id2 > 0.05"
-		label = "rel. iso. < 0.05"
-		name = "TightIso"
+	class isoCuts:
+		class TightIso:
+			cut = "id1 < 0.05 && id2 < 0.05"
+			label = "rel. iso. < 0.05"
+			name = "TightIso"
 
 	class bTags:
 		class noBTags:

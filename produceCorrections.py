@@ -96,9 +96,10 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
 	inputs["RSFOF"] = shelve[label]["r%sOF"%combination]
 	inputs["RSFOFMC"] = shelveMC[label]["r%sOF"%combination]
 	if combination == "SF":
-		inputs["RSFOFErr"] = (shelve[label]["r%sOFErr"%combination]**2 + shelve[label]["transferErr"]**2)**0.5
+		inputs["RSFOFErr"] = (shelve[label]["r%sOFErr"%combination]**2 + inputs["RSFOF"]*shelveMC[label]["transferErr"]**2)**0.5
+		print shelve[label]["r%sOFErr"%combination], shelveMC[label]["transferErr"]
 	else:
-		inputs["RSFOFErr"] = (shelve[label]["r%sOFErr"%combination]**2 + shelve[label]["transfer%sErr"%combination]**2)**0.5
+		inputs["RSFOFErr"] = (shelve[label]["r%sOFErr"%combination]**2 + inputs["RSFOF"]*shelveMC[label]["transfer%sErr"%combination]**2)**0.5
 	
 	inputs["RSFOFErrMC"] = shelveMC[label]["r%sOFErr"%combination]
 
@@ -132,12 +133,16 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
 	result["fromACErrMC"] = result["fromACMC"]*((result["fromRMuEErrMC"]/result["fromRMuEMC"])**2 + (result["fromTriggerErrMC"]/result["fromTriggerMC"])**2)**0.5
 
 	
-
+	
 	
 	result["fromETH"] = inputs["RSFOF"]
 	result["fromETHErr"] = inputs["RSFOFErr"]
 	result["fromETHMC"] = inputs["RSFOFMC"]
 	result["fromETHErrMC"] = inputs["RSFOFErrMC"]
+	
+	
+	#~ print result["fromAC"], result["fromACErr"], result["fromETH"], result["fromETHErr"]
+	
 	
 	result["combination"] = (result["fromAC"]/result["fromACErr"]**2 + result["fromETH"]/result["fromETHErr"]**2) / (1./result["fromACErr"]**2 + 1./result["fromETHErr"]**2)
 	result["combinationErr"] = (1./(1./result["fromACErr"]**2 + 1./result["fromETHErr"]**2))**0.5
