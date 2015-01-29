@@ -624,7 +624,7 @@ class Regions:
 		logY = True
 	
 	class DrellYanControl(Region):
-		cut = "met < 50 && nJets >= 2 && (%s)"%Region.cut
+		cut = "nJets >= 2 && met < 50 &&(%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} >= 2 E_T^{miss} < 50 GeV"			
 		titel = "Drell-Yan control region"
@@ -632,7 +632,7 @@ class Regions:
 		name = "DrellYanControl"
 		logY = True
 	class DrellYanControlCentral(Region):
-		cut = "met < 50 && nJets >= 2 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		cut = "nJets >= 2 && met < 50 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} >= 2 E_T^{miss} < 50 GeV"			
 		titel = "Drell-Yan control region central"
@@ -640,7 +640,7 @@ class Regions:
 		name = "DrellYanControlCentral"
 		logY = True
 	class DrellYanControlForward(Region):
-		cut = "met < 50 && nJets >= 2 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		cut = "nJets >= 2 && met < 50 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} >= 2 E_T^{miss} < 50 GeV"			
 		titel = "Drell-Yan control region forward"

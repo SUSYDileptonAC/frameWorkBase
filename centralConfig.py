@@ -5,25 +5,25 @@ class zPredictions:
 	#~ reRecoFactorErr = 1. # accounts for uncertainty due to Reco change
 	class SF:
 		class central:
-			value = 116
-			err = 21
+			value = 116*1.04
+			err = (21**2 + (116*0.04)**2)**0.5
 		class forward:
-			value = 42
-			err = 9
+			value = 42*1.04
+			err = (9**2 + (42*0.04)**2)**0.5
 	class EE:
 		class central:
-			value = 60.7
-			err = 11.6
+			value = 60.7*1.04
+			err = 11.2**2 + (60.7*0.04)**2)**0.5
 		class forward:
-			value = 21
-			err = 5
+			value = 21*1.04
+			err = (5**2 + (21*0.04)**2)**0.5
 	class MM:
 		class central:
-			value = 56.8
-			err = 10.7
+			value = 56.8*1.04
+			err = (10.7**2 + (56.8*0.04)**2)**0.5
 		class forward:
-			value = 25
-			err = 6
+			value = 25*1.04
+			err = (6**2 + (25*0.04)**2)**0.5
 
 
 class systematics:
@@ -100,7 +100,7 @@ class backgroundLists:
 	rSFOF = ["TTJets_SpinCorrelations"]
 	
 class plotLists:
-	default = ["Rare","SingleTop","TTJets_SpinCorrelations","Diboson","DrellYanTauTau","DrellYan"]
+	default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot"]
 	trigger = ["nJetsPlotTrigger","leadingPtPlotTriggerTrailing10","leadingPtPlotTrigger","trailigPtPlotTrigger","trailigPtPlotTriggerLeading30","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
 	rSFOF = ["mllPlot"]
 	signal = ["mllPlot"]
