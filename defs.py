@@ -57,8 +57,8 @@ class runRanges:
 
 		
 class Region:
-	cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20 && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && p4.M() > 20 && deltaR > 0.3 && !(runNr == 195649 && lumiSec == 49 && eventNr == 75858433) && !(runNr == 195749 && lumiSec == 108 && eventNr == 216906941)"
-	cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3 && !(runNr == 195649 && lumiSec == 49 && eventNr == 75858433) && !(runNr == 195749 && lumiSec == 108 && eventNr == 216906941) )"
+	cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20 && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && p4.M() > 20 && deltaR > 0.3"
+	cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3"
 	title = "everything"
 	latex = "everything"
 	labelRegion = "p_{T}^{l} > 20 GeV |#eta^{l}| < 2.4"
@@ -478,6 +478,22 @@ class theVariables:
 		nBins = 40
 		labelX = "N_{Vertex}"
 		labelY = "Events"	
+	class leadingJetPt:
+		variable = "jet1pt"
+		name = "leadingJetPt"
+		xMin = 0
+		xMax = 400
+		nBins = 40
+		labelX = "leading p_{T}^{jet} [GeV]"
+		labelY = "Events / 10 GeV"	
+	class subleadingJetPt:
+		variable = "jet2pt"
+		name = "subleadingJetPt"
+		xMin = 0
+		xMax = 400
+		nBins = 40
+		labelX = "subleading p_{T}^{jet} [GeV]"
+		labelY = "Events / 10 GeV"	
 
 		
 
@@ -515,7 +531,7 @@ class Regions:
 		logY = False
 		trigEffs = triggerEffs.forward
 
-	class SignalBarrel(Region):
+	class SignalCentral(Region):
 		cut = "((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelSubRegion = "Central Signal Region"
 		labelRegion = Region.labelRegion.replace("< 2.4","< 1.4")
@@ -687,7 +703,7 @@ class Regions:
 	
 
 def getRegion(name):
-	if not name in dir(Regions):
+	if not name in dir(Regions) and not name == "Region":
 		print "unknown region '%s, exiting'"%name
 		sys.exit()
 	elif name == "Region":
@@ -993,6 +1009,8 @@ class thePlots:
 	mllPlotZpeak = Plot(theVariables.Mll,[],binning = [30,60,120,"Events / 2 Gev",[]],additionalName = "ZPeak")
 
 	nJetsPlot = Plot(theVariables.nJets,[])
+	leadingJetPtPlot = Plot(theVariables.leadingJetPt,[])
+	subleadingJetPtPlot = Plot(theVariables.subleadingJetPt,[])
 	nJetsPlotLowMass = Plot(theVariables.nJets,[theCuts.massCuts.edgeMass])
 	nJetsPlotHighMass = Plot(theVariables.nJets,[theCuts.massCuts.highMass])
 

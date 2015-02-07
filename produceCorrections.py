@@ -42,6 +42,11 @@ def getROutInClass(classTemplate,shelve,shelveMC,massRange,combination,label):
 
 	return classTemplate%(label,shelve[label]["rOutIn%s%s"%(massRange,combination)],( shelve[label]["rOutIn%sSyst%s"%(massRange,combination)]**2 + shelve[label]["rOutIn%sErr%s"%(massRange,combination)]**2 )**0.5 , shelveMC[label]["rOutIn%s%s"%(massRange,combination)],( shelveMC[label]["rOutIn%sSyst%s"%(massRange,combination)]**2 + shelveMC[label]["rOutIn%sErr%s"%(massRange,combination)]**2 )**0.5)	
 
+def getROutInClassB(classTemplate,shelve,shelveMC,bLabel,combination,label):
+
+	#~ return classTemplate%(label,shelve[label]["bFactor%s%s"%(bLabel,combination)],( shelve[label]["bFactor%sSyst%s"%(bLabel,combination)]**2 + shelve[label]["bFactor%sErr%s"%(bLabel,combination)]**2 )**0.5 , shelveMC[label]["bFactor%s%s"%(bLabel,combination)],( shelveMC[label]["bFactor%sSyst%s"%(bLabel,combination)]**2 + shelveMC[label]["bFactor%sErr%s"%(bLabel,combination)]**2 )**0.5)	
+	return classTemplate%(label,shelve[label]["bFactor%s%s"%(bLabel,combination)],( 0**2 + shelve[label]["bFactor%sErr%s"%(bLabel,combination)]**2 )**0.5 , shelveMC[label]["bFactor%s%s"%(bLabel,combination)],( 0**2 + shelveMC[label]["bFactor%sErr%s"%(bLabel,combination)]**2 )**0.5)	
+
 
 def getTriggerClass(classTemplate,shelve,shelveMC,combination,label):
 	
@@ -97,7 +102,6 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
 	inputs["RSFOFMC"] = shelveMC[label]["r%sOF"%combination]
 	if combination == "SF":
 		inputs["RSFOFErr"] = (shelve[label]["r%sOFErr"%combination]**2 + inputs["RSFOF"]*shelveMC[label]["transferErr"]**2)**0.5
-		print shelve[label]["r%sOFErr"%combination], shelveMC[label]["transferErr"]
 	else:
 		inputs["RSFOFErr"] = (shelve[label]["r%sOFErr"%combination]**2 + inputs["RSFOF"]*shelveMC[label]["transfer%sErr"%combination]**2)**0.5
 	
@@ -140,9 +144,7 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
 	result["fromETHMC"] = inputs["RSFOFMC"]
 	result["fromETHErrMC"] = inputs["RSFOFErrMC"]
 	
-	
-	#~ print result["fromAC"], result["fromACErr"], result["fromETH"], result["fromETHErr"]
-	
+		
 	
 	result["combination"] = (result["fromAC"]/result["fromACErr"]**2 + result["fromETH"]/result["fromETHErr"]**2) / (1./result["fromACErr"]**2 + 1./result["fromETHErr"]**2)
 	result["combinationErr"] = (1./(1./result["fromACErr"]**2 + 1./result["fromETHErr"]**2))**0.5
@@ -195,6 +197,14 @@ class rOutIn:
 	%s
 	%s
 	%s
+	class bFactorB:
+	%s
+	%s
+	%s
+	class bFactorNoB:
+	%s
+	%s
+	%s
 class rOutInEE:
 	class lowMass:
 	%s
@@ -204,12 +214,28 @@ class rOutInEE:
 	%s
 	%s
 	%s
+	class bFactorB:
+	%s
+	%s
+	%s
+	class bFactorNoB:
+	%s
+	%s
+	%s
 class rOutInMM:
 	class lowMass:
 	%s
 	%s
 	%s
 	class highMass:
+	%s
+	%s
+	%s	
+	class bFactorB:
+	%s
+	%s
+	%s	
+	class bFactorNoB:
 	%s
 	%s
 	%s	
@@ -227,6 +253,9 @@ class rOutInMM:
 		for massRange in ["LowMass","HighMass"]:
 			for label in ["inclusive","central","forward"]:
 				rOutInTuple.append(getROutInClass(classTemplate,shelvesROutIn,shelvesROutInMC,massRange,combination,label))
+		for bLabel in ["B","NoB"]:
+			for label in ["inclusive","central","forward"]:
+				rOutInTuple.append(getROutInClassB(classTemplate,shelvesROutIn,shelvesROutInMC,bLabel,combination,label))
 
 	rOutInPartFinal = rOutInPart%tuple(rOutInTuple)
 	

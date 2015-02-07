@@ -1,28 +1,27 @@
 
 
 class zPredictions:
-	#~ reRecoFactor = 1.0154639175257731 #scales zPredictions to lumi
-	#~ reRecoFactorErr = 1. # accounts for uncertainty due to Reco change
+
 	class SF:
 		class central:
-			value = 116*1.04
+			val = 116*1.04
 			err = (21**2 + (116*0.04)**2)**0.5
 		class forward:
-			value = 42*1.04
+			val = 42*1.04
 			err = (9**2 + (42*0.04)**2)**0.5
 	class EE:
 		class central:
-			value = 60.7*1.04
-			err = 11.2**2 + (60.7*0.04)**2)**0.5
+			val = 60.7*1.04
+			err = (11.2**2 + (60.7*0.04)**2)**0.5
 		class forward:
-			value = 21*1.04
+			val = 21*1.04
 			err = (5**2 + (21*0.04)**2)**0.5
 	class MM:
 		class central:
-			value = 56.8*1.04
+			val = 56.8*1.04
 			err = (10.7**2 + (56.8*0.04)**2)**0.5
 		class forward:
-			value = 25*1.04
+			val = 25*1.04
 			err = (6**2 + (25*0.04)**2)**0.5
 
 
@@ -85,7 +84,7 @@ class regionsToUse:
 			name = "Control"
 	class signal:
 		class central: 
-			name = "SignalBarrel"
+			name = "SignalCentral"
 		class forward: 
 			name = "SignalForward"
 		class inclusive: 
@@ -100,7 +99,7 @@ class backgroundLists:
 	rSFOF = ["TTJets_SpinCorrelations"]
 	
 class plotLists:
-	default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot"]
+	default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot"]
 	trigger = ["nJetsPlotTrigger","leadingPtPlotTriggerTrailing10","leadingPtPlotTrigger","trailigPtPlotTrigger","trailigPtPlotTriggerLeading30","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
 	rSFOF = ["mllPlot"]
 	signal = ["mllPlot"]
