@@ -25,9 +25,9 @@ class runRanges:
 		runCut = "&& runNr < 201678 && !(runNr >= 198049 && runNr <= 198522)"
 		label = "Run92"
 	class Full2012:
-		lumi = 19700
-		printval = "19.7"
-		lumiErr = 0.026*19700
+		lumi = 19518
+		printval = "19.5"
+		lumiErr = 0.026*19518
 		runCut = "&& runNr < 99999999"
 		label = "Full2012"
 	class BlockA:
@@ -57,10 +57,12 @@ class runRanges:
 
 		
 class Region:
+	#~ cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20 && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && p4.M() > 20 && deltaR > 0.3 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
+	#~ cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
 	cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20 && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && p4.M() > 20 && deltaR > 0.3"
-	cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3"
-	title = "everything"
-	latex = "everything"
+	cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3)"
+	title = "Inclusive dilepton selection"
+	latex = "Inclusive dilepton selection"
 	labelRegion = "p_{T}^{l} > 20 GeV |#eta^{l}| < 2.4"
 	name = "Inclusive"
 	labelSubRegion = ""
@@ -288,16 +290,16 @@ class theCuts:
 			
 	class pileUpCuts:
 		class lowPU:
-			cut = "nVertices < 11"
-			label = "N_{Vtx} < 11"
+			cut = "nVertices < 13"
+			label = "N_{Vtx} < 13"
 			name = "LowPU"
 		class midPU:
-			cut = "nVertices >= 11 && nVertices < 16"
-			label = "11 #leq N_{Vtx} < 16"
+			cut = "nVertices >= 13 && nVertices < 17"
+			label = "13 #leq N_{Vtx} < 17"
 			name = "MidPU"
 		class highPU:
-			cut = "nVertices >= 16"
-			label = "N_{Vtx} #geq 16"
+			cut = "nVertices >= 17"
+			label = "N_{Vtx} #geq 17"
 			name = "HighPU"
 
 
@@ -326,6 +328,14 @@ class theVariables:
 		nBins = 10
 		labelX = "trailing #eta"
 		labelY = "Events / 0.48"	
+	class TrailingIso:
+		variable = "(pt2>pt1)*id1+(pt1>pt2)*id2"
+		name = "TrailingIso"
+		xMin = 0
+		xMax = 3
+		nBins = 60
+		labelX = "trailing relative isolation"
+		labelY = "Events / 0.05"	
 	class AbsTrailingEta:
 		variable = "abs((pt2>pt1)*eta1+(pt1>pt2)*eta2)"
 		name = "TrailingEta"
@@ -500,6 +510,14 @@ class theVariables:
 	
 	
 class Regions:
+	class SignalATLAS(Region):
+		cut = "(met > 225 && (ht + pt1 + pt2) > 600 && abs(deltaPhiJetMET) > 0.4 & abs(deltaPhiSecondJetMET) > 0.4) && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "ATLAS Signal Region"
+		titel = "ATLAS SR"
+		latex = "ATLAS Signal Region"
+		name = "SignalATLAS"
+		logY = False
 	class SignalInclusive(Region):
 		cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
@@ -642,7 +660,7 @@ class Regions:
 	class DrellYanControl(Region):
 		cut = "nJets >= 2 && met < 50 &&(%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "N_{jets} >= 2 E_T^{miss} < 50 GeV"			
+		labelSubRegion = "Drell-Yan control region"			
 		titel = "Drell-Yan control region"
 		latex = "Drell-Yan control region"
 		name = "DrellYanControl"
@@ -650,7 +668,7 @@ class Regions:
 	class DrellYanControlCentral(Region):
 		cut = "nJets >= 2 && met < 50 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "N_{jets} >= 2 E_T^{miss} < 50 GeV"			
+		labelSubRegion = "Drell-Yan control region"			
 		titel = "Drell-Yan control region central"
 		latex = "Drell-Yan control region central"
 		name = "DrellYanControlCentral"
@@ -658,7 +676,7 @@ class Regions:
 	class DrellYanControlForward(Region):
 		cut = "nJets >= 2 && met < 50 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "N_{jets} >= 2 E_T^{miss} < 50 GeV"			
+		labelSubRegion = "Drell-Yan control region"			
 		titel = "Drell-Yan control region forward"
 		latex = "Drell-Yan control region forward"
 		name = "DrellYanControlForward"
@@ -824,6 +842,7 @@ class Plot:
 		self.label = region.labelRegion
 		self.label2 = region.labelSubRegion
 		self.regionName = region.name
+		self.log = region.logY
 	def addDilepton(self,dilepton):
 		if dilepton == "SF":
 			self.tree1 = "EE"
@@ -997,15 +1016,21 @@ class thePlots:
 	ptElePlot = Plot(theVariables.PtEle,[])		
 	ptMuPlot = Plot(theVariables.PtMu,[])
 	trailingPtPlot = Plot(theVariables.TrailingPt,[])
+	trailingPtPlot100 = Plot(theVariables.TrailingPt,[],binning = [16,20,100,"Events / 5 Gev",[]],additionalName = "range100")
 	leadingPtPlot = Plot(theVariables.LeadingPt,[])
 	trailingPtPlotLowMass = Plot(theVariables.TrailingPt,[theCuts.massCuts.edgeMass])
 	leadingPtPlotLowMass = Plot(theVariables.LeadingPt,[theCuts.massCuts.edgeMass])
 	trailingPtPlotHighMass = Plot(theVariables.TrailingPt,[theCuts.massCuts.highMass])
 	leadingPtPlotHighMass = Plot(theVariables.LeadingPt,[theCuts.massCuts.highMass])
 
+	trailingIsoPlot = Plot(theVariables.TrailingIso,[])
+
+
+
 	mllPlot = Plot(theVariables.Mll,[])
 	mllPlotLowMass = Plot(theVariables.Mll,[theCuts.massCuts.edgeMass])
 	mllPlotHighMass = Plot(theVariables.Mll,[theCuts.massCuts.highMass])
+	mllPlotOnZ = Plot(theVariables.Mll,[theCuts.massCuts.zMass])
 	mllPlotZpeak = Plot(theVariables.Mll,[],binning = [30,60,120,"Events / 2 Gev",[]],additionalName = "ZPeak")
 
 	nJetsPlot = Plot(theVariables.nJets,[])
@@ -1025,6 +1050,8 @@ class thePlots:
 	ptllPlot = Plot(theVariables.Ptll,[])
 	ptllPlotLowMass = Plot(theVariables.Ptll,[theCuts.massCuts.edgeMass])
 	ptllPlotHighMass = Plot(theVariables.Ptll,[theCuts.massCuts.highMass])
+
+	nVtxPlot = Plot(theVariables.nVtx,[],binning=[40,0,40,"Events",[]])				
 
 			
 	### plots for trigger efficiency measurements
@@ -1055,6 +1082,7 @@ class thePlots:
 			
 								
 	mllPlotRMuESignal = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])
+	#~ mllPlotRMuESignal = Plot(theVariables.Mll,[],binning=[5,20,300,"Events / 10 GeV",[20,70,81,101,120,300]])
 	
 					
 	mllPlotROutIn = Plot(theVariables.Mll,[],binning=[1000,0,1000,"Events / 1 GeV",[]])				
@@ -1156,9 +1184,59 @@ class Backgrounds:
 		uncertainty = 0.07
 		scaleFac     = 1.0
 		additionalSelection = None
-	class TTJets_SpinCorrelations:
-		subprocesses = ["TTJets_MGDecays_madgraph_Summer12","TTJets_MGDecays_SemiLept_madgraph_Summer12","TTJets_MGDecays_FullHad_madgraph_Summer12"]
+	class TTJets_MatchingUp:
+		subprocesses = ["TTJets_matchingup_madgraph_Summer12_v1"]
 		label = "Madgraph t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TTJets_MatchingDown:
+		subprocesses = ["TTJets_matchingdown_madgraph_Summer12_v1"]
+		label = "Madgraph t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TTJets_ScaleUp:
+		subprocesses = ["TTJets_scaleup_madgraph_Summer12_v1"]
+		label = "Madgraph t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TTJets_ScaleDown:
+		subprocesses = ["TTJets_scaledown_madgraph_Summer12_v1"]
+		label = "Madgraph t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TTJets_MassUp:
+		subprocesses = ["TTJets_mass175_5_madgraph_Summer12_v1"]
+		label = "Madgraph t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TTJets_MassDown:
+		subprocesses = ["TTJets_mass169_5_madgraph_Summer12_v1"]
+		label = "Madgraph t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TTJets_SpinCorrelations:
+		#~ subprocesses = ["TTJets_MGDecays_madgraph_Summer12"]
+		subprocesses = ["TTJets_MGDecays_madgraph_Summer12","TTJets_MGDecays_SemiLept_madgraph_Summer12","TTJets_MGDecays_FullHad_madgraph_Summer12"]
+		#~ subprocesses = ["TTJets_MGDecays_SemiLept_madgraph_Summer12","TTJets_MGDecays_FullHad_madgraph_Summer12"]
+		label = "t#bar{t}"
 		fillcolor = 855
 		linecolor = ROOT.kBlack
 		uncertainty = 0.07
@@ -1199,9 +1277,49 @@ class Backgrounds:
 		uncertainty = 0.04
 		scaleFac     = 1.	
 		additionalSelection = None
+	class ZZ:
+		subprocesses = ["ZZJetsTo2L2Q_madgraph_Summer12","ZZJetsTo2L2Nu_madgraph_Summer12","ZZJetsTo4L_madgraph_Summer12"]
+		label = "ZZ"
+		fillcolor = 920
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = None
+	class WZ:
+		subprocesses = ["WZJetsTo3LNu_madgraph_Summer12","WZJetsTo2L2Q_madgraph_Summer12"]
+		label = "WZ"
+		fillcolor = 920
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = None
+	class WW:
+		subprocesses = ["WWJetsTo2L2Nu_madgraph_Summer12"]
+		label = "WW"
+		fillcolor = 920
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = None
 	class Rare:
 		subprocesses = ["WWWJets_madgraph_Summer12","WWGJets_madgraph_Summer12","WWZNoGstarJets_madgraph_Summer12","TTGJets_madgraph_Summer12","WZZNoGstar_madgraph_Summer12","TTWJets_madgraph_Summer12","TTZJets_madgraph_Summer12","TTWWJets_madgraph_Summer12"]
 		label = "Other SM"
+		fillcolor = 630
+		linecolor = ROOT.kBlack
+		uncertainty = 0.5
+		scaleFac     = 1.	
+		additionalSelection = None	
+	class RareNonZ:
+		subprocesses = ["WWWJets_madgraph_Summer12","WWGJets_madgraph_Summer12","TTGJets_madgraph_Summer12","TTWJets_madgraph_Summer12","TTWWJets_madgraph_Summer12"]
+		label = "Other SM without Z bosons"
+		fillcolor = 630
+		linecolor = ROOT.kBlack
+		uncertainty = 0.5
+		scaleFac     = 1.	
+		additionalSelection = None	
+	class RareZ:
+		subprocesses = ["WWZNoGstarJets_madgraph_Summer12","WZZNoGstar_madgraph_Summer12","TTZJets_madgraph_Summer12"]
+		label = "Other SM with Z bosons"
 		fillcolor = 630
 		linecolor = ROOT.kBlack
 		uncertainty = 0.5
@@ -1215,6 +1333,14 @@ class Backgrounds:
 		uncertainty = 0.04
 		scaleFac     = 1.	
 		additionalSelection = "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)"
+	class WJets:
+		subprocesses = ["WJets_madgraph_Summer12"]
+		label = "W+jets"
+		fillcolor = 401
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = None
 	class DrellYanTauTau:
 		subprocesses = ["AStar_madgraph_Summer12","ZJets_madgraph_Summer12"]
 		label = "DY+jets (#tau#tau)"

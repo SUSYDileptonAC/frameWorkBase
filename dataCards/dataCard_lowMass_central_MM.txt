@@ -5,7 +5,7 @@ kmax *  number of nuisance parameters (sources of systematical uncertainties)
 ------------
 # we have just one channel, in which we observe 0 events
 bin         1
-observation 479
+observation 476
 ------------
 # now we list the expected events for signal and all backgrounds in that bin
 # the second 'process' line must have a positive number for backgrounds, and 0 for signal
@@ -14,9 +14,9 @@ observation 479
 bin                 1           1           1           
 process             sig         EMu         DY       
 process             0           1           2           
-rate                1           404.289   4.420 
+rate                1           405.063   4.386 
 ------------
 deltaS  lnN         1.          -           -            
-uncEMu  lnN         -           1.0208        -         
-EmuStat gmN 750      -       0.5391    -          
+uncEMu  lnN         -           1.0298        -         
+EmuStat gmN 737      -       0.5496    -          
 uncDY  lnN       -           -       1.31      

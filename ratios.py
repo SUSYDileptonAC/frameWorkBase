@@ -239,6 +239,7 @@ class RatioGraph:
 					graph.SetFillStyle(error.fillStyle)
 					errorGraphs.append(graph)
 			elif (error.hasHistograms):
+				log.logInfo("Adding error '%s' given as histograms" % (error.name))
 
 				errorsUp = error.errorsUp
 				errorsDown = error.errorsDown
@@ -423,7 +424,6 @@ class RatioError:
 				denUpError = self.denominatorUp.GetBinError(iBin)
 				denDown = self.denominatorDown.GetBinContent(iBin)
 				denDownError = self.denominatorDown.GetBinError(iBin)
-
 				#~ log.logDebug("den: %f +- %f" % (den, denError))
 				#~ log.logDebug("denup: %f +- %f" % (denUp, denUpError))
 				#~ log.logDebug("dendown: %f +- %f" % (denDown, denDownError))

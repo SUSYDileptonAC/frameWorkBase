@@ -87,6 +87,43 @@ def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False):
 			return val,err,valMC,errMC
 		else:
 			return classTemplate%(label, val, err, valMC, errMC )
+			
+def getRSFOFFactClass(classTemplate,shelve,shelveMC,shelvesRMuE,shelvesRMuEMC,label,combination,returnNumbers=False):
+	inputs = {}
+	inputs["rMuE"] = shelvesRMuE[label]["rMuE"]
+	inputs["rMuEErr"] = (shelvesRMuE[label]["rMuEStatErr"]**2 + shelvesRMuE[label]["rMuESystErr"]**2)**0.5
+	inputs["rMuEMC"] = shelvesRMuEMC[label]["rMuE"]
+	inputs["rMuEErrMC"] = (shelvesRMuEMC[label]["rMuEStatErr"]**2 + shelvesRMuEMC[label]["rMuESystErr"]**2)**0.5	
+	
+	result = {}
+	### error propagation deluxe! 
+	if combination == "SF":
+		result["fromRMuE"] = 0.5*(inputs["rMuE"]+1./inputs["rMuE"])
+		result["fromRMuEErr"] = 0.5*(1. - (1./(inputs["rMuE"]**2)))*inputs["rMuEErr"]
+		result["fromRMuEMC"] = 0.5*(inputs["rMuEMC"]+1./inputs["rMuEMC"])
+		result["fromRMuEErrMC"] = 0.5*(1. - (1./(inputs["rMuEMC"]**2)))*inputs["rMuEErrMC"]
+	elif combination == "MM":
+		result["fromRMuE"] = 0.5*(inputs["rMuE"])
+		result["fromRMuEErr"] = inputs["rMuEErr"]
+		result["fromRMuEMC"] = 0.5*(inputs["rMuEMC"])
+		result["fromRMuEErrMC"] = inputs["rMuEErrMC"]
+
+	elif combination == "EE":
+		result["fromRMuE"] = 0.5*(1./inputs["rMuE"])
+		result["fromRMuEErr"] = inputs["rMuEErr"]
+		result["fromRMuEMC"] = 0.5*(1./inputs["rMuEMC"])
+		result["fromRMuEErrMC"] = inputs["rMuEErrMC"]
+
+	result["fromTrigger"], result["fromTriggerErr"] , result["fromTriggerMC"], result["fromTriggerErrMC"] = getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=True)
+
+
+	result["fromAC"] = result["fromRMuE"]*result["fromTrigger"]
+	result["fromACErr"] = result["fromAC"]*((result["fromRMuEErr"]/result["fromRMuE"])**2 + (result["fromTriggerErr"]/result["fromTrigger"])**2)**0.5
+	result["fromACMC"] = result["fromRMuEMC"]*result["fromTriggerMC"]
+	result["fromACErrMC"] = result["fromACMC"]*((result["fromRMuEErrMC"]/result["fromRMuEMC"])**2 + (result["fromTriggerErrMC"]/result["fromTriggerMC"])**2)**0.5
+		
+
+	return classTemplate%(combination, result["fromAC"], result["fromACErr"], result["fromACMC"], result["fromACErrMC"] )
 	
 
 def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,shelvesRMuE,shelvesRMuEMC,label,combination):
@@ -100,13 +137,13 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
 
 	inputs["RSFOF"] = shelve[label]["r%sOF"%combination]
 	inputs["RSFOFMC"] = shelveMC[label]["r%sOF"%combination]
+	
 	if combination == "SF":
 		inputs["RSFOFErr"] = (shelve[label]["r%sOFErr"%combination]**2 + inputs["RSFOF"]*shelveMC[label]["transferErr"]**2)**0.5
 	else:
 		inputs["RSFOFErr"] = (shelve[label]["r%sOFErr"%combination]**2 + inputs["RSFOF"]*shelveMC[label]["transfer%sErr"%combination]**2)**0.5
-	
-	inputs["RSFOFErrMC"] = shelveMC[label]["r%sOFErr"%combination]
 
+	inputs["RSFOFErrMC"] = shelveMC[label]["r%sOFErr"%combination]
 	
 	
 	result = {}
@@ -116,13 +153,13 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
 		result["fromRMuEErr"] = 0.5*(1. - (1./(inputs["rMuE"]**2)))*inputs["rMuEErr"]
 		result["fromRMuEMC"] = 0.5*(inputs["rMuEMC"]+1./inputs["rMuEMC"])
 		result["fromRMuEErrMC"] = 0.5*(1. - (1./(inputs["rMuEMC"]**2)))*inputs["rMuEErrMC"]
-	elif combination == "EE":
+	elif combination == "MM":
 		result["fromRMuE"] = 0.5*(inputs["rMuE"])
 		result["fromRMuEErr"] = inputs["rMuEErr"]
 		result["fromRMuEMC"] = 0.5*(inputs["rMuEMC"])
 		result["fromRMuEErrMC"] = inputs["rMuEErrMC"]
 
-	elif combination == "MM":
+	elif combination == "EE":
 		result["fromRMuE"] = 0.5*(1./inputs["rMuE"])
 		result["fromRMuEErr"] = inputs["rMuEErr"]
 		result["fromRMuEMC"] = 0.5*(1./inputs["rMuEMC"])
@@ -133,8 +170,9 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
 
 	result["fromAC"] = result["fromRMuE"]*result["fromTrigger"]
 	result["fromACErr"] = result["fromAC"]*((result["fromRMuEErr"]/result["fromRMuE"])**2 + (result["fromTriggerErr"]/result["fromTrigger"])**2)**0.5
-	result["fromACMC"] = result["fromRMuEMC"]*result["fromTriggerMC"]
-	result["fromACErrMC"] = result["fromACMC"]*((result["fromRMuEErrMC"]/result["fromRMuEMC"])**2 + (result["fromTriggerErrMC"]/result["fromTriggerMC"])**2)**0.5
+	### use data trigger effs because MC is scaled to data efficiencies in Data/MC comparisons!!!
+	result["fromACMC"] = result["fromRMuEMC"]*result["fromTrigger"]
+	result["fromACErrMC"] = result["fromACMC"]*((result["fromRMuEErrMC"]/result["fromRMuEMC"])**2 + (result["fromTriggerErr"]/result["fromTrigger"])**2)**0.5
 
 	
 	
@@ -182,7 +220,9 @@ def main():
 
 %s
 					
-%s			
+%s	
+
+%s		
 
 """
 
@@ -323,6 +363,34 @@ class rSFOFTrig:
 	rSFOFTrigPartFinal = rSFOFTrigPart%tuple(rSFOFTrigList)		
 	
 
+
+
+	rSFOFFactPart = """
+	
+class rSFOFFact:
+	class central:
+		%s	
+		%s
+		%s		
+	class forward:
+		%s	
+		%s
+		%s					
+	class inclusive:
+		%s	
+		%s
+		%s	
+	
+"""	
+
+	rSFOFFactList = []
+	for label in ["central","forward","inclusive"]:
+			for combination in ["SF","EE","MM"]:
+				rSFOFFactList.append(getRSFOFFactClass(classTemplate,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,combination))
+			
+	rSFOFFactPartFinal = rSFOFFactPart%tuple(rSFOFFactList)		
+	
+
 	shelvesRSFOF = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name)}
 	shelvesRSFOFMC = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name,MC=True),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name,MC=True), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name,MC=True)}
 	
@@ -364,7 +432,7 @@ class rMMOF:
 
 
 
-	finalFile = r%(rOutInPartFinal,rMuEPartFinal,rSFOFTrigPartFinal,rSFOFPartFinal,rEEOFPartFinal,rMMOFPartFinal,triggerPartFinal)
+	finalFile = r%(rOutInPartFinal,rMuEPartFinal,rSFOFTrigPartFinal,rSFOFFactPartFinal,rSFOFPartFinal,rEEOFPartFinal,rMMOFPartFinal,triggerPartFinal)
 
 	corrFile = open("corrections.py", "w")
 	corrFile.write(finalFile)

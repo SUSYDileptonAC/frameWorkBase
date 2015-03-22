@@ -14,9 +14,9 @@ observation 86
 bin                 1           1           1           
 process             sig         EMu         DY       
 process             0           1           2           
-rate                1           53.056   21.840 
+rate                1           58.355   21.630 
 ------------
 deltaS  lnN         1.          -           -            
-uncEMu  lnN         -           1.0334        -         
-EmuStat gmN 131      -       0.4050    -          
+uncEMu  lnN         -           1.0451        -         
+EmuStat gmN 131      -       0.4455    -          
 uncDY  lnN       -           -       1.23      

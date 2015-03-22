@@ -1,7 +1,7 @@
 import ROOT
 import gc
 from array import array
-from ROOT import TCanvas, TPad, TH1F, TH1I, THStack, TLegend, TMath
+from ROOT import TCanvas, TPad, TH1F, TH2F, TH1I, THStack, TLegend, TMath
 from defs import defineMyColors
 from defs import myColors
 from ConfigParser import ConfigParser
@@ -37,6 +37,8 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	else:
 		if "Single" in modifier:
 			result.Add("%s/cutsV23Dilepton%sFinalTriggerTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
+		elif "Fake" in modifier:
+			result.Add("%s/cutsV23Dilepton%sTree/Trees/Iso"%( path, modifier))
 		else:
 			result.Add("%s/cutsV23Dilepton%sFinalTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
 	return result
@@ -96,7 +98,7 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 			sampleName = match(".*sw538v.*\.processed.*\.(.*).root", filePath).groups()[0]		
 		else:
 			sampleName = ""
-			if source == "Summer12":
+			if source == "Summer12" or source == "Fake":
 				sample =  match(".*sw538v.*\.cutsV23.*\.(.*).root", filePath)
 			else:
 				sourceInsert = source
@@ -152,6 +154,36 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 		tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
 	gc.collect()
 	return result
+	
+def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, lastBin, nBins2=10, firstBin2=0, lastBin2=100, nEvents = -1,smearDY=False,binning=None,binning2=None):
+	"""
+	tree: tree to create histo from)
+	variable: variable to plot (must be a branch of the tree)
+	weight: weights to apply (e.g. "var1*(var2 > 15)" will use weights from var1 and cut on var2 > 15
+	nBins, firstBin, lastBin: number of bins, first bin and last bin (same as in TH1F constructor)
+	nEvents: number of events to process (-1 = all)
+	"""
+	from ROOT import TH2F
+	from random import randint
+	from sys import maxint
+	if nEvents < 0:
+		nEvents = maxint
+	#make a random name you could give something meaningfull here,
+	#but that would make this less readable
+	name = "%x"%(randint(0, maxint))
+	
+	if binning == []:
+		result = TH2F(name, "", nBins, firstBin, lastBin, nBins2, firstBin2, lastBin2)
+	else:
+		result = TH2F(name, "", len(binning)-1, array("f",binning), len(binning2)-1, array("f",binning2))
+		
+	result.Sumw2()
+
+	tree.Draw("%s:%s>>%s"%(variable2,variable, name), weight, "goff", nEvents)
+	
+	#~ for ev in tree:
+		#~ result.Fill(getattr(ev,variable),abs(getattr(ev,variable2)))
+	return result
 
 
 def createMyColors():
@@ -198,6 +230,7 @@ class Process:
 
 		
 	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,TopWeightUp=False,TopWeightDown=False,signal=False,doTopReweighting=True):
+		#~ doTopReweighting = False
 		if len(plot.binning) == 0:
 			self.histo = TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
 		else:
@@ -249,7 +282,6 @@ class Process:
 					
 					else:
 						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)				
-
 					tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/self.nEvents[index]))
 					self.histo.Add(tempHist.Clone())
 
@@ -284,20 +316,28 @@ class TheStack:
 	theHistogram = ROOT.TH1F()	
 	theHistogramXsecUp = ROOT.TH1F()
 	theHistogramXsecDown = ROOT.TH1F()
-	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None,JESUp=False,JESDown=False,TopWeightUp=False,TopWeightDown=False,PileUpUp=False,PileUpDown=False,doTopReweighting=True):
+	theHistogramTheoUp = ROOT.TH1F()
+	theHistogramTheoDown = ROOT.TH1F()
+	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None,JESUp=False,JESDown=False,TopWeightUp=False,TopWeightDown=False,PileUpUp=False,PileUpDown=False,doTopReweighting=True,theoUncert = 0.):
 		self.theStack = THStack()
 		self.theHistogram = ROOT.TH1F()
 		self.theHistogram.Sumw2()
 		self.theHistogramXsecDown = ROOT.TH1F()
 		self.theHistogramXsecUp = ROOT.TH1F()
+		self.theHistogramTheoDown = ROOT.TH1F()
+		self.theHistogramTheoUp = ROOT.TH1F()
 		if len(plot.binning) == 0:
 			self.theHistogram = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
 			self.theHistogramXsecDown = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
 			self.theHistogramXsecUp = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
+			self.theHistogramTheoDown = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
+			self.theHistogramTheoUp = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
 		else:
 			self.theHistogram = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
 			self.theHistogramXsecDown = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
 			self.theHistogramXsecUp = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
+			self.theHistogramTheoDown = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
+			self.theHistogramTheoUp = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
 
 
 			
@@ -305,6 +345,10 @@ class TheStack:
 			
 			
 		for process in processes:
+			if not "t#bar{t}" in process.label:
+				localTheo = 0.
+			else:
+				localTheo = theoUncert
 			temphist = TH1F()
 			temphist.Sumw2()
 			if TopWeightUp:
@@ -340,11 +384,12 @@ class TheStack:
 					counts[process.label]["jesDown"]=jesDown
 				else:
 					xSecUncert = val*process.uncertainty
-					counts[process.label] = {"val":val,"err":err,"xSec":xSecUncert}
+					theoUncertVal = val*localTheo
+					counts[process.label] = {"val":val,"err":err,"xSec":xSecUncert,"theo":theoUncertVal}
+
 					#~ counts[process.label]["val"]=val
 					#~ counts[process.label]["err"]=err
 					#~ counts[process.label]["xSec"]=xSecUncert
-				
 			self.theStack.Add(temphist.Clone())
 			self.theHistogram.Add(temphist.Clone())
 			temphist2 = temphist.Clone()
@@ -353,13 +398,18 @@ class TheStack:
 			temphist3 = temphist.Clone()
 			temphist3.Scale(1+process.uncertainty)
 			self.theHistogramXsecUp.Add(temphist3.Clone())
+			temphist4 = temphist.Clone()
+			temphist4.Scale(1-localTheo)
+			self.theHistogramTheoDown.Add(temphist4.Clone())
+			temphist5 = temphist.Clone()
+			temphist5.Scale(1+localTheo)
+			self.theHistogramTheoUp.Add(temphist5.Clone())
 
-def getDataHist(plot,tree1,tree2="None"):
+def getDataHist(plot,tree1,tree2="None",dataname = ""):
 	histo = TH1F()
 	histo2 = TH1F()
-
-
-	dataname = "MergedData"	
+	if dataname == "":
+		dataname = "MergedData"		
 	for name, tree in tree1.iteritems():
 		if name == dataname:
 			histo = createHistoFromTree(tree, plot.variable , plot.cuts , plot.nBins, plot.firstBin, plot.lastBin,binning=plot.binning)
