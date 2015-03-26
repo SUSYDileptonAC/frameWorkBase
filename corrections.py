@@ -309,21 +309,21 @@ class rSFOFTrig:
 			val = 1.025735
 			err = 0.066078
 			valMC = 1.017349
-			errMC = 0.063699
+			errMC = 0.064746
 	
 
 		class forward:
 			val = 1.084055
 			err = 0.079290
 			valMC = 1.018340
-			errMC = 0.064706
+			errMC = 0.069490
 
 
 		class inclusive:
 			val = 1.035636
 			err = 0.066385
 			valMC = 1.017521
-			errMC = 0.063955
+			errMC = 0.065629
 
 	
 	
@@ -338,21 +338,21 @@ class rSFOFFact:
 			val = 1.029382
 			err = 0.066877
 			valMC = 1.025932
-			errMC = 0.065592
+			errMC = 0.066626
 	
 		
 		class EE:
 			val = 0.471405
 			err = 0.115795
 			valMC = 0.446751
-			errMC = 0.119330
+			errMC = 0.119438
 
 		
 		class MM:
 			val = 0.557977
 			err = 0.117381
 			valMC = 0.579181
-			errMC = 0.121541
+			errMC = 0.121720
 		
 	class forward:
 		
@@ -360,21 +360,21 @@ class rSFOFFact:
 			val = 1.099433
 			err = 0.088382
 			valMC = 1.043569
-			errMC = 0.080503
+			errMC = 0.084587
 	
 		
 		class EE:
 			val = 0.458096
 			err = 0.258885
 			valMC = 0.407745
-			errMC = 0.255831
+			errMC = 0.256032
 
 		
 		class MM:
 			val = 0.641337
 			err = 0.260958
 			valMC = 0.635824
-			errMC = 0.257702
+			errMC = 0.258188
 					
 	class inclusive:
 		
@@ -382,21 +382,21 @@ class rSFOFFact:
 			val = 1.042514
 			err = 0.067889
 			valMC = 1.031350
-			errMC = 0.066978
+			errMC = 0.068621
 	
 		
 		class EE:
 			val = 0.461480
 			err = 0.120013
 			valMC = 0.431513
-			errMC = 0.123109
+			errMC = 0.123267
 
 		
 		class MM:
 			val = 0.581034
 			err = 0.122128
 			valMC = 0.599837
-			errMC = 0.125864
+			errMC = 0.126163
 	
 	
 
