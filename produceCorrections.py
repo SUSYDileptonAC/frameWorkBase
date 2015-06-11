@@ -80,7 +80,7 @@ def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False):
 		errMMMC = (systematics.trigger.central.val**2 + max(shelveMC[label][runRanges.name]["MuMu"]["UncertaintyUp"] , shelveMC[label][runRanges.name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
 		errEMMC = (systematics.trigger.central.val**2 + max(shelveMC[label][runRanges.name]["EMu"]["UncertaintyUp"] , shelveMC[label][runRanges.name]["EMu"]["UncertaintyDown"]  )**2)**0.5
 	
-		errMC = (errEEMC**2/(2*effEEMC*effMMMC)**2+ errMMMC**2/(2*effEEMC*effMMMC)**2 + errEMMC**2/(effEMMC)**2)**0.5
+		errMC = val*(errEEMC**2/(2*effMMMC)**2+ errMMMC**2/(2*effMMMC)**2 + errEMMC**2/(effEMMC)**2)**0.5
 		valMC = (effEEMC*effMMMC)**0.5/effEMMC
 		
 		if returnNumbers:
