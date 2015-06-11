@@ -1,7 +1,7 @@
 class locations:
 	
-	masterListPath = "/home/jan/Doktorarbeit/Dilepton/projects/SubmitScripts/Input"
-	dataSetPath = "/home/jan/Trees/sw538v0478/"
+	masterListPath = "/home/jan/Doktorarbeit/Dilepton/projects/runII/SubmitScripts/Input"
+	dataSetPath = "/home/jan/Trees/13TeV/"
 	dataSetPathLoose = "/home/jan/Trees/Loose/"
 	triggerDataSetPath = "/home/jan/Trees/HTTreesReReco"
 	fakeDataSetPath = "/home/jan/Trees/Fake"

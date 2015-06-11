@@ -405,10 +405,10 @@ class rSFOFFact:
 class rSFOF:
 
 		class central:
-			val = 1.013482
-			err = 0.036174
-			valMC = 1.037009
-			errMC = 0.014997
+			val = 1.000
+			err = 0.04
+			valMC = 1.0000
+			errMC = 0.04
 	
 
 		class forward:

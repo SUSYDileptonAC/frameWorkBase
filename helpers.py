@@ -8,7 +8,7 @@ from ConfigParser import ConfigParser
 from locations import locations
 config_path = locations.masterListPath
 config = ConfigParser()
-config.read("%s/Master53X.ini"%config_path)
+config.read("%s/Master70X.ini"%config_path)
 
 
 def loadPickles(path):
