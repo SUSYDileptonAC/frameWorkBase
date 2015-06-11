@@ -482,21 +482,24 @@ class triggerEffs:
 	class central:
 		
 		class effEE:
-			val = 0.972914
+			#~ val = 0.972914
+			val = 1.
 			err = 0.050087
 			valMC = 0.972688
 			errMC = 0.050004
 	
 		
 		class effMM:
-			val = 0.968310
+			#~ val = 0.968310
+			val = 1.
 			err = 0.050287
 			valMC = 0.985942
 			errMC = 0.050002
 
 		
 		class effEM:
-			val = 0.946257
+			#~ val = 0.946257
+			val = 1.
 			err = 0.051372
 			valMC = 0.962593
 			errMC = 0.050002
@@ -504,21 +507,24 @@ class triggerEffs:
 	class forward:
 		
 		class effEE:
-			val = 0.973469
+			#~ val = 0.973469
+			val = 1.
 			err = 0.050381
 			valMC = 0.972243
 			errMC = 0.050013
 	
 		
 		class effMM:
-			val = 0.966431
+			#~ val = 0.966431
+			val = 1.
 			err = 0.050875
 			valMC = 0.964689
 			errMC = 0.050012
 
 		
 		class effEM:
-			val = 0.894737
+			#~ val = 0.894737
+			val = 1.
 			err = 0.062240
 			valMC = 0.951017
 			errMC = 0.050009
@@ -526,21 +532,24 @@ class triggerEffs:
 	class inclusive:
 		
 		class effEE:
-			val = 0.973031
+			#~ val = 0.973031
+			val = 1.
 			err = 0.050067
 			valMC = 0.972576
 			errMC = 0.050003
 	
 		
 		class effMM:
-			val = 0.967774
+			#~ val = 0.967774
+			val = 1.
 			err = 0.050199
 			valMC = 0.980316
 			errMC = 0.050002
 
 		
 		class effEM:
-			val = 0.937008
+			#~ val = 0.937008
+			val = 1.
 			err = 0.051235
 			valMC = 0.959624
 			errMC = 0.050002
