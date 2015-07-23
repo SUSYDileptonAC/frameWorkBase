@@ -6,9 +6,10 @@ from defs import defineMyColors
 from defs import myColors
 from ConfigParser import ConfigParser
 from locations import locations
+from math import sqrt
 config_path = locations.masterListPath
 config = ConfigParser()
-config.read("%s/Master70X.ini"%config_path)
+config.read("%s/Master74X.ini"%config_path)
 
 
 def loadPickles(path):
@@ -33,17 +34,21 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	from ROOT import TChain
 	result = TChain()
 	if modifier == "":
-		result.Add("%s/cutsV23DileptonFinalTrees/%sDileptonTree"%(path, dileptonCombination))
+		result.Add("%s/cutsV25DileptonFinalTrees/%sDileptonTree"%(path, dileptonCombination))
 	else:
 		if "Single" in modifier:
-			result.Add("%s/cutsV23Dilepton%sFinalTriggerTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
+			result.Add("%s/cutsV25Dilepton%sFinalTriggerTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
 		elif "Fake" in modifier:
-			result.Add("%s/cutsV23Dilepton%sTree/Trees/Iso"%( path, modifier))
+			result.Add("%s/cutsV25Dilepton%sTree/Trees/Iso"%( path, modifier))
+		elif "baseTrees" in modifier:
+			result.Add("%s/cutsV25DileptonBaseTrees/%sDileptonTree"%(path, dileptonCombination))
+		elif "deltaBetaReweighted" in modifier:
+			result.Add("%s/cutsV25DileptonFinalTrees/%sDileptonTree"%(path, dileptonCombination))
 		else:
-			result.Add("%s/cutsV23Dilepton%sFinalTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
+			result.Add("%s/cutsV25DileptonMiniAOD%sFinalTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
 	return result
 	
-def totalNumberOfGeneratedEvents(path,source=""):
+def totalNumberOfGeneratedEvents(path,source="",modifier=""):
 	"""
 	path: path to directory containing all sample files
 
@@ -54,9 +59,17 @@ def totalNumberOfGeneratedEvents(path,source=""):
 	result = {}
 	#~ print path
 
-	for sampleName, filePath in getFilePathsAndSampleNames(path,source).iteritems():
-		rootFile = TFile(filePath, "read")
-		result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)				
+	if "baseTrees" in source:
+		for sampleName, filePath in getFilePathsAndSampleNames(path,source).iteritems():
+			rootFile = TFile(filePath, "read")
+			result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)
+		for sampleName, filePath in getFilePathsAndSampleNames(path,"baseTrees").iteritems():
+			rootFile = TFile(filePath, "read")
+			result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)
+	else:				
+		for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems():
+			rootFile = TFile(filePath, "read")
+			result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)				
 	return result
 	
 def readTrees(path, dileptonCombination,source = "", modifier = ""):
@@ -67,9 +80,7 @@ def readTrees(path, dileptonCombination,source = "", modifier = ""):
 	returns: dict of sample names ->  trees containing events (for all samples for one dileptonCombination)
 	"""
 	result = {}
-
-
-		
+	
 	for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems():
 		result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier)
 		
@@ -92,25 +103,50 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 	if source == "PFHT":
 		source = "HT_"
 
-	# This is even more stupid and tries to deal with uncleaned datasets. This has to improve otherwise it will drive you crazy at some point!
-	for filePath in glob("%s/sw538*.root"%path):
+	#~ # This is even more stupid and tries to deal with uncleaned datasets. This has to improve otherwise it will drive you crazy at some point!
+	for filePath in glob("%s/sw744*.root"%path):
 		if source == "":
-			sampleName = match(".*sw538v.*\.processed.*\.(.*).root", filePath).groups()[0]		
+			sampleName = match(".*sw744.*\.processed.*\.(.*).root", filePath).groups()[0]		
 		else:
 			sampleName = ""
 			if source == "Summer12" or source == "Fake":
-				sample =  match(".*sw538v.*\.cutsV23.*\.(.*).root", filePath)
+				sample =  match(".*sw744v.*\.cutsV25.*\.(.*).root", filePath)
 			else:
 				sourceInsert = source
 				if source == "SingleMuon":
 					sourceInsert = "SingleMu"
-				sample =  match(".*sw538v.*\.cutsV23.*\.(%s.*).root"%sourceInsert, filePath)
+				sample =  match(".*sw744v.*\.cutsV25.*\.(%s.*).root"%sourceInsert, filePath)
 				
 			if sample is not None:					
 				sampleName = sample.groups()[0]
 		#for the python enthusiats: yield sampleName, filePath is more efficient here :)
 		if sampleName is not "":
 			result[sampleName] = filePath
+	#~ 
+	#~ if source == "":		
+		#~ for filePath in glob("%s/*miniAODTest*.root"%path):
+			#~ sampleName = match(".*miniAODTest.*\.processed.*\.(.*).root", filePath).groups()[0]
+			#~ result[sampleName] = filePath	
+	#~ elif source == "baseTreesDiLeptonTrigger":
+		#~ for filePath in glob("%s/baseTreesMiniAODTrigger*.root"%path):
+			#~ sampleName = match(".*baseTreesMiniAODTrigger.*\.processed.*\.(.*).root", filePath).groups()[0]
+			#~ result[sampleName] = filePath
+	#~ elif source == "DiLeptonTrigger":
+		#~ for filePath in glob("%s/miniAODMiniIsoPFWeightIsoDileptonTriggerTrees*.root"%path):
+			#~ sampleName = match(".*miniAODMiniIsoPFWeightIsoTriggerTrees.*\.processed.*\.(.*).root", filePath).groups()[0]
+			#~ result[sampleName] = filePath
+	#~ elif source == "baseTrees":
+		#~ for filePath in glob("%s/baseTreesMiniAOD.processed*.root"%path):
+			#~ sampleName = match(".*baseTreesMiniAOD.*\.processed.*\.(.*).root", filePath).groups()[0]
+			#~ result[sampleName] = filePath
+	#~ elif source == "deltaBetaReweighted":
+		#~ for filePath in glob("%s/AODTestDeltaBetaReweighting*.root"%path):
+			#~ sampleName = match(".*AODTestDeltaBetaReweighting.*\.processed.*\.(.*).root", filePath).groups()[0]
+			#~ result[sampleName] = filePath
+	#~ else:
+		#~ for filePath in glob("%s/miniAOD%sTrees*.root"%(path,source)):
+			#~ sampleName = match(".*miniAOD%sTrees.*\.processed.*\.(.*).root"%source, filePath).groups()[0]
+			#~ result[sampleName] = filePath
 	return result
 
 
@@ -152,6 +188,8 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 			#print getattr(ev,weight.split("*(")[0])
 	else:
 		tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
+	result.SetBinContent(nBins,result.GetBinContent(nBins)+result.GetBinContent(nBins+1))
+	result.SetBinError(nBins,sqrt(result.GetBinContent(nBins)))
 	gc.collect()
 	return result
 	
@@ -212,9 +250,10 @@ class Process:
 	scaleFac = 1.
 	additionalSelection = None
 	
-	def __init__(self, process ,Counts={"none":-1}):
+	def __init__(self, process ,Counts={"none":-1}, normalized = True):
 		self.samples = process.subprocesses
 		self.xsecs = []
+		self.negWeightFractions = []
 		self.nEvents = []
 		self.label = process.label
 		self.theColor = process.fillcolor
@@ -224,8 +263,10 @@ class Process:
 		self.uncertainty = process.uncertainty
 		self.scaleFac = 1.
 		self.additionalSelection = process.additionalSelection
+		self.normalized = normalized
 		for sample in self.samples:
 			self.xsecs.append(eval(config.get(sample,"crosssection")))
+			self.negWeightFractions.append(eval(config.get(sample,"negWeightFraction")))
 			self.nEvents.append(Counts[sample])
 
 		
@@ -281,8 +322,10 @@ class Process:
 					
 					
 					else:
-						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)				
-					tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/self.nEvents[index]))
+						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
+						
+					if self.normalized:				
+						tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/(self.nEvents[index]*(1-2*self.negWeightFractions[index])**2)))
 					self.histo.Add(tempHist.Clone())
 
 			if tree2 != "None":		
@@ -299,7 +342,8 @@ class Process:
 							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
 						
 
-						tempHist.Scale((lumi*self.xsecs[index]*scalefacTree2/self.nEvents[index]))
+						if self.normalized:
+							tempHist.Scale((lumi*self.xsecs[index]*scalefacTree2/(self.nEvents[index]*(1-2*self.negWeightFractions[index])**2)))
 
 						self.histo.Add(tempHist.Clone())
 		self.histo.SetFillColor(self.theColor)

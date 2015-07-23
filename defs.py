@@ -54,12 +54,24 @@ class runRanges:
 		lumiErr = 0.045*4980
 		runCut = "&& runNr < 99999999"
 		label = "2011"
+	class RunIITest:
+		lumi = 10000
+		printval = "x"
+		lumiErr = 0.045*10000
+		runCut = "&& runNr < 99999999"
+		label = "RunIITest"
+	class EarlyData2015:
+		lumi = 1000
+		printval = "1.0"
+		lumiErr = 0.045*10000
+		runCut = "&& runNr < 99999999"
+		label = "EarlyData2015"
 
 		
 class Region:
 	#~ cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20 && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && p4.M() > 20 && deltaR > 0.3 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
 	#~ cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
-	cut = " chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25))  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.3"
+	cut = " chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25))  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.3 && p4.M() > 20"
 	cutToUse = "weight*(chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25)) && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3)"
 	title = "Inclusive dilepton selection"
 	latex = "Inclusive dilepton selection"
@@ -98,10 +110,26 @@ class theCuts:
 			cut = "pt1 > 20 && pt2 > 20"
 			label = "p_{T} > 20 GeV"
 			name = "pt2020"
+		class pt2515:
+			cut = "((pt1 > 25 && pt2 > 15)||(pt1 > 15 && pt2 > 25))"
+			label = "p_{T} > 25(15) GeV"
+			name = "pt2515"
+		class pt2520:
+			cut = "((pt1 > 25 && pt2 > 20)||(pt1 > 20 && pt2 > 25))"
+			label = "p_{T} > 25(20) GeV"
+			name = "pt2520"
+		class pt2525:
+			cut = "pt1 > 25 && pt2 > 25"
+			label = "p_{T} > 25 GeV"
+			name = "pt2525"
 		class pt3010:
 			cut = "((pt1 > 30 && pt2 > 10)||(pt1 > 10 && pt2 > 30))"
 			label = "p_{T} > 30(10) GeV"
 			name = "pt3010"
+		class pt3015:
+			cut = "((pt1 > 30 && pt2 > 15)||(pt1 > 15 && pt2 > 30))"
+			label = "p_{T} > 30(15) GeV"
+			name = "pt3015"
 		class pt3020:
 			cut = "((pt1 > 30 && pt2 > 20)||(pt1 > 20 && pt2 > 30))"
 			label = "p_{T} > 30(20) GeV"
@@ -240,7 +268,7 @@ class theCuts:
 
 	class isoCuts:
 		class TightIso:
-			cut = "id1 < 0.05 && id2 < 0.05"
+			cut = "miniIsoEffArea1 < 0.05 && miniIsoEffArea2 < 0.05"
 			label = "rel. iso. < 0.05"
 			name = "TightIso"
 
@@ -519,7 +547,7 @@ class Regions:
 		name = "SignalATLAS"
 		logY = False
 	class SignalInclusive(Region):
-		cut = "((nJetsOld >= 2 && met > 150) || (nJetsOld>=3 && met > 100)) && (%s)"%Region.cut
+		cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Inclusive Signal Region"
 		titel = "Inclusive SR"
@@ -529,7 +557,7 @@ class Regions:
 
 
 	class SignalForward(Region):
-		cut = "((nJetsOld >= 2 && met > 150) || (nJetsOld>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Forward Signal Region"
 		titel = "Forward SR"
@@ -540,7 +568,7 @@ class Regions:
 
 			
 	class SignalOneForward(Region):
-		cut = "((nJetsOld >= 2 && met > 150) || (nJetsOld>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (abs(eta1) < 1.6 || abs(eta2) < 1.6) && (%s)"%Region.cut
+		cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (abs(eta1) < 1.6 || abs(eta2) < 1.6) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Signal Region One Forward"
 		titel = "One Forward SR"
@@ -550,7 +578,7 @@ class Regions:
 		trigEffs = triggerEffs.forward
 
 	class SignalCentral(Region):
-		cut = "((nJetsOld >= 2 && met > 150) || (nJetsOld >= 3 && met > 100)) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		cut = "((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelSubRegion = "Central Signal Region"
 		labelRegion = Region.labelRegion.replace("< 2.4","< 1.4")
 		titel = "Central SR"
@@ -561,6 +589,7 @@ class Regions:
 
 		
 	class Control(Region):
+		#~ cut = "nJets == 2  && 100 <  met && met < 150 && (%s)"%Region.cut
 		cut = "nJets == 2  && 100 <  met && met < 150 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} = 2 100 GeV < E_{T}^{miss} < 150 GeV"		
@@ -569,6 +598,7 @@ class Regions:
 		name = "Control"
 		logY = True
 	class ControlForward(Region):
+		#~ cut = "nJets == 2  && 100 <  met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		cut = "nJets == 2  && 100 <  met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} = 2 100 GeV < E_{T}^{miss} < 150 GeV"		
@@ -578,6 +608,7 @@ class Regions:
 		logY = True
 		trigEffs = triggerEffs.forward
 	class ControlCentral(Region):
+		#~ cut = "nJets == 2  && 100 <  met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		cut = "nJets == 2  && 100 <  met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} = 2 100 GeV < E_{T}^{miss} < 150 GeV |#eta| < 1.4"		
@@ -588,6 +619,7 @@ class Regions:
 		trigEffs = triggerEffs.central		
 			
 	class bTagControl(Region):
+		#~ cut = "nJets >=2 && met > 50 && nBJets >=1 && (%s)"%Region.cut
 		cut = "nJets >=2 && met > 50 && nBJets >=1 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} #geq 2 N_{bJets} #geq 1 E_{T}^{miss} > 50 GeV"			
@@ -597,6 +629,7 @@ class Regions:
 		logY = True
 			
 	class ttBarDileptonSF(Region):
+		#~ cut = "nJets >=2 && met > 40 && (p4.M()<76 || p4.M() > 106) && (%s)"%Region.cut
 		cut = "nJets >=2 && met > 40 && (p4.M()<76 || p4.M() > 106) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} #geq 2 E_{T}^{miss} > 40 GeV |m_{ll} - m_{Z}| > 25 GeV"			
@@ -605,6 +638,7 @@ class Regions:
 		name = "ttBarDileptonSF"
 		logY = True
 	class ttBarDileptonOF(Region):
+		#~ cut = "nJets >=2 && (%s)"%Region.cut
 		cut = "nJets >=2 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} #geq 2"			
@@ -615,6 +649,7 @@ class Regions:
 
 
 	class InclusiveJets(Region):
+		#~ cut = "nJets >= 2   && (%s)"%Region.cut
 		cut = "nJets >= 2   && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "N_{jets} >= 2 "			
@@ -622,6 +657,35 @@ class Regions:
 		latex = "Inclusive Jets"
 		name = "InclusiveJets"
 		logY = True
+
+	class Inclusive(Region):
+		cut = "(%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = ""			
+		titel = "Inclusive"
+		latex = "Inclusive"
+		name = "Inclusive"
+		logY = True
+
+
+	class Central(Region):
+		cut = "abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = ""			
+		titel = "Central"
+		latex = "Central"
+		name = "Central"
+		logY = True
+
+	class Forward(Region):
+		cut = " 1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = ""			
+		titel = "Forward"
+		latex = "Forward"
+		name = "Forward"
+		logY = True
+
 				
 	class Zpeak(Region):
 		cut = "p4.M() > 60 && p4.M() < 120 && (%s)"%Region.cut
@@ -633,6 +697,7 @@ class Regions:
 		logY = True
 	
 	class ZPeakControl(Region):
+		#~ cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && (%s)"%Region.cut
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
@@ -641,6 +706,7 @@ class Regions:
 		name = "ZPeakControl"
 		logY = True
 	class ZPeakControlCentral(Region):
+		#~ cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
@@ -649,6 +715,7 @@ class Regions:
 		name = "ZPeakControlCentral"
 		logY = True
 	class ZPeakControlForward(Region):
+		#~ cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
@@ -658,6 +725,7 @@ class Regions:
 		logY = True
 	
 	class DrellYanControl(Region):
+		#~ cut = "nJets>= 2 && met < 50 &&(%s)"%Region.cut
 		cut = "nJets >= 2 && met < 50 &&(%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Drell-Yan control region"			
@@ -666,6 +734,7 @@ class Regions:
 		name = "DrellYanControl"
 		logY = True
 	class DrellYanControlCentral(Region):
+		#~ cut = "nJets >= 2 && met < 50 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		cut = "nJets >= 2 && met < 50 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Drell-Yan control region"			
@@ -674,6 +743,7 @@ class Regions:
 		name = "DrellYanControlCentral"
 		logY = True
 	class DrellYanControlForward(Region):
+		#~ cut = "nJets >= 2 && met < 50 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		cut = "nJets >= 2 && met < 50 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Drell-Yan control region"			
@@ -693,25 +763,28 @@ class Regions:
 		logY = False
 		
 	class HighHTExclusive(Region):
-		cut = "ht > 200 && !(nJets >= 2 && met > 100) && (%s)"%Region.cut
+		#~ cut = "ht > 200 && !(nJets >= 2 && met > 100) && (%s)"%Region.cut
+		cut = "ht > 400 && !(nJets >= 2 && met > 100) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "H_{T} > 200 GeV"
+		labelSubRegion = "H_{T} > 400 GeV"
 		titel = "High HT region exclusive"
 		latex = "High H_{T} region exclusive"
 		name = "HighHTExclusive"
 		logY = False
 	class HighHTExclusiveForward(Region):
-		cut = "ht > 200 && !(nJets >= 2 && met > 100) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		#~ cut = "ht > 200 && !(nJets >= 2 && met > 100) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		cut = "ht > 400 && !(nJets >= 2 && met > 100) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "H_{T} > 200 GeV"
+		labelSubRegion = "H_{T} > 400 GeV"
 		titel = "High HT region exclusive forward"
 		latex = "High H_{T} region exclusive forward"
 		name = "HighHTExclusiveForward"
 		logY = False
 	class HighHTExclusiveCentral(Region):
-		cut = "ht > 200 && !(nJets >= 2 && met > 100) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		#~ cut = "ht > 200 && !(nJets >= 2 && met > 100) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		cut = "ht > 400 && !(nJets >= 2 && met > 100) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "H_{T} > 200 GeV central"
+		labelSubRegion = "H_{T} > 400 GeV central"
 		titel = "High HT region exclusive central"
 		latex = "High H_{T} region exclusive central"
 		name = "HighHTExclusiveCentral"
@@ -1056,24 +1129,33 @@ class thePlots:
 			
 	### plots for trigger efficiency measurements
 	nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[11,-0.5,10.5,"Events",[]])
-	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[theCuts.ptCuts.pt2010],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
-	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt20")
-	trailigPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt20")
-	trailigPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt30")
-	trailigPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[10,10,110,"Events / 10 GeV",[]],additionalName = "leadingPt30Single")
-	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[9,20,290,"Events / 30 GeV",[]])				
-	htPlotTrigger = Plot(theVariables.HT,[],binning=[10,0,400,"Events / 40 GeV",[]])				
+	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
+	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt30")
+	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[10,10,110,"Events / 10 GeV",[]],additionalName = "leadingPt30Single")
+	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])							
+	htPlotTrigger = Plot(theVariables.HT,[],binning=[15,400,1000,"Events / 40 GeV",[]])				
 	metPlotTrigger = Plot(theVariables.Met,[],binning=[10,0,200,"Events / 20 GeV",[]])				
 	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[15,0,30,"Events / 2",[]])				
 	tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])				
 			
+	### plots for isolation efficiency measurements
+	leadingPtPlotIso= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	trailingPtPlotIso= Plot(theVariables.TrailingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	mllPlotIso = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])							
+					
+			
 	### plots for rmue measurements
 	nJetsPlotRMuE = Plot(theVariables.nJets,[],binning=[9,-0.5,8.5,"Events",[]])
 	nBJetsPlotRMuE = Plot(theVariables.nBJets,[],binning=[7,-0.5,6.5,"Events",[]])
-	leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "trailingPt20")
-	trailigPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "leadingPt20")
-	trailigPtPlotRMuELeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "leadingPt30")
-	mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)])				
+	leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[16,20,100,"Events / 5 GeV",[]])
+	trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[18,10,100,"Events / 5 GeV",[]])
+	#~ leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "PU4BX50")
+	#~ trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[18,10,100,"Events / 5 GeV",[]],additionalName = "PU4BX50")
+	trailingPtPlotRMuELeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "leadingPt30")
+	mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)])							
+	#~ mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)],additionalName = "PU4BX50")							
 	htPlotRMuE = Plot(theVariables.HT,[],binning=[-1,0,400,"Events / 40 GeV",range(0,300,50)+range(300,800,100)])				
 	metPlotRMuE = Plot(theVariables.Met,[],binning=[-1,0,250,"Events / 20 GeV",range(0,100,10)+range(100,150,25)+range(150,250,50)])				
 	nVtxPlotRMuE = Plot(theVariables.nVtx,[],binning=[40,0,40,"Events / 1",[]])				
@@ -1175,6 +1257,52 @@ class Signals:
 		additionalSelection = None
 		
 class Backgrounds:
+	
+	class TTJets:
+		subprocesses = ["TTJets_aMCatNLO_FXFX_Spring15_25ns"]
+		#~ label = "Madgraph t#bar{t} PU20BX25"
+		label = "t#bar{t} MC PU20BX25"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+
+	class DrellYan:
+		subprocesses = ["ZJets_aMCatNLO_Spring15_25ns","AStar_aMCatNLO_Spring15_25ns"]
+		label = "DY+jets"
+		fillcolor = 401
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		#~ additionalSelection = "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)"
+		additionalSelection = None
+	class WJets:
+		subprocesses = ["WJetsToLNu_13TeV_madgraph_pythia8_tauola_PU20BX25_miniAOD"]
+		label = "W+jets"
+		fillcolor = 401
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = None
+	class DrellYanTauTau:
+		subprocesses = ["DYJetsToLL_M_50_13TeV_madgraph_pythia8_Phys14DR_PU20BX25_miniAOD"]
+		label = "DY+jets (#tau#tau)"
+		fillcolor = ROOT.kOrange
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = "(abs(motherPdgId1) == 15 && abs(motherPdgId2) == 15)"
+	class SingleTop:
+		subprocesses = ["TBarToLeptons_sChannel_13TeV_aMCatNLO_tauola_PU20BX25_miniAOD","TBarToLeptons_tChannel_13TeV_aMCatNLO_tauola_PU20BX25_miniAOD","TBar_tWChannel_DR_Tune4C_13TeV_powheg_tauola_PU20BX25_miniAOD","T_tWChannel_DR_Tune4C_13TeV_powheg_tauola_PU20BX25_miniAOD","TToLeptons_sChannel_13TeV_aMCatNLO_tauola_PU20BX25_miniAOD","TToLeptons_tChannel_13TeV_aMCatNLO_tauola_PU20BX25_miniAOD"]
+		label = "Single t"
+		fillcolor = 854
+		linecolor = ROOT.kBlack
+		uncertainty = 0.06
+		scaleFac     = 1.
+		additionalSelection = None
+		
+class Backgrounds2012:
 	
 	class TTJets:
 		subprocesses = ["TTJets_madgraph_Summer12"]
