@@ -121,7 +121,7 @@ class plotLists:
 	fake =  ["trailingPtPlot100","tralingEtaPlot","metPlot","htPlot",]
 
 class baselineTrigger: 
-	name = "PFHT"
+	name = "HT"
 
 class cutNCountXChecks:
 	cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"isoCuts":["TightIso"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
