@@ -9,7 +9,8 @@ from locations import locations
 from math import sqrt
 config_path = locations.masterListPath
 config = ConfigParser()
-config.read("%s/Master74X.ini"%config_path)
+print config_path
+config.read("%s/Master74X_25nsMC.ini"%config_path)
 
 
 def loadPickles(path):
@@ -34,7 +35,7 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	from ROOT import TChain
 	result = TChain()
 	if modifier == "":
-		result.Add("%s/cutsV27DileptonMiniAODTriggerFinalTrees/%sDileptonTree"%(path, dileptonCombination))
+		result.Add("%s/cutsV27DileptonMiniAODTriggerEfficiencyFinalTrees/%sDileptonTree"%(path, dileptonCombination))
 	else:
 		if "Single" in modifier:
 			result.Add("%s/cutsV27Dilepton%sFinalTriggerTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
@@ -256,6 +257,7 @@ class Process:
 		nEvents = -1
 		smearDY = False
 		if self.additionalSelection != None:
+			print self.additionalSelection
 			if self.additionalSelection == "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)":
 				smearDY = False
 
@@ -284,7 +286,7 @@ class Process:
 			signalWeight = "(%s+%s+%s+%s+%s+%s)*sbottomWeight"%(MultiQuarkScaleFactor,NeutrinoQuarkScaleFactor,MultiNeutrinoScaleFactor,DileptonNeutrinoScaleFactor,DileptonQuarkScaleFactor,MultileptonScaleFactor)
 			
 			cut = cut+"*"+signalWeight
-					
+		print self.samples			
 		for index, sample in enumerate(self.samples):
 			for name, tree in tree1.iteritems(): 
 				if name == sample:
@@ -300,7 +302,12 @@ class Process:
 					else:
 						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
 						
-					if self.normalized:				
+					if self.normalized:	
+						#~ print lumi
+						#~ print scalefacTree1 
+						#~ print self.xsecs[index]
+						#~ print self.nEvents[index]
+						#~ print self.negWeightFractions[index]		
 						tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/(self.nEvents[index]*(1-2*self.negWeightFractions[index])**2)))
 					self.histo.Add(tempHist.Clone())
 
