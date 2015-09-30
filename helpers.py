@@ -34,18 +34,16 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	from ROOT import TChain
 	result = TChain()
 	if modifier == "":
-		result.Add("%s/cutsV25DileptonFinalTrees/%sDileptonTree"%(path, dileptonCombination))
+		result.Add("%s/cutsV27DileptonMiniAODTriggerFinalTrees/%sDileptonTree"%(path, dileptonCombination))
 	else:
 		if "Single" in modifier:
-			result.Add("%s/cutsV25Dilepton%sFinalTriggerTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
+			result.Add("%s/cutsV27Dilepton%sFinalTriggerTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
 		elif "Fake" in modifier:
-			result.Add("%s/cutsV25Dilepton%sTree/Trees/Iso"%( path, modifier))
+			result.Add("%s/cutsV27Dilepton%sTree/Trees/Iso"%( path, modifier))
 		elif "baseTrees" in modifier:
-			result.Add("%s/cutsV25DileptonBaseTrees/%sDileptonTree"%(path, dileptonCombination))
-		elif "deltaBetaReweighted" in modifier:
-			result.Add("%s/cutsV25DileptonFinalTrees/%sDileptonTree"%(path, dileptonCombination))
+			result.Add("%s/cutsV27DileptonBaseTrees/%sDileptonTree"%(path, dileptonCombination))
 		else:
-			result.Add("%s/cutsV25DileptonMiniAOD%sFinalTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
+			result.Add("%s/cutsV27DileptonMiniAOD%sFinalTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
 	return result
 	
 def totalNumberOfGeneratedEvents(path,source="",modifier=""):
@@ -104,49 +102,24 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 		source = "HT_"
 
 	#~ # This is even more stupid and tries to deal with uncleaned datasets. This has to improve otherwise it will drive you crazy at some point!
-	for filePath in glob("%s/sw744*.root"%path):
+	for filePath in glob("%s/sw7412*.root"%path):
 		if source == "":
-			sampleName = match(".*sw744.*\.processed.*\.(.*).root", filePath).groups()[0]		
+			sampleName = match(".*sw7412.*\.processed.*\.(.*).root", filePath).groups()[0]		
 		else:
 			sampleName = ""
 			if source == "Summer12" or source == "Fake":
-				sample =  match(".*sw744v.*\.cutsV25.*\.(.*).root", filePath)
+				sample =  match(".*sw7412v.*\.cutsV27.*\.(.*).root", filePath)
 			else:
 				sourceInsert = source
 				if source == "SingleMuon":
 					sourceInsert = "SingleMu"
-				sample =  match(".*sw744v.*\.cutsV25.*\.(%s.*).root"%sourceInsert, filePath)
+				sample =  match(".*sw7412v.*\.cutsV27.*\.(%s.*).root"%sourceInsert, filePath)
 				
 			if sample is not None:					
 				sampleName = sample.groups()[0]
 		#for the python enthusiats: yield sampleName, filePath is more efficient here :)
 		if sampleName is not "":
 			result[sampleName] = filePath
-	#~ 
-	#~ if source == "":		
-		#~ for filePath in glob("%s/*miniAODTest*.root"%path):
-			#~ sampleName = match(".*miniAODTest.*\.processed.*\.(.*).root", filePath).groups()[0]
-			#~ result[sampleName] = filePath	
-	#~ elif source == "baseTreesDiLeptonTrigger":
-		#~ for filePath in glob("%s/baseTreesMiniAODTrigger*.root"%path):
-			#~ sampleName = match(".*baseTreesMiniAODTrigger.*\.processed.*\.(.*).root", filePath).groups()[0]
-			#~ result[sampleName] = filePath
-	#~ elif source == "DiLeptonTrigger":
-		#~ for filePath in glob("%s/miniAODMiniIsoPFWeightIsoDileptonTriggerTrees*.root"%path):
-			#~ sampleName = match(".*miniAODMiniIsoPFWeightIsoTriggerTrees.*\.processed.*\.(.*).root", filePath).groups()[0]
-			#~ result[sampleName] = filePath
-	#~ elif source == "baseTrees":
-		#~ for filePath in glob("%s/baseTreesMiniAOD.processed*.root"%path):
-			#~ sampleName = match(".*baseTreesMiniAOD.*\.processed.*\.(.*).root", filePath).groups()[0]
-			#~ result[sampleName] = filePath
-	#~ elif source == "deltaBetaReweighted":
-		#~ for filePath in glob("%s/AODTestDeltaBetaReweighting*.root"%path):
-			#~ sampleName = match(".*AODTestDeltaBetaReweighting.*\.processed.*\.(.*).root", filePath).groups()[0]
-			#~ result[sampleName] = filePath
-	#~ else:
-		#~ for filePath in glob("%s/miniAOD%sTrees*.root"%(path,source)):
-			#~ sampleName = match(".*miniAOD%sTrees.*\.processed.*\.(.*).root"%source, filePath).groups()[0]
-			#~ result[sampleName] = filePath
 	return result
 
 
@@ -189,7 +162,10 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	else:
 		tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
 	result.SetBinContent(nBins,result.GetBinContent(nBins)+result.GetBinContent(nBins+1))
-	result.SetBinError(nBins,sqrt(result.GetBinContent(nBins)))
+	if result.GetBinContent(nBins) >= 0.:
+		result.SetBinError(nBins,sqrt(result.GetBinContent(nBins)))
+	else:
+		result.SetBinError(nBins,0)
 	gc.collect()
 	return result
 	

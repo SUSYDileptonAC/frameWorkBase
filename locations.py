@@ -1,14 +1,10 @@
 class locations:
 	
 
-	masterListPath = "/home/jan/Doktorarbeit/Dilepton/projects/runII/SubmitScripts/Input"
-	dataSetPath = "/home/jan/Trees/sw744v1001Trigger/"
+	masterListPath = "/home/home4/institut_1b/schomakers/FrameWork/SubmitScripts/Input"
+	dataSetPath = "/user/schomakers/trees/sw7412v1001/"
 	dataSetPathLoose = "/home/jan/Trees/Loose/"
-	triggerDataSetPath = "/home/jan/Trees/HTTreesReReco"
+	triggerDataSetPath = "/user/schomakers/trees/sw7412v1001TriggerEffs/"
 	fakeDataSetPath = "/home/jan/Trees/Fake"
 	triggerDataSetPathSingleLepton = "/home/jan/Trees/SingleLepton"
-	triggerDataSetPathMC = "/home/jan/Trees/sw744v1000Unprocessed"	
-	baseTreesDataSetPath = "/user/schomakers/trees/miniAODTest/baseTrees/"	
-	baseTreesTriggerDataSetPath = "/user/schomakers/trees/miniAODTest/baseTreesTrigger/"	
-	AODDataSetPath = "/user/schomakers/trees/miniAODTest/AOD/"	
 	
