@@ -91,9 +91,9 @@ class runRanges:
 		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) "
 		label = "25ns"
 	class Run2015_50ns:
-		lumi = 166.37
-		printval = "0.1664"
-		lumiErr = 0.045*166.37
+		lumi = 71.52
+		printval = "0.07"
+		lumiErr = 0.045*71.52
 		runCut = "&& (  runNr < 251884 || runNr == 254833 || runNr ==1) "
 		label = "50ns"
 
@@ -1290,10 +1290,37 @@ class Signals:
 		
 class Backgrounds:
 	
-	class TTJets:
+	class TTJets_Madgraph:
+		subprocesses = ["TTJets_Dilepton_Madgraph_MLM_Spring15_25ns_v2","TTJets_SemiLeptFromT_Madgraph_MLM_Spring15_25ns_v2","TTJets_SemiLeptFromTbar_Madgraph_MLM_Spring15_25ns_v2"]
+		#~ label = "Madgraph t#bar{t} PU20BX25"
+		label = "Madgraph t#bar{t} + jets"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TT_aMCatNLO:
+		subprocesses = ["TT_aMCatNLO_FXFX_Spring15_25ns"]
+		#~ label = "Madgraph t#bar{t} PU20BX25"
+		label = "aMC@NLO t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TTJets_aMCatNLO:
+		subprocesses = ["TTJets_aMCatNLO_FXFX_Spring15_25ns"]
+		#~ label = "Madgraph t#bar{t} PU20BX25"
+		label = "aMC@NLO t#bar{t} +jets"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TT_Powheg:
 		subprocesses = ["TT_Dilepton_Powheg_Spring15_25ns"]
 		#~ label = "Madgraph t#bar{t} PU20BX25"
-		label = "t#bar{t}"
+		label = "Powheg t#bar{t}"
 		fillcolor = 855
 		linecolor = ROOT.kBlack
 		uncertainty = 0.07
@@ -1302,6 +1329,15 @@ class Backgrounds:
 
 	class DrellYan:
 		subprocesses = ["ZJets_aMCatNLO_Spring15_25ns","AStar_aMCatNLO_Spring15_25ns"]
+		label = "DY+jets"
+		fillcolor = 401
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)"
+		#~ additionalSelection = None
+	class DrellYanLO:
+		subprocesses = ["ZJets_Madgraph_Spring15_25ns","AStar_Madgraph_Spring15_25ns"]
 		label = "DY+jets"
 		fillcolor = 401
 		linecolor = ROOT.kBlack	

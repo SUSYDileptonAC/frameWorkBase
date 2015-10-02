@@ -31,11 +31,11 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	returns: tree containing events for on sample and dileptonCombination
 	"""
 
-	
 	from ROOT import TChain
 	result = TChain()
+	#~ result.SetProof(True)
 	if modifier == "":
-		result.Add("%s/cutsV27DileptonMiniAODTriggerEfficiencyFinalTrees/%sDileptonTree"%(path, dileptonCombination))
+		result.Add("%s/cutsV27DileptonFinalTrees/%sDileptonTree"%(path, dileptonCombination))
 	else:
 		if "Single" in modifier:
 			result.Add("%s/cutsV27Dilepton%sFinalTriggerTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
@@ -140,15 +140,16 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 		nEvents = maxint
 	#make a random name you could give something meaningfull here,
 	#but that would make this less readable
-	name = "%x"%(randint(0, maxint))
+
 	
+	name = "%x"%(randint(0, maxint))
 	if binning == []:
 		result = TH1F(name, "", nBins, firstBin, lastBin)
 	else:
 		result = TH1F(name, "", len(binning)-1, array("f",binning))
 		
 	result.Sumw2()
-
+	print "begin drawing"
 	if smearDY and variable == "met":
 		print weight
 		r = ROOT.TRandom3()
@@ -162,6 +163,8 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 			#print getattr(ev,weight.split("*(")[0])
 	else:
 		tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
+		#~ tree.Draw("%s"%(variable), weight, "goff", nEvents)
+	print "done drawing"
 	result.SetBinContent(nBins,result.GetBinContent(nBins)+result.GetBinContent(nBins+1))
 	if result.GetBinContent(nBins) >= 0.:
 		result.SetBinError(nBins,sqrt(result.GetBinContent(nBins)))
@@ -286,7 +289,11 @@ class Process:
 			signalWeight = "(%s+%s+%s+%s+%s+%s)*sbottomWeight"%(MultiQuarkScaleFactor,NeutrinoQuarkScaleFactor,MultiNeutrinoScaleFactor,DileptonNeutrinoScaleFactor,DileptonQuarkScaleFactor,MultileptonScaleFactor)
 			
 			cut = cut+"*"+signalWeight
-		print self.samples			
+		cut = cut.replace("*weightUp","")	
+		
+		cut = cut.replace("*weightDown","")						
+		cut = cut.replace("*weight","")			
+		
 		for index, sample in enumerate(self.samples):
 			for name, tree in tree1.iteritems(): 
 				if name == sample:
@@ -308,7 +315,7 @@ class Process:
 						#~ print self.xsecs[index]
 						#~ print self.nEvents[index]
 						#~ print self.negWeightFractions[index]		
-						tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/(self.nEvents[index]*(1-2*self.negWeightFractions[index])**2)))
+						tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/(self.nEvents[index]*(1-2*self.negWeightFractions[index]))))
 					self.histo.Add(tempHist.Clone())
 
 			if tree2 != "None":		
@@ -326,7 +333,7 @@ class Process:
 						
 
 						if self.normalized:
-							tempHist.Scale((lumi*self.xsecs[index]*scalefacTree2/(self.nEvents[index]*(1-2*self.negWeightFractions[index])**2)))
+							tempHist.Scale((lumi*self.xsecs[index]*scalefacTree2/(self.nEvents[index]*(1-2*self.negWeightFractions[index]))))
 
 						self.histo.Add(tempHist.Clone())
 		self.histo.SetFillColor(self.theColor)

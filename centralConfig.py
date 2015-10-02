@@ -91,7 +91,7 @@ class regionsToUse:
 			name = "SignalInclusive"
 
 class runRanges:
-	name = "EarlyData2015"
+	name = "Run2015_25ns"
 
 class backgroundLists:
 	#~ default = ["Rare","SingleTop","TTJets_SpinCorrelations","Diboson","DrellYanTauTau","DrellYan"]

@@ -15,4 +15,5 @@ syntax: glob
 *.tex
 *.d
 *.so
+locations.py
 
