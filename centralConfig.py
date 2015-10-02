@@ -97,7 +97,7 @@ class backgroundLists:
 	#~ default = ["Rare","SingleTop","TTJets_SpinCorrelations","Diboson","DrellYanTauTau","DrellYan"]
 	default = ["TTJets","DrellYan"]
 	#~ trigger = ["TTJets_SpinCorrelations"]
-	trigger = ["TTJets","DrellYan"]
+	trigger = ["TT_Powheg"]
 	iso = ["TTJets","DrellYan"]
 	rSFOF = ["TTJets","DrellYan"]
 	nonPrompt = ["TTJets","DrellYan"]
@@ -125,3 +125,10 @@ class baselineTrigger:
 
 class cutNCountXChecks:
 	cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"isoCuts":["TightIso"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
+
+
+
+class versions:
+	cmssw = "sw7412"
+	cuts = "cutsV27"
+	masterListForMC = "Master74X_25nsMC.ini"

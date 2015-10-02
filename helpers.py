@@ -9,8 +9,10 @@ from locations import locations
 from math import sqrt
 config_path = locations.masterListPath
 config = ConfigParser()
-print config_path
-config.read("%s/Master74X_25nsMC.ini"%config_path)
+
+from centralConfig import versions
+
+config.read("%s/%s"%(config_path,versions.masterListForMC))
 
 
 def loadPickles(path):
@@ -35,16 +37,16 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	result = TChain()
 	#~ result.SetProof(True)
 	if modifier == "":
-		result.Add("%s/cutsV27DileptonFinalTrees/%sDileptonTree"%(path, dileptonCombination))
+		result.Add("%s/%sDileptonFinalTrees/%sDileptonTree"%(path, versions.cuts, dileptonCombination))
 	else:
 		if "Single" in modifier:
-			result.Add("%s/cutsV27Dilepton%sFinalTriggerTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
+			result.Add("%s/%sDilepton%sFinalTriggerTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
 		elif "Fake" in modifier:
-			result.Add("%s/cutsV27Dilepton%sTree/Trees/Iso"%( path, modifier))
+			result.Add("%s/%sDilepton%sTree/Trees/Iso"%( path, versions.cuts, modifier))
 		elif "baseTrees" in modifier:
-			result.Add("%s/cutsV27DileptonBaseTrees/%sDileptonTree"%(path, dileptonCombination))
+			result.Add("%s/%sDileptonBaseTrees/%sDileptonTree"%(path, versions.cuts, dileptonCombination))
 		else:
-			result.Add("%s/cutsV27DileptonMiniAOD%sFinalTrees/%sDileptonTree"%( path, modifier, dileptonCombination))
+			result.Add("%s/%sDileptonMiniAOD%sFinalTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
 	return result
 	
 def totalNumberOfGeneratedEvents(path,source="",modifier=""):
@@ -103,18 +105,18 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 		source = "HT_"
 
 	#~ # This is even more stupid and tries to deal with uncleaned datasets. This has to improve otherwise it will drive you crazy at some point!
-	for filePath in glob("%s/sw7412*.root"%path):
+	for filePath in glob("%s/%sv*.root"%(path,versions.cmssw)):
 		if source == "":
-			sampleName = match(".*sw7412.*\.processed.*\.(.*).root", filePath).groups()[0]		
+			sampleName = match(".*%sv.*\.processed.*\.(.*).root"%versions.cmssw, filePath).groups()[0]		
 		else:
 			sampleName = ""
 			if source == "Summer12" or source == "Fake":
-				sample =  match(".*sw7412v.*\.cutsV27.*\.(.*).root", filePath)
+				sample =  match(".*%sv.*\.%s.*\.(.*).root"%(versions.cmssw,versions.cuts), filePath)
 			else:
 				sourceInsert = source
 				if source == "SingleMuon":
 					sourceInsert = "SingleMu"
-				sample =  match(".*sw7412v.*\.cutsV27.*\.(%s.*).root"%sourceInsert, filePath)
+				sample =  match(".*%sv.*\.%s.*\.(%s.*).root"%(versions.cmssw,versions.cuts,sourceInsert), filePath)
 				
 			if sample is not None:					
 				sampleName = sample.groups()[0]
@@ -149,7 +151,6 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 		result = TH1F(name, "", len(binning)-1, array("f",binning))
 		
 	result.Sumw2()
-	print "begin drawing"
 	if smearDY and variable == "met":
 		print weight
 		r = ROOT.TRandom3()
@@ -164,7 +165,6 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	else:
 		tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
 		#~ tree.Draw("%s"%(variable), weight, "goff", nEvents)
-	print "done drawing"
 	result.SetBinContent(nBins,result.GetBinContent(nBins)+result.GetBinContent(nBins+1))
 	if result.GetBinContent(nBins) >= 0.:
 		result.SetBinError(nBins,sqrt(result.GetBinContent(nBins)))
