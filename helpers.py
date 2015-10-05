@@ -46,7 +46,7 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 		elif "baseTrees" in modifier:
 			result.Add("%s/%sDileptonBaseTrees/%sDileptonTree"%(path, versions.cuts, dileptonCombination))
 		else:
-			result.Add("%s/%sDileptonMiniAOD%sFinalTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
+			result.Add("%s/%sDilepton%sFinalTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
 	return result
 	
 def totalNumberOfGeneratedEvents(path,source="",modifier=""):
@@ -81,7 +81,6 @@ def readTrees(path, dileptonCombination,source = "", modifier = ""):
 	returns: dict of sample names ->  trees containing events (for all samples for one dileptonCombination)
 	"""
 	result = {}
-	
 	for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems():
 		result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier)
 		
@@ -127,7 +126,7 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 
 
 	
-def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,smearDY=False,binning=None):
+def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,smearDY=False,binning=None,doPUWeights = False):
 	"""
 	tree: tree to create histo from)
 	variable: variable to plot (must be a branch of the tree)
@@ -143,7 +142,6 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	#make a random name you could give something meaningfull here,
 	#but that would make this less readable
 
-	
 	name = "%x"%(randint(0, maxint))
 	if binning == []:
 		result = TH1F(name, "", nBins, firstBin, lastBin)
@@ -152,12 +150,32 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 		
 	result.Sumw2()
 	if smearDY and variable == "met":
-		print weight
 		r = ROOT.TRandom3()
 		tempTree = tree.CopyTree(weight)
-		print weight.split("*(")[0]
 		for ev in tempTree:
 			result.Fill(ev.met*r.Gaus(1.08,0.1),getattr(ev,weight.split("*(")[0]))
+			
+		tempTree.IsA().Destructor(tempTree)
+		#myobject.IsA().Destructor(myobject)	
+			#print getattr(ev,weight.split("*(")[0])
+	elif doPUWeights:
+		tempTree = tree.CopyTree(weight)
+		
+		for ev in tempTree:
+			if variable == "p4.M()":
+				result.Fill(ev.p4.M(),getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
+			elif variable == "(pt2>pt1)*eta1+(pt1>pt2)*eta2":
+				if ev.pt2 > ev.pt1: 
+					result.Fill(ev.eta1,getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
+				elif ev.pt2 < ev.pt1: 
+					result.Fill(ev.eta2,getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
+			elif variable == "(pt1>pt2)*pt2+(pt2>pt1)*pt1":
+				if ev.pt2 > ev.pt1: 
+					result.Fill(ev.pt1,getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
+				elif ev.pt2 < ev.pt1: 
+					result.Fill(ev.pt2,getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
+			else:	
+				result.Fill(getattr(ev,variable),getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
 			
 		tempTree.IsA().Destructor(tempTree)
 		#myobject.IsA().Destructor(myobject)	
@@ -250,7 +268,7 @@ class Process:
 			self.nEvents.append(Counts[sample])
 
 		
-	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,TopWeightUp=False,TopWeightDown=False,signal=False,doTopReweighting=True):
+	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,TopWeightUp=False,TopWeightDown=False,signal=False,doTopReweighting=True,doPUWeights=False):
 		#~ doTopReweighting = False
 		if len(plot.binning) == 0:
 			self.histo = TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
@@ -260,7 +278,6 @@ class Process:
 		nEvents = -1
 		smearDY = False
 		if self.additionalSelection != None:
-			print self.additionalSelection
 			if self.additionalSelection == "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)":
 				smearDY = False
 
@@ -274,7 +291,7 @@ class Process:
 			cut = plot.cuts
 
 		weightNorm = 1./0.99
-		
+
 		if signal:
 
 
@@ -293,21 +310,22 @@ class Process:
 		
 		cut = cut.replace("*weightDown","")						
 		cut = cut.replace("*weight","")			
-		
+		cut = cut.replace("weight*","genWeight*")			
+
 		for index, sample in enumerate(self.samples):
 			for name, tree in tree1.iteritems(): 
 				if name == sample:
 					if doTopReweighting and "TT" in name:						
 						if TopWeightUp:
-							tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
+							tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
 						elif TopWeightDown:	
-							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
+							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
 						else:	
-							tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
+							tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
 					
 					
 					else:
-						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
+						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning,doPUWeights=doPUWeights)
 						
 					if self.normalized:	
 						#~ print lumi
@@ -323,13 +341,13 @@ class Process:
 					if name == sample:
 						if doTopReweighting and "TT" in name:
 							if TopWeightUp:
-								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
+								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
 							elif TopWeightDown:	
-								tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
+								tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
 							else:	
-								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
+								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
 						else:
-							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
+							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning,doPUWeights=doPUWeights)
 						
 
 						if self.normalized:
@@ -352,7 +370,7 @@ class TheStack:
 	theHistogramXsecDown = ROOT.TH1F()
 	theHistogramTheoUp = ROOT.TH1F()
 	theHistogramTheoDown = ROOT.TH1F()
-	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None,JESUp=False,JESDown=False,TopWeightUp=False,TopWeightDown=False,PileUpUp=False,PileUpDown=False,doTopReweighting=True,theoUncert = 0.):
+	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None,JESUp=False,JESDown=False,TopWeightUp=False,TopWeightDown=False,PileUpUp=False,PileUpDown=False,doTopReweighting=True,theoUncert = 0.,doPUWeights = False):
 		self.theStack = THStack()
 		self.theHistogram = ROOT.TH1F()
 		self.theHistogram.Sumw2()
@@ -386,11 +404,11 @@ class TheStack:
 			temphist = TH1F()
 			temphist.Sumw2()
 			if TopWeightUp:
-				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,TopWeightUp=True,doTopReweighting=True)
+				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,TopWeightUp=True,doTopReweighting=True,doPUWeights = doPUWeights)
 			elif TopWeightDown:	
-				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,TopWeightDown=True,doTopReweighting=True)
+				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,TopWeightDown=True,doTopReweighting=True,doPUWeights = doPUWeights)
 			else:	
-				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,doTopReweighting=doTopReweighting)
+				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,doTopReweighting=doTopReweighting,doPUWeights = doPUWeights)
 			if saveIntegrals:
 				
 				errIntMC = ROOT.Double()
@@ -476,14 +494,9 @@ def getDataTrees(path):
 			
 	return result
 				
-def getTotalTopWeight(genPt1,genPt2):
-	from math import exp,sqrt
-	## 8 TeV Dilepton
-	a = 0.148
-	b = -0.00129 
-	sf1 = exp(a*genPt1+b)
-	sf2 = exp(a*genPt2+b)
+def getVtxWeight(nVtx):
+	# based on 225/pb, Golden JSON from 02/10/2015
+	weights = [1, 1, 5.257347331038417, 3.6620287172043655, 3.2145438780779156, 2.9215830134107024, 2.7172733269793143, 2.499763816411226, 2.2358505010682275, 1.946608815936303, 1.66663585526661, 1.3917062061924035, 1.1239566743048217, 0.8838519279375375, 0.6762957802962626, 0.5277954493868846, 0.3953278839107886, 0.2916698725757984, 0.21232722799503542, 0.15516191067117857, 0.1187750029289671, 0.08675361880847646, 0.07089979610006057, 0.046231845546640206, 0.03480539409420972, 0.02463791911084164, 0.024537360650415386, 0.014415024309474854, 0.015096285304302518, 0.008316456648660545, 0.0, 0.010835052897837951, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0, 1, 0.0, 0.0, 1, 1, 1, 0.0, 1, 1, 1, 1, 1, 1, 1]
+
+	return weights[nVtx+1]
 	
-	result = sqrt(sf1+sf2)
-	
-	return result

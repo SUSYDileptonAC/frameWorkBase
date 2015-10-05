@@ -85,17 +85,17 @@ class runRanges:
 		runCut = "&& (runNr > 256500 || runNr ==1) && runNr < 99999999"
 		label = "Run2015D"
 	class Run2015_25ns:
-		lumi = 166.37
-		printval = "0.1664"
+		lumi = 225.57
+		printval = "0.226"
 		lumiErr = 0.045*166.37
 		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) "
-		label = "25ns"
+		label = "Run2015_25ns"
 	class Run2015_50ns:
 		lumi = 71.52
 		printval = "0.07"
 		lumiErr = 0.045*71.52
 		runCut = "&& (  runNr < 251884 || runNr == 254833 || runNr ==1) "
-		label = "50ns"
+		label = "Run2015_50ns"
 
 		
 class Region:
@@ -622,18 +622,18 @@ class Regions:
 		
 	class Control(Region):
 		#~ cut = "nJets == 2  && 100 <  met && met < 150 && (%s)"%Region.cut
-		cut = "nJets == 2  && 100 <  met && met < 150 && (%s)"%Region.cut
+		cut = "nJets == 2  && 100 < met && met < 150 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "N_{jets} = 2 100 GeV < E_{T}^{miss} < 150 GeV"		
+		labelSubRegion = "Control Region"		
 		titel = "CR"
 		latex = "Control Region"
 		name = "Control"
 		logY = True
 	class ControlForward(Region):
 		#~ cut = "nJets == 2  && 100 <  met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
-		cut = "nJets == 2  && 100 <  met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		cut = "nJets == 2  && 100 < met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "N_{jets} = 2 100 GeV < E_{T}^{miss} < 150 GeV"		
+		labelSubRegion = "Control Region Forward"		
 		titel = "CR"
 		latex = "Control Region Forward"
 		name = "ControlForward"
@@ -641,9 +641,9 @@ class Regions:
 		trigEffs = triggerEffs.forward
 	class ControlCentral(Region):
 		#~ cut = "nJets == 2  && 100 <  met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
-		cut = "nJets == 2  && 100 <  met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		cut = "nJets == 2  && 100 < met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "N_{jets} = 2 100 GeV < E_{T}^{miss} < 150 GeV |#eta| < 1.4"		
+		labelSubRegion = "Control Region Central"		
 		titel = "CR"
 		latex = "Control Region Central"
 		name = "ControlCentral"
@@ -795,28 +795,28 @@ class Regions:
 		logY = False
 		
 	class HighHTExclusive(Region):
-		#~ cut = "ht > 200 && !(nJets >= 2 && met > 100) && (%s)"%Region.cut
-		cut = "ht > 400 && !(nJets >= 2 && met > 100) && (%s)"%Region.cut
+		cut = "ht > 200 && !(nJets >= 2 && met > 100) && (%s)"%Region.cut
+		#~ cut = "ht > 400 && !(nJets >= 2 && met > 100) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "H_{T} > 400 GeV"
+		labelSubRegion = "H_{T} > 200 GeV"
 		titel = "High HT region exclusive"
 		latex = "High H_{T} region exclusive"
 		name = "HighHTExclusive"
 		logY = False
 	class HighHTExclusiveForward(Region):
-		#~ cut = "ht > 200 && !(nJets >= 2 && met > 100) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
-		cut = "ht > 400 && !(nJets >= 2 && met > 100) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		cut = "ht > 200 && !(nJets >= 2 && met > 100) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		#~ cut = "ht > 400 && !(nJets >= 2 && met > 100) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "H_{T} > 400 GeV"
+		labelSubRegion = "H_{T} > 200 GeV"
 		titel = "High HT region exclusive forward"
 		latex = "High H_{T} region exclusive forward"
 		name = "HighHTExclusiveForward"
 		logY = False
 	class HighHTExclusiveCentral(Region):
-		#~ cut = "ht > 200 && !(nJets >= 2 && met > 100) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
-		cut = "ht > 400 && !(nJets >= 2 && met > 100) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		cut = "ht > 200 && !(nJets >= 2 && met > 100) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		#~ cut = "ht > 400 && !(nJets >= 2 && met > 100) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "H_{T} > 400 GeV central"
+		labelSubRegion = "H_{T} > 200 GeV central"
 		titel = "High HT region exclusive central"
 		latex = "High H_{T} region exclusive central"
 		name = "HighHTExclusiveCentral"
@@ -921,7 +921,6 @@ class Plot:
 	
 	
 	def clone(self,selection):
-		print self.cuts
 		tempPlot = Plot(theVariables.Met,[])
 		if getMassSelection(selection) != None:
 			tempPlot.cuts = "genWeight*weight*(%s)"%(getMassSelection(selection).cut+"&& %s")
@@ -969,13 +968,17 @@ class Plot:
 						metCutUp.append(cut)
 					elif "met <" in cut:
 						metCutDown.append(cut)
+					elif "< met" in cut:
+						metCutDown.append(cut)
 				for cut in metCutUp:
 					self.cuts = self.cuts.replace(cut.split(")")[0],"")
 				for cut in metCutDown:
 					self.cuts = self.cuts.replace(cut,"")
 				self.cuts = self.cuts.replace("&&)",")")
 				self.cuts = self.cuts.replace("&& &&","&&")
+				self.cuts = self.cuts.replace("&&&&&&","&&")				
 				self.cuts = self.cuts.replace("&&&&","&&")
+
 			if self.variable == "ht":
 				cuts = self.cuts.split("&&")
 				htCutUp = "" 
@@ -1161,13 +1164,14 @@ class thePlots:
 			
 	### plots for trigger efficiency measurements
 	nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[11,-0.5,10.5,"Events",[]])
+	nBJetsPlotTrigger = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
 	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
 	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
 	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
 	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt30")
 	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[10,10,110,"Events / 10 GeV",[]],additionalName = "leadingPt30Single")
 	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])							
-	htPlotTrigger = Plot(theVariables.HT,[],binning=[15,400,1000,"Events / 40 GeV",[]])				
+	htPlotTrigger = Plot(theVariables.HT,[],binning=[20,200,1000,"Events / 40 GeV",[]])				
 	metPlotTrigger = Plot(theVariables.Met,[],binning=[10,0,200,"Events / 20 GeV",[]])				
 	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[15,0,30,"Events / 2",[]])				
 	tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])				
@@ -1202,6 +1206,8 @@ class thePlots:
 	mllPlotROutIn = Plot(theVariables.Mll,[],binning=[1000,0,1000,"Events / 1 GeV",[]])				
 	metPlotROutIn = Plot(theVariables.Met,[],binning=[-1,0,100,"Events / 1 GeV",[0,10,20,30,40,50,65,80,100]])				
 	nJetsPlotROutIn = Plot(theVariables.nJets,[],binning=[5,-0.5,4.5,"Events / 1 GeV",[]])				
+
+	nVtxPlotWeights = Plot(theVariables.nVtx,[],binning=[60,0,60,"Events / 1",[]])				
 
 	
 class Signals:
@@ -1380,7 +1386,7 @@ class Backgrounds:
 		additionalSelection = None			
 
 	class Diboson:
-		subprocesses = ["ZZTo4L_Powheg_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WWTo2L2Nu_Powheg_Spring15_25ns","WWTo4Q_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns"]
+		subprocesses = ["ZZTo4L_Powheg_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns"]
 		label = "WW,WZ,ZZ"
 		fillcolor = 920
 		linecolor = ROOT.kBlack	

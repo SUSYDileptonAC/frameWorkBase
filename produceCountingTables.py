@@ -416,10 +416,10 @@ def main():
 	
 	name = "cutAndCount"
 	countingShelves = {"inclusive":readPickle(name,regionsToUse.signal.inclusive.name , runRanges.name),"central": readPickle(name,regionsToUse.signal.central.name,runRanges.name), "forward":readPickle(name,regionsToUse.signal.forward.name,runRanges.name)}	
-	#~ 
-	#~ produceFinalTable(countingShelves,"SF")
-	#~ produceFinalTable(countingShelves,"EE")
-	#~ produceFinalTable(countingShelves,"MM")
+	
+	produceFinalTable(countingShelves,"SF")
+	produceFinalTable(countingShelves,"EE")
+	produceFinalTable(countingShelves,"MM")
 #~ 
 	#~ getDataCards(countingShelves,"SF")
 	#~ getDataCards(countingShelves,"EE")

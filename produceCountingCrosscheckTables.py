@@ -125,17 +125,17 @@ def produceCrosscheckTable(shelves,region):
 	table += lineTemplate%("$N_{\\text{vtx}} \geq$ 17",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
 	table += "\hline \n"
 	
-	table += " & \multicolumn{4}{c}{\MET reconstructions}\\\\\n"
-	table += "\hline \n"
-	result =  getResults(shelves,region,"caloMet")
-	table += lineTemplate%("Calo \MET",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
-	result =  getResults(shelves,region,"type1Met")
-	table += lineTemplate%("type I corrected PF \MET",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
-	result =  getResults(shelves,region,"tcMet")
-	table += lineTemplate%("track corrected \MET",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
-	result =  getResults(shelves,region,"mht")
-	table += lineTemplate%("missing $H_{\mathrm{T}}$",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
-	table += "\hline \n"
+	#~ table += " & \multicolumn{4}{c}{\MET reconstructions}\\\\\n"
+	#~ table += "\hline \n"
+	#~ result =  getResults(shelves,region,"caloMet")
+	#~ table += lineTemplate%("Calo \MET",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
+	#~ result =  getResults(shelves,region,"type1Met")
+	#~ table += lineTemplate%("type I corrected PF \MET",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
+	#~ result =  getResults(shelves,region,"tcMet")
+	#~ table += lineTemplate%("track corrected \MET",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
+	#~ result =  getResults(shelves,region,"mht")
+	#~ table += lineTemplate%("missing $H_{\mathrm{T}}$",result["lowMassSF"],result["lowMassPredSF"],(result["lowMassPredStatErrSF"]**2 + result["lowMassPredSystErrSF"]**2)**0.5, result["lowMassZPredSF"], result["lowMassZPredErrSF"] , result["signal"], result["signalErr"] )
+	#~ table += "\hline \n"
 	
 	
 	table += " & \multicolumn{4}{c}{$H_{\mathrm{T}}$}\\\\\n"
