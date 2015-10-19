@@ -85,11 +85,17 @@ class runRanges:
 		runCut = "&& (runNr > 256500 || runNr ==1) && runNr < 99999999"
 		label = "Run2015D"
 	class Run2015_25ns:
-		lumi = 225.57
-		printval = "0.226"
+		lumi = 578
+		printval = "0.58"
 		lumiErr = 0.045*166.37
-		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) "
+		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1)"
 		label = "Run2015_25ns"
+	class Run2015_Unblinded:
+		lumi = 133.3
+		printval = "0.13"
+		lumiErr = 0.045*133.3
+		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) && runNr <= 257599"
+		label = "Run2015_Unblinded"
 	class Run2015_50ns:
 		lumi = 71.52
 		printval = "0.07"
@@ -132,6 +138,14 @@ class theCuts:
 			cut = "p4.M() > 120"
 			label = "m_{ll} > 120 GeV"
 			name = "highMass"
+		class belowZ:
+			cut = "p4.M() > 70 && p4.M() < 81"
+			label = "70 GeV < m_{ll} < 81 GeV"
+			name = "belowZ"
+		class aboveZ:
+			cut = "p4.M() > 101 && p4.M() < 120"
+			label = "101 GeV < m_{ll} < 120 GeV"
+			name = "aboveZ"
 			
 	class ptCuts:
 		class pt2010:
@@ -460,6 +474,14 @@ class theVariables:
 		nBins = 40
 		labelX = "E_{T}^{miss} [GeV]"
 		labelY = "Events / 10 GeV"	
+	class RawMet:
+		variable = "uncorrectedMet"
+		name = "RawMET"
+		xMin = 0
+		xMax = 400
+		nBins = 40
+		labelX = "uncorr. E_{T}^{miss} [GeV]"
+		labelY = "Events / 10 GeV"	
 	class Type1Met:
 		variable = "type1Met"
 		name = "Type1MET"
@@ -504,10 +526,10 @@ class theVariables:
 		variable = "p4.M()"
 		name = "Mll"
 		xMin = 20
-		xMax = 305
-		nBins = 57
+		xMax = 300
+		nBins = 14
 		labelX = "m_{ll} [GeV]"
-		labelY = "Events / 5 GeV"	
+		labelY = "Events / 20 GeV"	
 	class Ptll:
 		variable = "p4.Pt()"
 		name = "Ptll"
@@ -1061,6 +1083,7 @@ class Plot:
 class thePlots:
 
 	metPlot = Plot(theVariables.Met,[])
+	rawMetPlot = Plot(theVariables.RawMet,[])
 	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
 	metPlotZMass = Plot(theVariables.Met,[theCuts.massCuts.zMass])
 	metPlotHighMass = Plot(theVariables.Met,[theCuts.massCuts.highMass])
@@ -1136,6 +1159,8 @@ class thePlots:
 
 
 	mllPlot = Plot(theVariables.Mll,[])
+	mllPlotGeOneBTags = Plot(theVariables.Mll,[theCuts.bTags.geOneBTags])
+	mllPlotGeTwoBTags = Plot(theVariables.Mll,[theCuts.bTags.geTwoBTags])
 	mllPlotLowMass = Plot(theVariables.Mll,[theCuts.massCuts.edgeMass])
 	mllPlotHighMass = Plot(theVariables.Mll,[theCuts.massCuts.highMass])
 	mllPlotOnZ = Plot(theVariables.Mll,[theCuts.massCuts.zMass])
@@ -1167,7 +1192,7 @@ class thePlots:
 	nBJetsPlotTrigger = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
 	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
 	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
-	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[6,0,120,"Events / 30 GeV",[]])
 	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt30")
 	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[10,10,110,"Events / 10 GeV",[]],additionalName = "leadingPt30Single")
 	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])							
@@ -1297,7 +1322,7 @@ class Signals:
 class Backgrounds:
 	
 	class TTJets_Madgraph:
-		subprocesses = ["TTJets_Dilepton_Madgraph_MLM_Spring15_25ns_v2","TTJets_SemiLeptFromT_Madgraph_MLM_Spring15_25ns_v2","TTJets_SemiLeptFromTbar_Madgraph_MLM_Spring15_25ns_v2"]
+		subprocesses = ["TTJets_Dilepton_Madgraph_MLM_Spring15_25ns_v1"]
 		#~ label = "Madgraph t#bar{t} PU20BX25"
 		label = "Madgraph t#bar{t} + jets"
 		fillcolor = 855
@@ -1377,7 +1402,8 @@ class Backgrounds:
 		additionalSelection = None
 		
 	class Rare:
-		subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Spring15_25ns","TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","4T_aMCatNLO_FXFX_Spring15_25ns","TZQ_LL_aMCatNLO_Spring15_25ns","WZZ_aMCatNLO_Spring15_25ns"]
+		#~ subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Spring15_25ns","TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","4T_aMCatNLO_FXFX_Spring15_25ns","TZQ_LL_aMCatNLO_Spring15_25ns","WZZ_aMCatNLO_Spring15_25ns"]
+		subprocesses = ["TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","4T_aMCatNLO_FXFX_Spring15_25ns","TZQ_LL_aMCatNLO_Spring15_25ns","WZZ_aMCatNLO_FXFX_Spring15_25ns","WWZ_aMCatNLO_FXFX_Spring15_25ns","ZZZ_aMCatNLO_FXFX_Spring15_25ns"]
 		label = "Other SM"
 		fillcolor = 630
 		linecolor = ROOT.kBlack
@@ -1386,7 +1412,8 @@ class Backgrounds:
 		additionalSelection = None			
 
 	class Diboson:
-		subprocesses = ["ZZTo4L_Powheg_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns"]
+		#~ subprocesses = ["ZZTo4L_Powheg_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns"]
+		subprocesses = ["WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns","WZTo1L1Nu2Q_aMCatNLO_Spring15_25ns","WZTo1L3Nu_aMCatNLO_Spring15_25ns","WZTo2L2Q_aMCatNLO_Spring15_25ns","ZZTo4Q_aMCatNLO_Spring15_25ns","ZZTo4L_aMCatNLO_Spring15_25ns","ZZTo2Q2Nu_aMCatNLO_Spring15_25ns","ZZTo2L2Q_aMCatNLO_Spring15_25ns"]
 		label = "WW,WZ,ZZ"
 		fillcolor = 920
 		linecolor = ROOT.kBlack	

@@ -1,28 +1,72 @@
 
 
 class zPredictions:
-
-	class SF:
-		class central:
-			val = 17
-			err = 17
-		class forward:
-			val = 11
-			err = 11
-	class EE:
-		class central:
-			val = 5
-			err = 5
-		class forward:
-			val = 4
-			err = 4
-	class MM:
-		class central:
-			val = 12
-			err = 12
-		class forward:
-			val = 7
-			err = 7
+	class default:
+		class SF:
+			class central:
+				val = 5
+				err = 5
+			class forward:
+				val = 2
+				err = 2
+		class EE:
+			class central:
+				val = 5
+				err = 5
+			class forward:
+				val = 2
+				err = 2
+		class MM:
+			class central:
+				val = 5
+				err = 5
+			class forward:
+				val = 2
+				err = 2
+	class geOneBTags:
+		class SF:
+			class central:
+				val = 2
+				err = 2
+			class forward:
+				val = 1
+				err = 1
+		class EE:
+			class central:
+				val = 2
+				err = 2
+			class forward:
+				val = 1
+				err = 1
+		class MM:
+			class central:
+				val = 2
+				err = 2
+			class forward:
+				val = 1
+				err = 1
+	class geTwoBTags:
+		class SF:
+			class central:
+				val = 1
+				err = 1
+			class forward:
+				val = 1
+				err = 1
+		class EE:
+			class central:
+				val = 1
+				err = 1
+			class forward:
+				val = 1
+				err = 1
+		class MM:
+			class central:
+				val = 1
+				err = 1
+			class forward:
+				val = 1
+				err = 1
 
 
 class systematics:
@@ -51,7 +95,13 @@ class mllBins:
 		high = 101
 	class highMass:
 		low = 120
-		high = 1000
+		high = 1000		
+	class belowZ:
+		low = 70
+		high = 81
+	class aboveZ:
+		low = 101
+		high = 120
 		
 class regionsToUse:
 	class triggerEfficiencies:
@@ -131,5 +181,5 @@ class cutNCountXChecks:
 
 class versions:
 	cmssw = "sw7412"
-	cuts = "cutsV27"
-	masterListForMC = "Master74X_25nsMC.ini"
+	cuts = "cutsV28"
+	masterListForMC = "Master74X_25nsMC_ReMiniAOD.ini"

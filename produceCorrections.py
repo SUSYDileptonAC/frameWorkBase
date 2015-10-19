@@ -237,11 +237,11 @@ class rOutIn:
 	%s
 	%s
 	%s
-	class bFactorB:
+	class aboveZ:
 	%s
 	%s
 	%s
-	class bFactorNoB:
+	class belowZ:
 	%s
 	%s
 	%s
@@ -254,11 +254,11 @@ class rOutInEE:
 	%s
 	%s
 	%s
-	class bFactorB:
+	class aboveZ:
 	%s
 	%s
 	%s
-	class bFactorNoB:
+	class belowZ:
 	%s
 	%s
 	%s
@@ -271,11 +271,11 @@ class rOutInMM:
 	%s
 	%s
 	%s	
-	class bFactorB:
+	class aboveZ:
 	%s
 	%s
 	%s	
-	class bFactorNoB:
+	class belowZ:
 	%s
 	%s
 	%s	
@@ -290,12 +290,12 @@ class rOutInMM:
 	
 	rOutInTuple = []
 	for combination in ["SF","EE","MM"]:
-		for massRange in ["LowMass","HighMass"]:
+		for massRange in ["LowMass","HighMass","BelowZ","AboveZ"]:
 			for label in ["inclusive","central","forward"]:
 				rOutInTuple.append(getROutInClass(classTemplate,shelvesROutIn,shelvesROutInMC,massRange,combination,label))
-		for bLabel in ["B","NoB"]:
-			for label in ["inclusive","central","forward"]:
-				rOutInTuple.append(getROutInClassB(classTemplate,shelvesROutIn,shelvesROutInMC,bLabel,combination,label))
+		#~ for bLabel in ["B","NoB"]:
+			#~ for label in ["inclusive","central","forward"]:
+				#~ rOutInTuple.append(getROutInClassB(classTemplate,shelvesROutIn,shelvesROutInMC,bLabel,combination,label))
 
 	rOutInPartFinal = rOutInPart%tuple(rOutInTuple)
 	

@@ -28,6 +28,11 @@ def readPickle(name,regionName,runName,MC=False):
 
 	return result	
 
+
+tableHeaders = {"default":"being inclusive in the number of b-tagged jets","geOneBTags":"requiring at least one b-tagged jet","geTwoBTags":"requiring at least two b-tagged jets"}
+tableColumnHeaders = {"default":"no b-tag requirement","geOneBTags":"$\geq$ 1 b-tagged jets","geTwoBTags":"$\geq$ 2 b-tagged jets"}
+
+
 def makeDC(anaDict):
 	
 
@@ -57,9 +62,9 @@ uncDY  lnN       -           -       %(uncertDY).2f
     return txt
 
 
-def getDataCards(shelves,combination):
+def getDataCards(shelves,combination,selection):
 	
-	results = {"central":getResults(shelves,"central"),"forward":getResults(shelves,"forward")}
+	results = {"central":getResults(shelves,"central",selection),"forward":getResults(shelves,"forward",selection)}
 	for etaRegion in ["forward","central"]:
 		for region in ["lowMass","onZ","highMass"]:
 			theDict = {
@@ -73,10 +78,10 @@ def getDataCards(shelves,combination):
 				
 				}
 			result = makeDC(theDict)
-			outFile = open("dataCards/dataCard_%s_%s_%s.txt"%(region, etaRegion, combination), "w")
+			outFile = open("dataCards/dataCard_%s_%s_%s_%s.txt"%(selection,region, etaRegion, combination), "w")
 			outFile.write(result)
 			outFile.close()		
-def getResults(shelve,region):
+def getResults(shelve,region,selection):
 	
 	result = {}
 	
@@ -87,11 +92,10 @@ def getResults(shelve,region):
 	result["rMMOF"] = getattr(rMMOF,region).val
 	result["rMMOFErr"] = getattr(rMMOF,region).err
 	
-	result["lowMassEE"] = shelve[region]["default"]["edgeMass"]["EE"]
-	result["lowMassMM"] = shelve[region]["default"]["edgeMass"]["MM"]
-	result["lowMassSF"] = shelve[region]["default"]["edgeMass"]["EE"] + shelve[region]["default"]["edgeMass"]["MM"]
-	result["lowMassOF"] = shelve[region]["default"]["edgeMass"]["EM"]
-	
+	result["lowMassEE"] = shelve[region][selection]["edgeMass"]["EE"]
+	result["lowMassMM"] = shelve[region][selection]["edgeMass"]["MM"]
+	result["lowMassSF"] = shelve[region][selection]["edgeMass"]["EE"] + shelve[region][selection]["edgeMass"]["MM"]
+	result["lowMassOF"] = shelve[region][selection]["edgeMass"]["EM"]
 	result["lowMassPredSF"] = result["lowMassOF"]*getattr(rSFOF,region).val
 	result["lowMassPredStatErrSF"] = result["lowMassOF"]**0.5*getattr(rSFOF,region).val
 	result["lowMassPredSystErrSF"] = result["lowMassOF"]*getattr(rSFOF,region).err
@@ -104,14 +108,14 @@ def getResults(shelve,region):
 	result["lowMassPredStatErrMM"] = result["lowMassOF"]**0.5*getattr(rMMOF,region).val
 	result["lowMassPredSystErrMM"] = result["lowMassOF"]*getattr(rMMOF,region).err
 	
-	result["lowMassZPredSF"] = getattr(zPredictions.SF,region).val*getattr(rOutIn.lowMass,region).val
-	result["lowMassZPredErrSF"] = ((getattr(zPredictions.SF,region).val*getattr(rOutIn.lowMass,region).err)**2 + (getattr(zPredictions.SF,region).err*getattr(rOutIn.lowMass,region).val)**2 )**0.5
+	result["lowMassZPredSF"] = getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.lowMass,region).val
+	result["lowMassZPredErrSF"] = ((getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.lowMass,region).err)**2 + (getattr(getattr(zPredictions,selection).SF,region).err*getattr(rOutIn.lowMass,region).val)**2 )**0.5
 	
-	result["lowMassZPredEE"] = getattr(zPredictions.EE,region).val*getattr(rOutInEE.lowMass,region).val
-	result["lowMassZPredErrEE"] = ((getattr(zPredictions.EE,region).val*getattr(rOutInEE.lowMass,region).err)**2 + (getattr(zPredictions.EE,region).err*getattr(rOutInEE.lowMass,region).val)**2 )**0.5
+	result["lowMassZPredEE"] = getattr(getattr(zPredictions,selection).EE,region).val*getattr(rOutInEE.lowMass,region).val
+	result["lowMassZPredErrEE"] = ((getattr(getattr(zPredictions,selection).EE,region).val*getattr(rOutInEE.lowMass,region).err)**2 + (getattr(getattr(zPredictions,selection).EE,region).err*getattr(rOutInEE.lowMass,region).val)**2 )**0.5
 	
-	result["lowMassZPredMM"] = getattr(zPredictions.MM,region).val*getattr(rOutInMM.lowMass,region).val
-	result["lowMassZPredErrMM"] = ((getattr(zPredictions.MM,region).val*getattr(rOutInMM.lowMass,region).err)**2 + (getattr(zPredictions.MM,region).err*getattr(rOutInMM.lowMass,region).val)**2 )**0.5
+	result["lowMassZPredMM"] = getattr(getattr(zPredictions,selection).MM,region).val*getattr(rOutInMM.lowMass,region).val
+	result["lowMassZPredErrMM"] = ((getattr(getattr(zPredictions,selection).MM,region).val*getattr(rOutInMM.lowMass,region).err)**2 + (getattr(getattr(zPredictions,selection).MM,region).err*getattr(rOutInMM.lowMass,region).val)**2 )**0.5
 	
 	result["lowMassTotalPredSF"] = result["lowMassPredSF"] + result["lowMassZPredSF"]
 	result["lowMassTotalPredErrSF"] = ( result["lowMassPredStatErrSF"]**2 +  result["lowMassPredSystErrSF"]**2 + result["lowMassZPredErrSF"]**2 )**0.5
@@ -121,14 +125,85 @@ def getResults(shelve,region):
 	
 	result["lowMassTotalPredMM"] = result["lowMassPredMM"] + result["lowMassZPredMM"]
 	result["lowMassTotalPredErrMM"] = ( result["lowMassPredStatErrMM"]**2 +  result["lowMassPredSystErrMM"]**2 + result["lowMassZPredErrMM"]**2 )**0.5
+
+	
+	result["belowZEE"] = shelve[region][selection]["belowZ"]["EE"]
+	result["belowZMM"] = shelve[region][selection]["belowZ"]["MM"]
+	result["belowZSF"] = shelve[region][selection]["belowZ"]["EE"] + shelve[region][selection]["belowZ"]["MM"]
+	result["belowZOF"] = shelve[region][selection]["belowZ"]["EM"]
+	
+	result["belowZPredSF"] = result["belowZOF"]*getattr(rSFOF,region).val
+	result["belowZPredStatErrSF"] = result["belowZOF"]**0.5*getattr(rSFOF,region).val
+	result["belowZPredSystErrSF"] = result["belowZOF"]*getattr(rSFOF,region).err
+	
+	result["belowZPredEE"] = result["belowZOF"]*getattr(rEEOF,region).val
+	result["belowZPredStatErrEE"] = result["belowZOF"]**0.5*getattr(rEEOF,region).val
+	result["belowZPredSystErrEE"] = result["belowZOF"]*getattr(rEEOF,region).err
+	
+	result["belowZPredMM"] = result["belowZOF"]*getattr(rMMOF,region).val
+	result["belowZPredStatErrMM"] = result["belowZOF"]**0.5*getattr(rMMOF,region).val
+	result["belowZPredSystErrMM"] = result["belowZOF"]*getattr(rMMOF,region).err
+	
+	result["belowZZPredSF"] = getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.belowZ,region).val
+	result["belowZZPredErrSF"] = ((getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.belowZ,region).err)**2 + (getattr(getattr(zPredictions,selection).SF,region).err*getattr(rOutIn.belowZ,region).val)**2 )**0.5
+	
+	result["belowZZPredEE"] = getattr(getattr(zPredictions,selection).EE,region).val*getattr(rOutInEE.belowZ,region).val
+	result["belowZZPredErrEE"] = ((getattr(getattr(zPredictions,selection).EE,region).val*getattr(rOutInEE.belowZ,region).err)**2 + (getattr(getattr(zPredictions,selection).EE,region).err*getattr(rOutInEE.belowZ,region).val)**2 )**0.5
+	
+	result["belowZZPredMM"] = getattr(getattr(zPredictions,selection).MM,region).val*getattr(rOutInMM.belowZ,region).val
+	result["belowZZPredErrMM"] = ((getattr(getattr(zPredictions,selection).MM,region).val*getattr(rOutInMM.belowZ,region).err)**2 + (getattr(getattr(zPredictions,selection).MM,region).err*getattr(rOutInMM.belowZ,region).val)**2 )**0.5
+	
+	result["belowZTotalPredSF"] = result["belowZPredSF"] + result["belowZZPredSF"]
+	result["belowZTotalPredErrSF"] = ( result["belowZPredStatErrSF"]**2 +  result["belowZPredSystErrSF"]**2 + result["belowZZPredErrSF"]**2 )**0.5
+	
+	result["belowZTotalPredEE"] = result["belowZPredEE"] + result["belowZZPredEE"]
+	result["belowZTotalPredErrEE"] = ( result["belowZPredStatErrEE"]**2 +  result["belowZPredSystErrEE"]**2 + result["belowZZPredErrEE"]**2 )**0.5
+	
+	result["belowZTotalPredMM"] = result["belowZPredMM"] + result["belowZZPredMM"]
+	result["belowZTotalPredErrMM"] = ( result["belowZPredStatErrMM"]**2 +  result["belowZPredSystErrMM"]**2 + result["belowZZPredErrMM"]**2 )**0.5
+	
+	result["aboveZEE"] = shelve[region][selection]["aboveZ"]["EE"]
+	result["aboveZMM"] = shelve[region][selection]["aboveZ"]["MM"]
+	result["aboveZSF"] = shelve[region][selection]["aboveZ"]["EE"] + shelve[region][selection]["aboveZ"]["MM"]
+	result["aboveZOF"] = shelve[region][selection]["aboveZ"]["EM"]
+	
+	result["aboveZPredSF"] = result["aboveZOF"]*getattr(rSFOF,region).val
+	result["aboveZPredStatErrSF"] = result["aboveZOF"]**0.5*getattr(rSFOF,region).val
+	result["aboveZPredSystErrSF"] = result["aboveZOF"]*getattr(rSFOF,region).err
+	
+	result["aboveZPredEE"] = result["aboveZOF"]*getattr(rEEOF,region).val
+	result["aboveZPredStatErrEE"] = result["aboveZOF"]**0.5*getattr(rEEOF,region).val
+	result["aboveZPredSystErrEE"] = result["aboveZOF"]*getattr(rEEOF,region).err
+	
+	result["aboveZPredMM"] = result["aboveZOF"]*getattr(rMMOF,region).val
+	result["aboveZPredStatErrMM"] = result["aboveZOF"]**0.5*getattr(rMMOF,region).val
+	result["aboveZPredSystErrMM"] = result["aboveZOF"]*getattr(rMMOF,region).err
+	
+	result["aboveZZPredSF"] = getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.aboveZ,region).val
+	result["aboveZZPredErrSF"] = ((getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.aboveZ,region).err)**2 + (getattr(getattr(zPredictions,selection).SF,region).err*getattr(rOutIn.aboveZ,region).val)**2 )**0.5
+	
+	result["aboveZZPredEE"] = getattr(getattr(zPredictions,selection).EE,region).val*getattr(rOutInEE.aboveZ,region).val
+	result["aboveZZPredErrEE"] = ((getattr(getattr(zPredictions,selection).EE,region).val*getattr(rOutInEE.aboveZ,region).err)**2 + (getattr(getattr(zPredictions,selection).EE,region).err*getattr(rOutInEE.aboveZ,region).val)**2 )**0.5
+	
+	result["aboveZZPredMM"] = getattr(getattr(zPredictions,selection).MM,region).val*getattr(rOutInMM.aboveZ,region).val
+	result["aboveZZPredErrMM"] = ((getattr(getattr(zPredictions,selection).MM,region).val*getattr(rOutInMM.aboveZ,region).err)**2 + (getattr(getattr(zPredictions,selection).MM,region).err*getattr(rOutInMM.aboveZ,region).val)**2 )**0.5
+	
+	result["aboveZTotalPredSF"] = result["aboveZPredSF"] + result["aboveZZPredSF"]
+	result["aboveZTotalPredErrSF"] = ( result["aboveZPredStatErrSF"]**2 +  result["aboveZPredSystErrSF"]**2 + result["aboveZZPredErrSF"]**2 )**0.5
+	
+	result["aboveZTotalPredEE"] = result["aboveZPredEE"] + result["aboveZZPredEE"]
+	result["aboveZTotalPredErrEE"] = ( result["aboveZPredStatErrEE"]**2 +  result["aboveZPredSystErrEE"]**2 + result["aboveZZPredErrEE"]**2 )**0.5
+	
+	result["aboveZTotalPredMM"] = result["aboveZPredMM"] + result["aboveZZPredMM"]
+	result["aboveZTotalPredErrMM"] = ( result["aboveZPredStatErrMM"]**2 +  result["aboveZPredSystErrMM"]**2 + result["aboveZZPredErrMM"]**2 )**0.5
 	
 	
 	
 	
-	result["highMassEE"] = shelve[region]["default"]["highMass"]["EE"]
-	result["highMassMM"] = shelve[region]["default"]["highMass"]["MM"]
-	result["highMassSF"] = shelve[region]["default"]["highMass"]["EE"] + shelve[region]["default"]["highMass"]["MM"]
-	result["highMassOF"] = shelve[region]["default"]["highMass"]["EM"]
+	result["highMassEE"] = shelve[region][selection]["highMass"]["EE"]
+	result["highMassMM"] = shelve[region][selection]["highMass"]["MM"]
+	result["highMassSF"] = shelve[region][selection]["highMass"]["EE"] + shelve[region][selection]["highMass"]["MM"]
+	result["highMassOF"] = shelve[region][selection]["highMass"]["EM"]
 	
 	result["highMassPredSF"] = result["highMassOF"]*getattr(rSFOF,region).val
 	result["highMassPredStatErrSF"] = result["highMassOF"]**0.5*getattr(rSFOF,region).val
@@ -142,14 +217,14 @@ def getResults(shelve,region):
 	result["highMassPredStatErrMM"] = result["highMassOF"]**0.5*getattr(rMMOF,region).val
 	result["highMassPredSystErrMM"] = result["highMassOF"]*getattr(rMMOF,region).err
 	
-	result["highMassZPredSF"] = getattr(zPredictions.SF,region).val*getattr(rOutIn.highMass,region).val
-	result["highMassZPredErrSF"] = ((getattr(zPredictions.SF,region).val*getattr(rOutIn.highMass,region).err)**2 + (getattr(zPredictions.SF,region).err*getattr(rOutIn.highMass,region).val)**2 )**0.5
+	result["highMassZPredSF"] = getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.highMass,region).val
+	result["highMassZPredErrSF"] = ((getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.highMass,region).err)**2 + (getattr(getattr(zPredictions,selection).SF,region).err*getattr(rOutIn.highMass,region).val)**2 )**0.5
 	
-	result["highMassZPredEE"] = getattr(zPredictions.EE,region).val*getattr(rOutInEE.highMass,region).val
-	result["highMassZPredErrEE"] = ((getattr(zPredictions.EE,region).val*getattr(rOutInEE.highMass,region).err)**2 + (getattr(zPredictions.EE,region).err*getattr(rOutInEE.highMass,region).val)**2 )**0.5
+	result["highMassZPredEE"] = getattr(getattr(zPredictions,selection).EE,region).val*getattr(rOutInEE.highMass,region).val
+	result["highMassZPredErrEE"] = ((getattr(getattr(zPredictions,selection).EE,region).val*getattr(rOutInEE.highMass,region).err)**2 + (getattr(getattr(zPredictions,selection).EE,region).err*getattr(rOutInEE.highMass,region).val)**2 )**0.5
 	
-	result["highMassZPredMM"] = getattr(zPredictions.MM,region).val*getattr(rOutInMM.highMass,region).val
-	result["highMassZPredErrMM"] = ((getattr(zPredictions.MM,region).val*getattr(rOutInMM.highMass,region).err)**2 + (getattr(zPredictions.MM,region).err*getattr(rOutInMM.highMass,region).val)**2 )**0.5
+	result["highMassZPredMM"] = getattr(getattr(zPredictions,selection).MM,region).val*getattr(rOutInMM.highMass,region).val
+	result["highMassZPredErrMM"] = ((getattr(getattr(zPredictions,selection).MM,region).val*getattr(rOutInMM.highMass,region).err)**2 + (getattr(getattr(zPredictions,selection).MM,region).err*getattr(rOutInMM.highMass,region).val)**2 )**0.5
 	
 
 	result["highMassTotalPredSF"] = result["highMassPredSF"] + result["highMassZPredSF"]
@@ -164,10 +239,10 @@ def getResults(shelve,region):
 	
 	
 	
-	result["onZEE"] = shelve[region]["default"]["zMass"]["EE"]
-	result["onZMM"] = shelve[region]["default"]["zMass"]["MM"]
-	result["onZSF"] = shelve[region]["default"]["zMass"]["EE"] + shelve[region]["default"]["zMass"]["MM"]
-	result["onZOF"] = shelve[region]["default"]["zMass"]["EM"]	
+	result["onZEE"] = shelve[region][selection]["zMass"]["EE"]
+	result["onZMM"] = shelve[region][selection]["zMass"]["MM"]
+	result["onZSF"] = shelve[region][selection]["zMass"]["EE"] + shelve[region][selection]["zMass"]["MM"]
+	result["onZOF"] = shelve[region][selection]["zMass"]["EM"]	
 	
 	result["onZPredSF"] = result["onZOF"]*getattr(rSFOF,region).val
 	result["onZPredStatErrSF"] = result["onZOF"]**0.5*getattr(rSFOF,region).val
@@ -181,14 +256,14 @@ def getResults(shelve,region):
 	result["onZPredStatErrMM"] = result["onZOF"]**0.5*getattr(rMMOF,region).val
 	result["onZPredSystErrMM"] = result["onZOF"]*getattr(rMMOF,region).err
 	
-	result["onZZPredSF"] = getattr(zPredictions.SF,region).val
-	result["onZZPredErrSF"] = getattr(zPredictions.SF,region).err
+	result["onZZPredSF"] = getattr(getattr(zPredictions,selection).SF,region).val
+	result["onZZPredErrSF"] = getattr(getattr(zPredictions,selection).SF,region).err
 	
-	result["onZZPredEE"] = getattr(zPredictions.EE,region).val
-	result["onZZPredErrEE"] = getattr(zPredictions.EE,region).err
+	result["onZZPredEE"] = getattr(getattr(zPredictions,selection).EE,region).val
+	result["onZZPredErrEE"] = getattr(getattr(zPredictions,selection).EE,region).err
 	
-	result["onZZPredMM"] = getattr(zPredictions.MM,region).val
-	result["onZZPredErrMM"] = getattr(zPredictions.MM,region).err
+	result["onZZPredMM"] = getattr(getattr(zPredictions,selection).MM,region).val
+	result["onZZPredErrMM"] = getattr(getattr(zPredictions,selection).MM,region).err
 	
 
 	result["onZTotalPredSF"] = result["onZPredSF"] + result["onZZPredSF"]
@@ -204,36 +279,37 @@ def getResults(shelve,region):
 	return result
 
 
-def produceFinalTable(shelves,region):
+def produceFinalTable(shelves,region,selection):
+	
+	
+	
 	
 	tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
  \setlength{\\belowcaptionskip}{6pt}
- \scriptsize
+ \\tiny
  \centering
- \caption{Results of the edge-search counting experiment for event yields in the signal regions.
+ \caption{Results of the edge-search counting experiment for event yields in the signal regions, %s.
      The statistical and systematic uncertainties are added in quadrature, except for the flavor-symmetric backgrounds.
-     Low-mass refers to $20 < \mll < 70$\GeV, on-\Z to  $81 < \mll < 101$\GeV and high-mass to $\mll > 120$\GeV.
+     Low-mass refers to 20 $<$ \mll $<$ 70\GeV, below-\Z to 71 $<$ \mll $<$ 81\GeV, on-\Z to  81 $<$ \mll $<$ 101\GeV, above-\Z to 81 $<$ \mll $<$ 120\GeV and high-mass to \mll $>$ 120\GeV.
      }
-  \label{tab:METresults2012}
-  \\begin{tabular}{l| cc | cc | cc}
+  \label{tab:edgeResults%s}
+  \\begin{tabular}{l| cc | cc | cc | cc | cc}
     \hline
     \hline
-    							& \multicolumn{2}{c}{Low-mass} & \multicolumn{2}{c}{On-\Z} & \multicolumn{2}{c}{High-mass} \\\\ \n
+     & \multicolumn{10}{c}{%s} \\\\ \n
+    \hline    
+    							& \multicolumn{2}{c}{Low-mass} & \multicolumn{2}{c}{below-\Z} & \multicolumn{2}{c}{On-\Z} & \multicolumn{2}{c}{above-\Z} & \multicolumn{2}{c}{High-mass} \\\\ \n
     \hline
-                                &  Central        & Forward  &  Central  & Forward   &  Central        & Forward \\\\ \n
-    \hline
-%s
-    \hline
-%s
-%s
+                                &  Central        & Forward  &  Central  & Forward   &  Central        & Forward &  Central        & Forward &  Central        & Forward \\\\ \n
     \hline
 %s
     \hline
-         Observed - estimated  & $xxx^{+xx}_{-xx}$      & $5^{+xx}_{-xx}$ & $xx^{+xx}_{-xx} $ & $-3^{+xx}_{-xx}$ & $47^{+xx}_{-xx}$ & $-62^{+xx}_{-xx} $ \\\\ \n
+%s
+%s
     \hline
-   Significance      & xx~$\sigma$    &  xx~$\sigma$  & xx~$\sigma$ & xx~$\sigma$ & xx~$\sigma$ & xx~$\sigma$ \\\\ \n
+%s
    \hline
     \hline
   \end{tabular}
@@ -242,54 +318,56 @@ def produceFinalTable(shelves,region):
 
 """
 
-	observedTemplate = r"        Observed       &  %d                   & %d              &  %d            &  %d       &   %d           &   %d    \\" +"\n"
+	observedTemplate = r"        Observed       &  %d                   & %d              &  %d            &  %d       &   %d           &   %d &   %d           &   %d &   %d           &   %d    \\" +"\n"
 
-	flavSysmTemplate = r"        Flavor-symmetric    & $%d\pm%d\pm%d$        & $%d\pm%d\pm%d$  &  $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ \\"+"\n"
+	flavSysmTemplate = r"        Flavor-symmetric    & $%d\pm%d\pm%d$        & $%d\pm%d\pm%d$  &  $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ \\"+"\n"
 
-	dyTemplate = r"            Drell--Yan          & $%.1f\pm%.1f$            & $%.1f\pm%.1f$      & $%d\pm%d$ & $%d\pm%d$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$ \\"+"\n"
+	dyTemplate = r"            Drell--Yan          & $%.1f\pm%.1f$            & $%.1f\pm%.1f$      & $%d\pm%d$ & $%d\pm%d$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$ \\"+"\n"
 	
-	totalTemplate = r"            Total estimated          & $%d\pm%d$            & $%d\pm%d$      & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ \\"+"\n"
-
-
-	
-	
-	resultsCentral = getResults(shelves,"central")
-	resultsForward = getResults(shelves,"forward")
-
-	observed = observedTemplate%(resultsCentral["lowMass%s"%region],resultsForward["lowMass%s"%region],resultsCentral["onZ%s"%region],resultsForward["onZ%s"%region],resultsCentral["highMass%s"%region],resultsForward["highMass%s"%region])
-	
-	flavSym = flavSysmTemplate%(resultsCentral["lowMassPred%s"%region],resultsCentral["lowMassPredStatErr%s"%region],resultsCentral["lowMassPredSystErr%s"%region],resultsForward["lowMassPred%s"%region],resultsForward["lowMassPredStatErr%s"%region],resultsForward["lowMassPredSystErr%s"%region],resultsCentral["onZPred%s"%region],resultsCentral["onZPredStatErr%s"%region],resultsCentral["onZPredSystErr%s"%region],resultsForward["onZPred%s"%region],resultsForward["onZPredStatErr%s"%region],resultsForward["onZPredSystErr%s"%region],resultsCentral["highMassPred%s"%region],resultsCentral["highMassPredStatErr%s"%region],resultsCentral["highMassPredSystErr%s"%region],resultsForward["highMassPred%s"%region],resultsForward["highMassPredStatErr%s"%region],resultsForward["highMassPredSystErr%s"%region])
-	
-	dy = dyTemplate%(resultsCentral["lowMassZPred%s"%region],resultsCentral["lowMassZPredErr%s"%region],resultsForward["lowMassZPred%s"%region],resultsForward["lowMassZPredErr%s"%region],resultsCentral["onZZPred%s"%region],resultsCentral["onZZPredErr%s"%region],resultsForward["onZZPred%s"%region],resultsForward["onZZPredErr%s"%region],resultsCentral["highMassZPred%s"%region],resultsCentral["highMassZPredErr%s"%region],resultsForward["highMassZPred%s"%region],resultsForward["highMassZPredErr%s"%region])
-	
-	total = totalTemplate%(resultsCentral["lowMassTotalPred%s"%region],resultsCentral["lowMassTotalPredErr%s"%region],resultsForward["lowMassTotalPred%s"%region],resultsForward["lowMassTotalPredErr%s"%region],resultsCentral["onZTotalPred%s"%region],resultsCentral["onZTotalPredErr%s"%region],resultsForward["onZTotalPred%s"%region],resultsForward["onZTotalPredErr%s"%region],resultsCentral["highMassTotalPred%s"%region],resultsCentral["highMassTotalPredErr%s"%region],resultsForward["highMassTotalPred%s"%region],resultsForward["highMassTotalPredErr%s"%region])
-
-	table = tableTemplate%(observed,flavSym,dy,total)
-	
-	saveTable(table,"cutNCount_Result_%s"%region)
-	
-	
-	
+	totalTemplate = r"            Total estimated          & $%d\pm%d$            & $%d\pm%d$      & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ \\"+"\n"
 
 
-def produceFlavSymTable(shelves):
+	
+	
+	resultsCentral = getResults(shelves,"central",selection)
+	resultsForward = getResults(shelves,"forward",selection)
+
+	observed = observedTemplate%(resultsCentral["lowMass%s"%region],resultsForward["lowMass%s"%region],resultsCentral["belowZ%s"%region],resultsForward["belowZ%s"%region],resultsCentral["onZ%s"%region],resultsForward["onZ%s"%region],resultsCentral["aboveZ%s"%region],resultsForward["aboveZ%s"%region],resultsCentral["highMass%s"%region],resultsForward["highMass%s"%region])
+	
+	flavSym = flavSysmTemplate%(resultsCentral["lowMassPred%s"%region],resultsCentral["lowMassPredStatErr%s"%region],resultsCentral["lowMassPredSystErr%s"%region],resultsForward["lowMassPred%s"%region],resultsForward["lowMassPredStatErr%s"%region],resultsForward["lowMassPredSystErr%s"%region],resultsCentral["belowZPred%s"%region],resultsCentral["belowZPredStatErr%s"%region],resultsCentral["belowZPredSystErr%s"%region],resultsForward["belowZPred%s"%region],resultsForward["belowZPredStatErr%s"%region],resultsForward["belowZPredSystErr%s"%region],resultsCentral["onZPred%s"%region],resultsCentral["onZPredStatErr%s"%region],resultsCentral["onZPredSystErr%s"%region],resultsForward["onZPred%s"%region],resultsForward["onZPredStatErr%s"%region],resultsForward["onZPredSystErr%s"%region],resultsCentral["aboveZPred%s"%region],resultsCentral["aboveZPredStatErr%s"%region],resultsCentral["aboveZPredSystErr%s"%region],resultsForward["aboveZPred%s"%region],resultsForward["aboveZPredStatErr%s"%region],resultsForward["aboveZPredSystErr%s"%region],resultsCentral["highMassPred%s"%region],resultsCentral["highMassPredStatErr%s"%region],resultsCentral["highMassPredSystErr%s"%region],resultsForward["highMassPred%s"%region],resultsForward["highMassPredStatErr%s"%region],resultsForward["highMassPredSystErr%s"%region])
+	
+	dy = dyTemplate%(resultsCentral["lowMassZPred%s"%region],resultsCentral["lowMassZPredErr%s"%region],resultsForward["lowMassZPred%s"%region],resultsForward["lowMassZPredErr%s"%region],resultsCentral["belowZZPred%s"%region],resultsCentral["belowZZPredErr%s"%region],resultsForward["belowZZPred%s"%region],resultsForward["belowZZPredErr%s"%region],resultsCentral["onZZPred%s"%region],resultsCentral["onZZPredErr%s"%region],resultsForward["onZZPred%s"%region],resultsForward["onZZPredErr%s"%region],resultsCentral["aboveZZPred%s"%region],resultsCentral["aboveZZPredErr%s"%region],resultsForward["aboveZZPred%s"%region],resultsForward["aboveZZPredErr%s"%region],resultsCentral["highMassZPred%s"%region],resultsCentral["highMassZPredErr%s"%region],resultsForward["highMassZPred%s"%region],resultsForward["highMassZPredErr%s"%region])
+	
+	total = totalTemplate%(resultsCentral["lowMassTotalPred%s"%region],resultsCentral["lowMassTotalPredErr%s"%region],resultsForward["lowMassTotalPred%s"%region],resultsForward["lowMassTotalPredErr%s"%region],resultsCentral["belowZTotalPred%s"%region],resultsCentral["belowZTotalPredErr%s"%region],resultsForward["belowZTotalPred%s"%region],resultsForward["belowZTotalPredErr%s"%region],resultsCentral["onZTotalPred%s"%region],resultsCentral["onZTotalPredErr%s"%region],resultsForward["onZTotalPred%s"%region],resultsForward["onZTotalPredErr%s"%region],resultsCentral["aboveZTotalPred%s"%region],resultsCentral["aboveZTotalPredErr%s"%region],resultsForward["aboveZTotalPred%s"%region],resultsForward["aboveZTotalPredErr%s"%region],resultsCentral["highMassTotalPred%s"%region],resultsCentral["highMassTotalPredErr%s"%region],resultsForward["highMassTotalPred%s"%region],resultsForward["highMassTotalPredErr%s"%region])
+
+	table = tableTemplate%(tableHeaders[selection],selection,tableColumnHeaders[selection],observed,flavSym,dy,total)
+	
+	saveTable(table,"cutNCount_Result_%s_%s"%(selection,region))
+	
+	
+	
+
+
+def produceFlavSymTable(shelves,selection):
 	
 	tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
  \setlength{\\belowcaptionskip}{6pt}
- \scriptsize
+ \\tiny
  \centering
- \caption{Resulting estimates for flavour-symmetric backgrounds. Given is the observed event yield in \EM events and the resulting estimate after applying the correction, seperately for the SF, \EE, and \MM channels. Statistical and systematic uncertainties are given separately.
-     Low-mass refers to $20 < \mll < 70$\GeV, on-\Z to  $81 < \mll < 101$\GeV and high-mass to $\mll > 120$\GeV.
+ \caption{Resulting estimates for flavour-symmetric backgrounds, %s. Given is the observed event yield in \EM events and the resulting estimate after applying the correction, seperately for the SF, \EE, and \MM channels. Statistical and systematic uncertainties are given separately.
+     Low-mass refers to 20 $<$ \mll $<$ 70\GeV, below-\Z to 71 $<$ \mll $<$ 81\GeV, on-\Z to  81 $<$ \mll $<$ 101\GeV, above-\Z to 81 $<$ \mll $<$ 120\GeV and high-mass to \mll $>$ 120\GeV.
      }
   \label{tab:FlavSymBackgrounds}
-  \\begin{tabular}{l| cc | cc | cc}
+  \\begin{tabular}{l| cc | cc | cc | cc | cc}
     \hline
     \hline
-    							& \multicolumn{2}{c}{Low-mass} & \multicolumn{2}{c}{On-\Z} & \multicolumn{2}{c}{High-mass} \\\\ \n
+     & \multicolumn{10}{c}{%s} \\\\ \n
     \hline
-                                &  Central        & Forward  &  Central  & Forward   &  Central        & Forward \\\\ \n
+    							& \multicolumn{2}{c}{Low-mass} & \multicolumn{2}{c}{below-\Z} & \multicolumn{2}{c}{On-\Z} & \multicolumn{2}{c}{above-\Z} & \multicolumn{2}{c}{High-mass} \\\\ \n
+    \hline
+                                &  Central        & Forward  &  Central  & Forward   &  Central        & Forward &  Central        & Forward &  Central        & Forward \\\\ \n
     \hline
 %s
     \hline
@@ -303,30 +381,31 @@ def produceFlavSymTable(shelves):
 
 """
 
-	observedTemplate = r"        Observed OF events       &  %d                   & %d              &  %d            &  %d       &   %d           &   %d    \\" +"\n"
+	observedTemplate = r"        Observed OF events       &  %d                   & %d              &  %d            &  %d       &   %d           &   %d &   %d           &   %d &   %d           &   %d    \\" +"\n"
 
-	flavSysmTemplate = r"        Estimate in %s channel    & $%d\pm%d\pm%d$        & $%d\pm%d\pm%d$  &  $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ \\"+"\n"
+	flavSysmTemplate = r"        Estimate in %s channel    & $%d\pm%d\pm%d$        & $%d\pm%d\pm%d$  &  $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ \\"+"\n"
 
 
-
-	
-	
-	resultsCentral = getResults(shelves,"central")
-	resultsForward = getResults(shelves,"forward")
-	observed = observedTemplate%(resultsCentral["lowMassOF"],resultsForward["lowMassOF"],resultsCentral["onZOF"],resultsForward["onZOF"],resultsCentral["highMassOF"],resultsForward["highMassOF"])
 
 	
-	flavSymSF = flavSysmTemplate%("SF",resultsCentral["lowMassPredSF"],resultsCentral["lowMassPredStatErrSF"],resultsCentral["lowMassPredSystErrSF"],resultsForward["lowMassPredSF"],resultsForward["lowMassPredStatErrSF"],resultsForward["lowMassPredSystErrSF"],resultsCentral["onZPredSF"],resultsCentral["onZPredStatErrSF"],resultsCentral["onZPredSystErrSF"],resultsForward["onZPredSF"],resultsForward["onZPredStatErrSF"],resultsForward["onZPredSystErrSF"],resultsCentral["highMassPredSF"],resultsCentral["highMassPredStatErrSF"],resultsCentral["highMassPredSystErrSF"],resultsForward["highMassPredSF"],resultsForward["highMassPredStatErrSF"],resultsForward["highMassPredSystErrSF"])
-	flavSymEE = flavSysmTemplate%("\EE",resultsCentral["lowMassPredEE"],resultsCentral["lowMassPredStatErrEE"],resultsCentral["lowMassPredSystErrEE"],resultsForward["lowMassPredEE"],resultsForward["lowMassPredStatErrEE"],resultsForward["lowMassPredSystErrEE"],resultsCentral["onZPredEE"],resultsCentral["onZPredStatErrEE"],resultsCentral["onZPredSystErrEE"],resultsForward["onZPredEE"],resultsForward["onZPredStatErrEE"],resultsForward["onZPredSystErrEE"],resultsCentral["highMassPredEE"],resultsCentral["highMassPredStatErrEE"],resultsCentral["highMassPredSystErrEE"],resultsForward["highMassPredEE"],resultsForward["highMassPredStatErrEE"],resultsForward["highMassPredSystErrEE"])
-	flavSymMM = flavSysmTemplate%("\MM",resultsCentral["lowMassPredMM"],resultsCentral["lowMassPredStatErrMM"],resultsCentral["lowMassPredSystErrMM"],resultsForward["lowMassPredMM"],resultsForward["lowMassPredStatErrMM"],resultsForward["lowMassPredSystErrMM"],resultsCentral["onZPredMM"],resultsCentral["onZPredStatErrMM"],resultsCentral["onZPredSystErrMM"],resultsForward["onZPredMM"],resultsForward["onZPredStatErrMM"],resultsForward["onZPredSystErrMM"],resultsCentral["highMassPredMM"],resultsCentral["highMassPredStatErrMM"],resultsCentral["highMassPredSystErrMM"],resultsForward["highMassPredMM"],resultsForward["highMassPredStatErrMM"],resultsForward["highMassPredSystErrMM"])
+	
+	resultsCentral = getResults(shelves,"central",selection)
+	resultsForward = getResults(shelves,"forward",selection)
+	observed = observedTemplate%(resultsCentral["lowMassOF"],resultsForward["lowMassOF"],resultsCentral["belowZOF"],resultsForward["belowZOF"],resultsCentral["onZOF"],resultsForward["onZOF"],resultsCentral["aboveZOF"],resultsForward["aboveZOF"],resultsCentral["highMassOF"],resultsForward["highMassOF"])
+
+	
+	flavSymSF = flavSysmTemplate%("SF",resultsCentral["lowMassPredSF"],resultsCentral["lowMassPredStatErrSF"],resultsCentral["lowMassPredSystErrSF"],resultsForward["lowMassPredSF"],resultsForward["lowMassPredStatErrSF"],resultsForward["lowMassPredSystErrSF"],resultsCentral["belowZPredSF"],resultsCentral["belowZPredStatErrSF"],resultsCentral["belowZPredSystErrSF"],resultsForward["belowZPredSF"],resultsForward["belowZPredStatErrSF"],resultsForward["belowZPredSystErrSF"],resultsCentral["onZPredSF"],resultsCentral["onZPredStatErrSF"],resultsCentral["onZPredSystErrSF"],resultsForward["onZPredSF"],resultsForward["onZPredStatErrSF"],resultsForward["onZPredSystErrSF"],resultsCentral["aboveZPredSF"],resultsCentral["aboveZPredStatErrSF"],resultsCentral["aboveZPredSystErrSF"],resultsForward["aboveZPredSF"],resultsForward["aboveZPredStatErrSF"],resultsForward["aboveZPredSystErrSF"],resultsCentral["highMassPredSF"],resultsCentral["highMassPredStatErrSF"],resultsCentral["highMassPredSystErrSF"],resultsForward["highMassPredSF"],resultsForward["highMassPredStatErrSF"],resultsForward["highMassPredSystErrSF"])
+	flavSymEE = flavSysmTemplate%("EE",resultsCentral["lowMassPredEE"],resultsCentral["lowMassPredStatErrEE"],resultsCentral["lowMassPredSystErrEE"],resultsForward["lowMassPredEE"],resultsForward["lowMassPredStatErrEE"],resultsForward["lowMassPredSystErrEE"],resultsCentral["belowZPredEE"],resultsCentral["belowZPredStatErrEE"],resultsCentral["belowZPredSystErrEE"],resultsForward["belowZPredEE"],resultsForward["belowZPredStatErrEE"],resultsForward["belowZPredSystErrEE"],resultsCentral["onZPredEE"],resultsCentral["onZPredStatErrEE"],resultsCentral["onZPredSystErrEE"],resultsForward["onZPredEE"],resultsForward["onZPredStatErrEE"],resultsForward["onZPredSystErrEE"],resultsCentral["aboveZPredEE"],resultsCentral["aboveZPredStatErrEE"],resultsCentral["aboveZPredSystErrEE"],resultsForward["aboveZPredEE"],resultsForward["aboveZPredStatErrEE"],resultsForward["aboveZPredSystErrEE"],resultsCentral["highMassPredEE"],resultsCentral["highMassPredStatErrEE"],resultsCentral["highMassPredSystErrEE"],resultsForward["highMassPredEE"],resultsForward["highMassPredStatErrEE"],resultsForward["highMassPredSystErrEE"])
+	flavSymMM = flavSysmTemplate%("MM",resultsCentral["lowMassPredMM"],resultsCentral["lowMassPredStatErrMM"],resultsCentral["lowMassPredSystErrMM"],resultsForward["lowMassPredMM"],resultsForward["lowMassPredStatErrMM"],resultsForward["lowMassPredSystErrMM"],resultsCentral["belowZPredMM"],resultsCentral["belowZPredStatErrMM"],resultsCentral["belowZPredSystErrMM"],resultsForward["belowZPredMM"],resultsForward["belowZPredStatErrMM"],resultsForward["belowZPredSystErrMM"],resultsCentral["onZPredMM"],resultsCentral["onZPredStatErrMM"],resultsCentral["onZPredSystErrMM"],resultsForward["onZPredMM"],resultsForward["onZPredStatErrMM"],resultsForward["onZPredSystErrMM"],resultsCentral["aboveZPredMM"],resultsCentral["aboveZPredStatErrMM"],resultsCentral["aboveZPredSystErrMM"],resultsForward["aboveZPredMM"],resultsForward["aboveZPredStatErrMM"],resultsForward["aboveZPredSystErrMM"],resultsCentral["highMassPredMM"],resultsCentral["highMassPredStatErrMM"],resultsCentral["highMassPredSystErrMM"],resultsForward["highMassPredMM"],resultsForward["highMassPredStatErrMM"],resultsForward["highMassPredSystErrMM"])
 
 
-	table = tableTemplate%(observed,flavSymSF,flavSymEE,flavSymMM)
+
+	table = tableTemplate%(tableHeaders[selection],tableColumnHeaders[selection],observed,flavSymSF,flavSymEE,flavSymMM)
 	
-	saveTable(table,"cutNCount_FlavSymBkgs")	
+	saveTable(table,"cutNCount_FlavSymBkgs_%s"%selection)	
 	
 	
-def produceZTable(shelves):
+def produceZTable(shelves,selection):
 
 	shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name)}
 
@@ -389,8 +468,8 @@ def produceZTable(shelves):
 
 	
 	
-	resultsCentral = getResults(shelves,"central")
-	resultsForward = getResults(shelves,"forward")
+	resultsCentral = getResults(shelves,"central",selection)
+	resultsForward = getResults(shelves,"forward",selection)
 
 	rOutInLowMassCentral = rOutInTemplate%("low",shelvesROutIn["central"]["rOutInLowMassEE"],shelvesROutIn["central"]["rOutInLowMassErrEE"],shelvesROutIn["central"]["rOutInLowMassSystEE"],shelvesROutIn["central"]["rOutInLowMassMM"],shelvesROutIn["central"]["rOutInLowMassErrMM"],shelvesROutIn["central"]["rOutInLowMassSystMM"],shelvesROutIn["central"]["rOutInLowMassSF"],shelvesROutIn["central"]["rOutInLowMassErrSF"],shelvesROutIn["central"]["rOutInLowMassSystSF"])
 	rOutInLowMassForward = rOutInTemplate%("low",shelvesROutIn["forward"]["rOutInLowMassEE"],shelvesROutIn["forward"]["rOutInLowMassErrEE"],shelvesROutIn["forward"]["rOutInLowMassSystEE"],shelvesROutIn["forward"]["rOutInLowMassMM"],shelvesROutIn["forward"]["rOutInLowMassErrMM"],shelvesROutIn["forward"]["rOutInLowMassSystMM"],shelvesROutIn["forward"]["rOutInLowMassSF"],shelvesROutIn["forward"]["rOutInLowMassErrSF"],shelvesROutIn["forward"]["rOutInLowMassSystSF"])
@@ -408,7 +487,7 @@ def produceZTable(shelves):
 	
 	table = tableTemplate%(rOutInLowMassCentral,predictionLowMassCentral,rOutInHighMassCentral,predictionHighMassCentral,rOutInLowMassForward,predictionLowMassForward,rOutInHighMassForward,predictionHighMassForward)
 	
-	saveTable(table,"cutNCount_ZBkgs")		
+	saveTable(table,"cutNCount_ZBkgs_%s"%selection)		
 	
 	
 def main():
@@ -417,13 +496,15 @@ def main():
 	name = "cutAndCount"
 	countingShelves = {"inclusive":readPickle(name,regionsToUse.signal.inclusive.name , runRanges.name),"central": readPickle(name,regionsToUse.signal.central.name,runRanges.name), "forward":readPickle(name,regionsToUse.signal.forward.name,runRanges.name)}	
 	
-	produceFinalTable(countingShelves,"SF")
-	produceFinalTable(countingShelves,"EE")
-	produceFinalTable(countingShelves,"MM")
-#~ 
-	#~ getDataCards(countingShelves,"SF")
-	#~ getDataCards(countingShelves,"EE")
-	#~ getDataCards(countingShelves,"MM")
-	produceFlavSymTable(countingShelves)
-	produceZTable(countingShelves)
+	for selection in ["default","geOneBTags","geTwoBTags"]:
+	
+		produceFinalTable(countingShelves,"SF",selection)
+		produceFinalTable(countingShelves,"EE",selection)
+		produceFinalTable(countingShelves,"MM",selection)
+	#~ 
+		#~ getDataCards(countingShelves,"SF",selection)
+		#~ getDataCards(countingShelves,"EE",selection)
+		#~ getDataCards(countingShelves,"MM",selection)
+		produceFlavSymTable(countingShelves,selection)
+		produceZTable(countingShelves,selection)
 main()
