@@ -522,14 +522,22 @@ class theVariables:
 		nBins = 20
 		labelX = "H_{T} [GeV]"
 		labelY = "Events / 40 GeV"	
+	#~ class Mll:
+		#~ variable = "p4.M()"
+		#~ name = "Mll"
+		#~ xMin = 20
+		#~ xMax = 300
+		#~ nBins = 14
+		#~ labelX = "m_{ll} [GeV]"
+		#~ labelY = "Events / 20 GeV"	
 	class Mll:
 		variable = "p4.M()"
 		name = "Mll"
 		xMin = 20
-		xMax = 300
-		nBins = 14
+		xMax = 305
+		nBins = 57
 		labelX = "m_{ll} [GeV]"
-		labelY = "Events / 20 GeV"	
+		labelY = "Events / 5 GeV"	
 	class Ptll:
 		variable = "p4.Pt()"
 		name = "Ptll"
