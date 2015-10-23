@@ -85,9 +85,9 @@ class runRanges:
 		runCut = "&& (runNr > 256500 || runNr ==1) && runNr < 99999999"
 		label = "Run2015D"
 	class Run2015_25ns:
-		lumi = 578
-		printval = "0.58"
-		lumiErr = 0.045*166.37
+		lumi = 1264
+		printval = "1.3"
+		lumiErr = 0.045*1264
 		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1)"
 		label = "Run2015_25ns"
 	class Run2015_Unblinded:
@@ -522,22 +522,22 @@ class theVariables:
 		nBins = 20
 		labelX = "H_{T} [GeV]"
 		labelY = "Events / 40 GeV"	
-	#~ class Mll:
-		#~ variable = "p4.M()"
-		#~ name = "Mll"
-		#~ xMin = 20
-		#~ xMax = 300
-		#~ nBins = 14
-		#~ labelX = "m_{ll} [GeV]"
-		#~ labelY = "Events / 20 GeV"	
 	class Mll:
 		variable = "p4.M()"
 		name = "Mll"
 		xMin = 20
-		xMax = 305
-		nBins = 57
+		xMax = 300
+		nBins = 14
 		labelX = "m_{ll} [GeV]"
-		labelY = "Events / 5 GeV"	
+		labelY = "Events / 20 GeV"	
+	#~ class Mll:
+		#~ variable = "p4.M()"
+		#~ name = "Mll"
+		#~ xMin = 20
+		#~ xMax = 305
+		#~ nBins = 57
+		#~ labelX = "m_{ll} [GeV]"
+		#~ labelY = "Events / 5 GeV"	
 	class Ptll:
 		variable = "p4.Pt()"
 		name = "Ptll"
@@ -1119,6 +1119,7 @@ class thePlots:
 	metPlot100NoClean = Plot(theVariables.Met,[],binning = [30,100,400,"Events / 10 Gev",[]],additionalName = "MET100Cuts",DoCleanCuts=False)
 	
 	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
+	metPlotOnZ = Plot(theVariables.Met,[theCuts.massCuts.zMass])
 	metPlotLowPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.lowPU,theCuts.massCuts.edgeMass])
 	metPlotMidPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.midPU,theCuts.massCuts.edgeMass])
 	metPlotHighPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.highPU,theCuts.massCuts.edgeMass])
@@ -1196,18 +1197,32 @@ class thePlots:
 
 			
 	### plots for trigger efficiency measurements
+	nJetsPlotTriggerMC = Plot(theVariables.nJets,[],binning=[11,-0.5,10.5,"Events",[]])
+	nBJetsPlotTriggerMC = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
+	leadingPtPlotTriggerTrailing10MC= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
+	leadingPtPlotTriggerMC= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	trailingPtPlotTriggerMC= Plot(theVariables.TrailingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	trailingPtPlotTriggerLeading30MC = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt30")
+	trailingPtPlotTriggerLeading30SingleMC = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[10,10,110,"Events / 10 GeV",[]],additionalName = "leadingPt30Single")
+	mllPlotTriggerMC = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])							
+	htPlotTriggerMC = Plot(theVariables.HT,[],binning=[20,200,1000,"Events / 40 GeV",[]])				
+	metPlotTriggerMC = Plot(theVariables.Met,[],binning=[10,0,200,"Events / 20 GeV",[]])				
+	nVtxPlotTriggerMC = Plot(theVariables.nVtx,[],binning=[15,0,30,"Events / 2",[]])				
+	tralingEtaPlotTriggerMC = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])				
+
 	nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[11,-0.5,10.5,"Events",[]])
 	nBJetsPlotTrigger = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
 	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
 	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
-	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[3,0,120,"Events / 5 GeV",[]])
 	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt30")
 	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[10,10,110,"Events / 10 GeV",[]],additionalName = "leadingPt30Single")
-	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])							
+	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[4,20,300,"Events / 40 GeV",[]])							
 	htPlotTrigger = Plot(theVariables.HT,[],binning=[20,200,1000,"Events / 40 GeV",[]])				
-	metPlotTrigger = Plot(theVariables.Met,[],binning=[10,0,200,"Events / 20 GeV",[]])				
-	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[15,0,30,"Events / 2",[]])				
-	tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])				
+	metPlotTrigger = Plot(theVariables.Met,[],binning=[4,0,200,"Events / 20 GeV",[]])				
+	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[10,0,30,"Events / 2",[]])				
+	tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])
+
 			
 	### plots for isolation efficiency measurements
 	leadingPtPlotIso= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])

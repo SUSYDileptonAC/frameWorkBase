@@ -4,11 +4,11 @@ class zPredictions:
 	class default:
 		class SF:
 			class central:
-				val = 5
-				err = 5
+				val = 56.2*113.3/1264
+				err = 10.44*113.3/1264
 			class forward:
-				val = 2
-				err = 2
+				val = 19.6*113.3/1264
+				err = 2.41*113.3/1264
 		class EE:
 			class central:
 				val = 5
@@ -26,11 +26,11 @@ class zPredictions:
 	class geOneBTags:
 		class SF:
 			class central:
-				val = 2
-				err = 2
+				val = 13.5*113.3/1264
+				err = 2.38*113.3/1264
 			class forward:
-				val = 1
-				err = 1
+				val = 5.3*113.3/1264
+				err = 1.80*113.3/1264
 		class EE:
 			class central:
 				val = 2
@@ -48,11 +48,11 @@ class zPredictions:
 	class geTwoBTags:
 		class SF:
 			class central:
-				val = 1
-				err = 1
+				val = 2.2*113.3/1264
+				err = 0.632*113.3/1264
 			class forward:
-				val = 1
-				err = 1
+				val = 1.0*113.3/1264
+				err = 0.41*113.3/1264
 		class EE:
 			class central:
 				val = 1
