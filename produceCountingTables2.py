@@ -792,7 +792,7 @@ def makeOverviewPlot(countingShelves,region):
 	intlumi.SetTextSize(0.03)
 	intlumi.SetNDC(True)		
 
-	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"0.13")
+	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"0.15")
 	
 	cmsExtra = "Preliminary"
 	latexCMS.DrawLatex(0.19,0.88,"CMS")
@@ -861,10 +861,10 @@ def makeOverviewPlot2(countingShelves,region):
 	
 	resultsCentral = getResults(countingShelves,"central","default")
 	resultsForward = getResults(countingShelves,"forward","default")
-	resultsCentralGeOneBTags = getResults(countingShelves,"central","geOneBTags")
-	resultsForwardGeOneBTags = getResults(countingShelves,"forward","geOneBTags")
-	resultsCentralGeTwoBTags = getResults(countingShelves,"central","geTwoBTags")
-	resultsForwardGeTwoBTags = getResults(countingShelves,"forward","geTwoBTags")
+	resultsCentralGeOneBTags = getResults(countingShelves,"central","noBTags")
+	resultsForwardGeOneBTags = getResults(countingShelves,"forward","noBTags")
+	resultsCentralGeTwoBTags = getResults(countingShelves,"central","geOneBTags")
+	resultsForwardGeTwoBTags = getResults(countingShelves,"forward","geOneBTags")
 	
 	
 	histObs = ROOT.TH1F("histObs","histObs",30,0,30)
@@ -927,7 +927,7 @@ def makeOverviewPlot2(countingShelves,region):
 	histObs.SetBinContent(30,resultsForwardGeTwoBTags["aboveZSF"])
 	
 	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
-	names = ["#geq 0 b-tags c","#geq 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","#geq 1 b-tags f","#geq 2 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","#geq 1 b-tags f","#geq 2 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","#geq 1 b-tags f","#geq 2 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","#geq 1 b-tags f","#geq 2 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","#geq 1 b-tags f","#geq 2 b-tags f"]
+	names = ["#geq 0 b-tags c","= 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f"]
 	
 	for index, name in enumerate(names):
 	
@@ -1047,39 +1047,39 @@ def makeOverviewPlot2(countingShelves,region):
 	#~ errGraph.SetPointError(30,0.5,0.5,resultsForwardGeTwoBTags["highMassTotalPredErrSF"],resultsForwardGeTwoBTags["highMassTotalPredErrSF"])
 
 	errGraph.SetPointError(1,0.5,0.5,resultsCentral["lowMassTotalPredErrSF"],resultsCentral["lowMassTotalPredErrSF"])
-	errGraph.SetPointError(11,0.5,0.5,resultsCentralGeOneBTags["lowMassTotalPredErrSF"],resultsCentralGeOneBTags["lowMassTotalPredErrSF"])
-	errGraph.SetPointError(21,0.5,0.5,resultsCentralGeTwoBTags["lowMassTotalPredErrSF"],resultsCentralGeTwoBTags["lowMassTotalPredErrSF"])
-	errGraph.SetPointError(6,0.5,0.5,resultsForward["lowMassTotalPredErrSF"],resultsForward["lowMassTotalPredErrSF"])
-	errGraph.SetPointError(16,0.5,0.5,resultsForwardGeOneBTags["lowMassTotalPredErrSF"],resultsForwardGeOneBTags["lowMassTotalPredErrSF"])
-	errGraph.SetPointError(26,0.5,0.5,resultsForwardGeTwoBTags["lowMassTotalPredErrSF"],resultsForwardGeTwoBTags["lowMassTotalPredErrSF"])
+	errGraph.SetPointError(2,0.5,0.5,resultsCentralGeOneBTags["lowMassTotalPredErrSF"],resultsCentralGeOneBTags["lowMassTotalPredErrSF"])
+	errGraph.SetPointError(3,0.5,0.5,resultsCentralGeTwoBTags["lowMassTotalPredErrSF"],resultsCentralGeTwoBTags["lowMassTotalPredErrSF"])
+	errGraph.SetPointError(4,0.5,0.5,resultsForward["lowMassTotalPredErrSF"],resultsForward["lowMassTotalPredErrSF"])
+	errGraph.SetPointError(5,0.5,0.5,resultsForwardGeOneBTags["lowMassTotalPredErrSF"],resultsForwardGeOneBTags["lowMassTotalPredErrSF"])
+	errGraph.SetPointError(6,0.5,0.5,resultsForwardGeTwoBTags["lowMassTotalPredErrSF"],resultsForwardGeTwoBTags["lowMassTotalPredErrSF"])
 
-	errGraph.SetPointError(3,0.5,0.5,resultsCentral["onZTotalPredErrSF"],resultsCentral["onZTotalPredErrSF"])
-	errGraph.SetPointError(13,0.5,0.5,resultsCentralGeOneBTags["onZTotalPredErrSF"],resultsCentralGeOneBTags["onZTotalPredErrSF"])
-	errGraph.SetPointError(23,0.5,0.5,resultsCentralGeTwoBTags["onZTotalPredErrSF"],resultsCentralGeTwoBTags["onZTotalPredErrSF"])
-	errGraph.SetPointError(8,0.5,0.5,resultsForward["onZTotalPredErrSF"],resultsForward["onZTotalPredErrSF"])
-	errGraph.SetPointError(18,0.5,0.5,resultsForwardGeOneBTags["onZTotalPredErrSF"],resultsForwardGeOneBTags["onZTotalPredErrSF"])
-	errGraph.SetPointError(28,0.5,0.5,resultsForwardGeTwoBTags["onZTotalPredErrSF"],resultsForwardGeTwoBTags["onZTotalPredErrSF"])
+	errGraph.SetPointError(7,0.5,0.5,resultsCentral["onZTotalPredErrSF"],resultsCentral["onZTotalPredErrSF"])
+	errGraph.SetPointError(8,0.5,0.5,resultsCentralGeOneBTags["onZTotalPredErrSF"],resultsCentralGeOneBTags["onZTotalPredErrSF"])
+	errGraph.SetPointError(9,0.5,0.5,resultsCentralGeTwoBTags["onZTotalPredErrSF"],resultsCentralGeTwoBTags["onZTotalPredErrSF"])
+	errGraph.SetPointError(10,0.5,0.5,resultsForward["onZTotalPredErrSF"],resultsForward["onZTotalPredErrSF"])
+	errGraph.SetPointError(11,0.5,0.5,resultsForwardGeOneBTags["onZTotalPredErrSF"],resultsForwardGeOneBTags["onZTotalPredErrSF"])
+	errGraph.SetPointError(12,0.5,0.5,resultsForwardGeTwoBTags["onZTotalPredErrSF"],resultsForwardGeTwoBTags["onZTotalPredErrSF"])
 
-	errGraph.SetPointError(5,0.5,0.5,resultsCentral["highMassTotalPredErrSF"],resultsCentral["highMassTotalPredErrSF"])
-	errGraph.SetPointError(15,0.5,0.5,resultsCentralGeOneBTags["highMassTotalPredErrSF"],resultsCentralGeOneBTags["highMassTotalPredErrSF"])
-	errGraph.SetPointError(25,0.5,0.5,resultsCentralGeTwoBTags["highMassTotalPredErrSF"],resultsCentralGeTwoBTags["highMassTotalPredErrSF"])
-	errGraph.SetPointError(10,0.5,0.5,resultsForward["highMassTotalPredErrSF"],resultsForward["highMassTotalPredErrSF"])
-	errGraph.SetPointError(20,0.5,0.5,resultsForwardGeOneBTags["highMassTotalPredErrSF"],resultsForwardGeOneBTags["highMassTotalPredErrSF"])	
-	errGraph.SetPointError(30,0.5,0.5,resultsForwardGeTwoBTags["highMassTotalPredErrSF"],resultsForwardGeTwoBTags["highMassTotalPredErrSF"])
+	errGraph.SetPointError(13,0.5,0.5,resultsCentral["highMassTotalPredErrSF"],resultsCentral["highMassTotalPredErrSF"])
+	errGraph.SetPointError(14,0.5,0.5,resultsCentralGeOneBTags["highMassTotalPredErrSF"],resultsCentralGeOneBTags["highMassTotalPredErrSF"])
+	errGraph.SetPointError(15,0.5,0.5,resultsCentralGeTwoBTags["highMassTotalPredErrSF"],resultsCentralGeTwoBTags["highMassTotalPredErrSF"])
+	errGraph.SetPointError(16,0.5,0.5,resultsForward["highMassTotalPredErrSF"],resultsForward["highMassTotalPredErrSF"])
+	errGraph.SetPointError(17,0.5,0.5,resultsForwardGeOneBTags["highMassTotalPredErrSF"],resultsForwardGeOneBTags["highMassTotalPredErrSF"])	
+	errGraph.SetPointError(18,0.5,0.5,resultsForwardGeTwoBTags["highMassTotalPredErrSF"],resultsForwardGeTwoBTags["highMassTotalPredErrSF"])
 		
-	errGraph.SetPointError(2,0.5,0.5,resultsCentral["belowZTotalPredErrSF"],resultsCentral["belowZTotalPredErrSF"])
-	errGraph.SetPointError(12,0.5,0.5,resultsCentralGeOneBTags["belowZTotalPredErrSF"],resultsCentralGeOneBTags["belowZTotalPredErrSF"])
-	errGraph.SetPointError(22,0.5,0.5,resultsCentralGeTwoBTags["belowZTotalPredErrSF"],resultsCentralGeTwoBTags["belowZTotalPredErrSF"])
-	errGraph.SetPointError(7,0.5,0.5,resultsForward["belowZTotalPredErrSF"],resultsForward["belowZTotalPredErrSF"])
-	errGraph.SetPointError(17,0.5,0.5,resultsForwardGeOneBTags["belowZTotalPredErrSF"],resultsForwardGeOneBTags["belowZTotalPredErrSF"])
-	errGraph.SetPointError(27,0.5,0.5,resultsForwardGeTwoBTags["belowZTotalPredErrSF"],resultsForwardGeTwoBTags["belowZTotalPredErrSF"])
+	errGraph.SetPointError(19,0.5,0.5,resultsCentral["belowZTotalPredErrSF"],resultsCentral["belowZTotalPredErrSF"])
+	errGraph.SetPointError(20,0.5,0.5,resultsCentralGeOneBTags["belowZTotalPredErrSF"],resultsCentralGeOneBTags["belowZTotalPredErrSF"])
+	errGraph.SetPointError(21,0.5,0.5,resultsCentralGeTwoBTags["belowZTotalPredErrSF"],resultsCentralGeTwoBTags["belowZTotalPredErrSF"])
+	errGraph.SetPointError(22,0.5,0.5,resultsForward["belowZTotalPredErrSF"],resultsForward["belowZTotalPredErrSF"])
+	errGraph.SetPointError(23,0.5,0.5,resultsForwardGeOneBTags["belowZTotalPredErrSF"],resultsForwardGeOneBTags["belowZTotalPredErrSF"])
+	errGraph.SetPointError(24,0.5,0.5,resultsForwardGeTwoBTags["belowZTotalPredErrSF"],resultsForwardGeTwoBTags["belowZTotalPredErrSF"])
 	
-	errGraph.SetPointError(4,0.5,0.5,resultsCentral["aboveZTotalPredErrSF"],resultsCentral["aboveZTotalPredErrSF"])
-	errGraph.SetPointError(9,0.5,0.5,resultsForward["aboveZTotalPredErrSF"],resultsForward["aboveZTotalPredErrSF"])
-	errGraph.SetPointError(14,0.5,0.5,resultsCentralGeOneBTags["aboveZTotalPredErrSF"],resultsCentralGeOneBTags["aboveZTotalPredErrSF"])
-	errGraph.SetPointError(19,0.5,0.5,resultsForwardGeOneBTags["aboveZTotalPredErrSF"],resultsForwardGeOneBTags["aboveZTotalPredErrSF"])
-	errGraph.SetPointError(24,0.5,0.5,resultsCentralGeTwoBTags["aboveZTotalPredErrSF"],resultsCentralGeTwoBTags["aboveZTotalPredErrSF"])
-	errGraph.SetPointError(29,0.5,0.5,resultsForwardGeTwoBTags["aboveZTotalPredErrSF"],resultsForwardGeTwoBTags["aboveZTotalPredErrSF"])
+	errGraph.SetPointError(25,0.5,0.5,resultsCentral["aboveZTotalPredErrSF"],resultsCentral["aboveZTotalPredErrSF"])
+	errGraph.SetPointError(26,0.5,0.5,resultsForward["aboveZTotalPredErrSF"],resultsForward["aboveZTotalPredErrSF"])
+	errGraph.SetPointError(27,0.5,0.5,resultsCentralGeOneBTags["aboveZTotalPredErrSF"],resultsCentralGeOneBTags["aboveZTotalPredErrSF"])
+	errGraph.SetPointError(28,0.5,0.5,resultsForwardGeOneBTags["aboveZTotalPredErrSF"],resultsForwardGeOneBTags["aboveZTotalPredErrSF"])
+	errGraph.SetPointError(29,0.5,0.5,resultsCentralGeTwoBTags["aboveZTotalPredErrSF"],resultsCentralGeTwoBTags["aboveZTotalPredErrSF"])
+	errGraph.SetPointError(30,0.5,0.5,resultsForwardGeTwoBTags["aboveZTotalPredErrSF"],resultsForwardGeTwoBTags["aboveZTotalPredErrSF"])
 
 	errGraph.SetFillColor(myColors["MyBlue"])
 	errGraph.SetFillStyle(3001)	
@@ -1103,7 +1103,7 @@ def makeOverviewPlot2(countingShelves,region):
 
 	
 	
-	histObs.GetYaxis().SetRangeUser(0,70)
+	histObs.GetYaxis().SetRangeUser(0,500)
 	histObs.GetYaxis().SetTitle("Events")
 	histObs.LabelsOption("v")
 
@@ -1137,7 +1137,7 @@ def makeOverviewPlot2(countingShelves,region):
 	intlumi.SetTextSize(0.03)
 	intlumi.SetNDC(True)		
 
-	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"0.13")
+	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"1.3")
 	
 	cmsExtra = "Preliminary"
 	latexCMS.DrawLatex(0.19,0.88,"CMS")
@@ -1170,10 +1170,10 @@ def makeOverviewPlot2(countingShelves,region):
 
 	
 	
-	line1 = ROOT.TLine(6,0,6,40)
-	line2 = ROOT.TLine(12,0,12,40)
-	line3 = ROOT.TLine(18,0,18,40)
-	line4 = ROOT.TLine(24,0,24,40)
+	line1 = ROOT.TLine(6,0,6,210)
+	line2 = ROOT.TLine(12,0,12,210)
+	line3 = ROOT.TLine(18,0,18,210)
+	line4 = ROOT.TLine(24,0,24,210)
 
 	line1.SetLineColor(ROOT.kBlack)
 	line2.SetLineColor(ROOT.kBlack)
@@ -1190,11 +1190,11 @@ def makeOverviewPlot2(countingShelves,region):
 	line3.Draw("same")
 	line4.Draw("same")
 	
-	line5 = ROOT.TLine(3,0,3,25)
-	line6 = ROOT.TLine(9,0,9,25)
-	line7 = ROOT.TLine(15,0,15,25)
-	line8 = ROOT.TLine(21,0,21,25)
-	line9 = ROOT.TLine(27,0,27,25)
+	line5 = ROOT.TLine(3,0,3,180)
+	line6 = ROOT.TLine(9,0,9,180)
+	line7 = ROOT.TLine(15,0,15,180)
+	line8 = ROOT.TLine(21,0,21,180)
+	line9 = ROOT.TLine(27,0,27,180)
 
 	line5.SetLineColor(ROOT.kBlack)
 	line6.SetLineColor(ROOT.kBlack)
@@ -1226,11 +1226,11 @@ def makeOverviewPlot2(countingShelves,region):
 	label.SetTextColor(ROOT.kBlack)	
 	label.SetTextAngle(45)	
 	
-	label.DrawLatex(1,30,"low-mass")
-	label.DrawLatex(7,30,"on-Z")
-	label.DrawLatex(13,30,"high-mass")
-	label.DrawLatex(19,30,"below-Z")
-	label.DrawLatex(25,30,"above-Z")
+	label.DrawLatex(1,230,"low-mass")
+	label.DrawLatex(7,230,"on-Z")
+	label.DrawLatex(13,230,"high-mass")
+	label.DrawLatex(19,230,"below-Z")
+	label.DrawLatex(25,230,"above-Z")
 
 
 	plotPad.RedrawAxis()

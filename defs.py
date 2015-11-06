@@ -85,15 +85,15 @@ class runRanges:
 		runCut = "&& (runNr > 256500 || runNr ==1) && runNr < 99999999"
 		label = "Run2015D"
 	class Run2015_25ns:
-		lumi = 1264
+		lumi = 1280.23
 		printval = "1.3"
 		lumiErr = 0.045*1264
-		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1)"
+		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) && runNr < 258750"
 		label = "Run2015_25ns"
 	class Run2015_Unblinded:
-		lumi = 133.3
-		printval = "0.13"
-		lumiErr = 0.045*133.3
+		lumi = 149.5
+		printval = "0.15"
+		lumiErr = 0.045*149.5
 		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) && runNr <= 257599"
 		label = "Run2015_Unblinded"
 	class Run2015_50ns:
@@ -109,6 +109,7 @@ class Region:
 	#~ cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
 	#~ cut = " chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25))  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.3 && p4.M() > 20"
 	#~ cutToUse = "genWeight*weight*(chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25)) && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3)"
+	#~ cut = " chargeProduct < 0 && miniIsoEffArea1 < 0.01 && miniIsoEffArea2 < 0.01 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.3 && p4.M() > 20"
 	cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.3 && p4.M() > 20"
 	cutToUse = "genWeight*weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3)"
 	title = "Inclusive dilepton selection"
@@ -152,6 +153,14 @@ class theCuts:
 			cut = "((pt1 > 20 && pt2 > 10)||(pt1 > 10 && pt2 > 20))"
 			label = "p_{T} > 20(10) GeV"
 			name = "pt2010"
+		class eleLeading:
+			cut = "(pt1 > pt2)"
+			label = "electron leading"
+			name = "eleLeading"
+		class muLeading:
+			cut = "(pt2 > pt1)"
+			label = "muon leading"
+			name = "muLeading"
 		class pt2020:
 			cut = "pt1 > 20 && pt2 > 20"
 			label = "p_{T} > 20 GeV"
@@ -527,9 +536,9 @@ class theVariables:
 		name = "Mll"
 		xMin = 20
 		xMax = 300
-		nBins = 14
+		nBins = 28
 		labelX = "m_{ll} [GeV]"
-		labelY = "Events / 20 GeV"	
+		labelY = "Events / 10 GeV"	
 	#~ class Mll:
 		#~ variable = "p4.M()"
 		#~ name = "Mll"
@@ -719,6 +728,15 @@ class Regions:
 		latex = "Inclusive Jets"
 		name = "InclusiveJets"
 		logY = True
+	class InclusiveJetsBlinded(Region):
+		#~ cut = "nJets >= 2   && (%s)"%Region.cut
+		cut = "!((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && nJets >= 2   && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "N_{jets} >= 2 blinded "			
+		titel = "Inclusive Jets Blinded"
+		latex = "Inclusive Jets Blinded"
+		name = "InclusiveJetsBlinded"
+		logY = True
 
 	class Inclusive(Region):
 		cut = "(%s)"%Region.cut
@@ -727,6 +745,15 @@ class Regions:
 		titel = "Inclusive"
 		latex = "Inclusive"
 		name = "Inclusive"
+		logY = True
+		
+	class InclusiveBlinded(Region):
+		cut = "!((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = ""			
+		titel = "InclusiveBlinded"
+		latex = "InclusiveBlinded"
+		name = "InclusiveBlinded"
 		logY = True
 
 
@@ -1082,9 +1109,8 @@ class Plot:
 				self.cuts = self.cuts.replace("&&&&","&&")			
 				self.cuts = self.cuts.replace("( &&","(")			
 				self.cuts = self.cuts.replace("(&&","(")	
-				
-			if self.additionalName == "trailingPt10" or self.additionalName == "leadingPt30Single":
-				self.cuts = self.cuts.replace("&& pt1 > 20 && pt2 > 20 &&", "&&") 		
+			if (self.additionalName == "trailingPt10" or self.additionalName == "leadingPt30Single") and "pt" in self.variable:
+				self.cuts = self.cuts.replace("&& pt1 > 20 && pt2 > 20  &&", "&&") 		
 		else:
 			print "Cut cleaning deactivated for this plot!"
 		
@@ -1116,7 +1142,11 @@ class thePlots:
 	metPlotUncertaintyHighMET = Plot(theVariables.Met,[theCuts.htCuts.ht100,theCuts.nJetsCuts.geTwoJetCut])
 	metPlotUncertaintyLowMET = Plot(theVariables.Met,[theCuts.nJetsCuts.geThreeJetCut])
 	metPlot100 = Plot(theVariables.Met,[],binning = [30,100,400,"Events / 10 Gev",[]],additionalName = "MET100")
+	metPlot100 = Plot(theVariables.Met,[],binning = [30,100,400,"Events / 10 Gev",[]],additionalName = "MET100")
 	metPlot100NoClean = Plot(theVariables.Met,[],binning = [30,100,400,"Events / 10 Gev",[]],additionalName = "MET100Cuts",DoCleanCuts=False)
+	
+	
+	metPlotNoClean = Plot(theVariables.Met,[],binning = [15,0,150,"Events / 10 Gev",[]],additionalName = "NoClean",DoCleanCuts=False)
 	
 	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
 	metPlotOnZ = Plot(theVariables.Met,[theCuts.massCuts.zMass])
@@ -1168,7 +1198,10 @@ class thePlots:
 
 
 	mllPlot = Plot(theVariables.Mll,[])
+	mllPlotEleLeading = Plot(theVariables.Mll,[theCuts.ptCuts.eleLeading])
+	mllPlotMuLeading = Plot(theVariables.Mll,[theCuts.ptCuts.muLeading])
 	mllPlotGeOneBTags = Plot(theVariables.Mll,[theCuts.bTags.geOneBTags])
+	mllPlotNoBTags = Plot(theVariables.Mll,[theCuts.bTags.noBTags])
 	mllPlotGeTwoBTags = Plot(theVariables.Mll,[theCuts.bTags.geTwoBTags])
 	mllPlotLowMass = Plot(theVariables.Mll,[theCuts.massCuts.edgeMass])
 	mllPlotHighMass = Plot(theVariables.Mll,[theCuts.massCuts.highMass])
@@ -1215,9 +1248,10 @@ class thePlots:
 	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
 	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
 	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[3,0,120,"Events / 5 GeV",[]])
-	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt30")
-	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[10,10,110,"Events / 10 GeV",[]],additionalName = "leadingPt30Single")
+	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30")
+	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30Single")
 	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[4,20,300,"Events / 40 GeV",[]])							
+	mllPlotTriggerLeading30Single = Plot(theVariables.Mll,[theCuts.ptCuts.leadingPt30],binning=[7,20,300,"Events / 40 GeV",[]],additionalName = "leadingPt30Single")							
 	htPlotTrigger = Plot(theVariables.HT,[],binning=[20,200,1000,"Events / 40 GeV",[]])				
 	metPlotTrigger = Plot(theVariables.Met,[],binning=[4,0,200,"Events / 20 GeV",[]])				
 	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[10,0,30,"Events / 2",[]])				
@@ -1425,8 +1459,8 @@ class Backgrounds:
 		additionalSelection = None
 		
 	class Rare:
-		#~ subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Spring15_25ns","TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","4T_aMCatNLO_FXFX_Spring15_25ns","TZQ_LL_aMCatNLO_Spring15_25ns","WZZ_aMCatNLO_Spring15_25ns"]
-		subprocesses = ["TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","4T_aMCatNLO_FXFX_Spring15_25ns","TZQ_LL_aMCatNLO_Spring15_25ns","WZZ_aMCatNLO_FXFX_Spring15_25ns","WWZ_aMCatNLO_FXFX_Spring15_25ns","ZZZ_aMCatNLO_FXFX_Spring15_25ns"]
+		subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Spring15_25ns","TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","WZZ_aMCatNLO_FXFX_Spring15_25ns","WWZ_aMCatNLO_FXFX_Spring15_25ns","ZZZ_aMCatNLO_FXFX_Spring15_25ns"]
+		#~ subprocesses = ["TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","4T_aMCatNLO_FXFX_Spring15_25ns","TZQ_LL_aMCatNLO_Spring15_25ns","WZZ_aMCatNLO_FXFX_Spring15_25ns","WWZ_aMCatNLO_FXFX_Spring15_25ns","ZZZ_aMCatNLO_FXFX_Spring15_25ns"]
 		label = "Other SM"
 		fillcolor = 630
 		linecolor = ROOT.kBlack
@@ -1436,7 +1470,7 @@ class Backgrounds:
 
 	class Diboson:
 		#~ subprocesses = ["ZZTo4L_Powheg_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns"]
-		subprocesses = ["WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns","WZTo1L1Nu2Q_aMCatNLO_Spring15_25ns","WZTo1L3Nu_aMCatNLO_Spring15_25ns","WZTo2L2Q_aMCatNLO_Spring15_25ns","ZZTo4Q_aMCatNLO_Spring15_25ns","ZZTo4L_aMCatNLO_Spring15_25ns","ZZTo2Q2Nu_aMCatNLO_Spring15_25ns","ZZTo2L2Q_aMCatNLO_Spring15_25ns"]
+		subprocesses = ["WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns","WZTo1L1Nu2Q_aMCatNLO_Spring15_25ns","WZTo1L3Nu_aMCatNLO_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WZTo2L2Q_aMCatNLO_Spring15_25ns","ZZTo4Q_aMCatNLO_Spring15_25ns","ZZTo4L_Powheg_Spring15_25ns","ZZTo2Q2Nu_aMCatNLO_Spring15_25ns","ZZTo2L2Q_aMCatNLO_Spring15_25ns"]
 		label = "WW,WZ,ZZ"
 		fillcolor = 920
 		linecolor = ROOT.kBlack	
