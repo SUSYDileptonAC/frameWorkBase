@@ -278,22 +278,22 @@ class rOutInMM:
 class rMuE:
 
 		class inclusive:
-			val = 1.169685
-			err = 0.117123
+			val = 1.169828
+			err = 0.117136
 			valMC = 1.173877
 			errMC = 0.117530
 	
 
 		class central:
-			val = 1.132860
-			err = 0.113522
+			val = 1.133864
+			err = 0.113620
 			valMC = 1.127557
 			errMC = 0.112969
 
 
 		class forward:
-			val = 1.236031
-			err = 0.247432
+			val = 1.234628
+			err = 0.247148
 			valMC = 1.259483
 			errMC = 0.252109
 	
@@ -335,66 +335,66 @@ class rSFOFFact:
 	class central:
 		
 		class SF:
-			val = 1.025957
-			err = 0.077979
+			val = 1.026070
+			err = 0.078002
 			valMC = 1.034869
 			errMC = 0.069168
 	
 		
 		class EE:
-			val = 0.449317
-			err = 0.120379
+			val = 0.448919
+			err = 0.120466
 			valMC = 0.455612
 			errMC = 0.119875
 
 		
 		class MM:
-			val = 0.576641
-			err = 0.123392
+			val = 0.577152
+			err = 0.123498
 			valMC = 0.579257
 			errMC = 0.122161
 		
 	class forward:
 		
 		class SF:
-			val = 1.046606
-			err = 0.102069
+			val = 1.046359
+			err = 0.101948
 			valMC = 1.056753
 			errMC = 0.085499
 	
 		
 		class EE:
-			val = 0.414043
-			err = 0.255870
+			val = 0.414513
+			err = 0.255589
 			valMC = 0.408597
 			errMC = 0.260921
 
 		
 		class MM:
-			val = 0.632563
-			err = 0.259317
+			val = 0.631846
+			err = 0.259020
 			valMC = 0.648156
 			errMC = 0.263088
 					
 	class inclusive:
 		
 		class SF:
-			val = 1.032598
-			err = 0.075054
+			val = 1.032617
+			err = 0.075058
 			valMC = 1.041208
 			errMC = 0.070816
 	
 		
 		class EE:
-			val = 0.436033
-			err = 0.123416
+			val = 0.435980
+			err = 0.123428
 			valMC = 0.437853
 			errMC = 0.124238
 
 		
 		class MM:
-			val = 0.596564
-			err = 0.126756
+			val = 0.596637
+			err = 0.126770
 			valMC = 0.603355
 			errMC = 0.127234
 	
@@ -405,22 +405,22 @@ class rSFOFFact:
 class rSFOF:
 
 		class central:
-			val = 1.023651
-			err = 0.056251
+			val = 1.029391
+			err = 0.056414
 			valMC = 1.044134
 			errMC = 0.015434
 	
 
 		class forward:
-			val = 1.076046
-			err = 0.078375
+			val = 1.075511
+			err = 0.078113
 			valMC = 1.082381
 			errMC = 0.023013
 
 
 		class inclusive:
-			val = 1.044387
-			err = 0.050300
+			val = 1.048511
+			err = 0.050343
 			valMC = 1.056749
 			errMC = 0.012908
 	
@@ -430,22 +430,22 @@ class rSFOF:
 class rEEOF:
 
 		class central:
-			val = 0.442160
-			err = 0.043460
+			val = 0.445029
+			err = 0.043545
 			valMC = 0.459910
 			errMC = 0.008908
 	
 
 		class forward:
-			val = 0.414192
-			err = 0.062338
+			val = 0.415164
+			err = 0.062133
 			valMC = 0.436756
 			errMC = 0.012409
 
 
 		class inclusive:
-			val = 0.432344
-			err = 0.036039
+			val = 0.434648
+			err = 0.036046
 			valMC = 0.452462
 			errMC = 0.007245
 	
@@ -455,22 +455,22 @@ class rEEOF:
 class rMMOF:
 
 		class central:
-			val = 0.579488
-			err = 0.050502
+			val = 0.586653
+			err = 0.050804
 			valMC = 0.584866
 			errMC = 0.010415
 	
 
 		class forward:
-			val = 0.696630
-			err = 0.084010
+			val = 0.694502
+			err = 0.083428
 			valMC = 0.647162
 			errMC = 0.016494
 
 
 		class inclusive:
-			val = 0.618895
-			err = 0.044286
+			val = 0.623269
+			err = 0.044355
 			valMC = 0.604912
 			errMC = 0.008837
 	

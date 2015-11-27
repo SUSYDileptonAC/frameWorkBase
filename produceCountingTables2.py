@@ -35,7 +35,7 @@ def readPickle(name,regionName,runName,MC=False):
 
 
 tableHeaders = {"default":"being inclusive in the number of b-tagged jets","geOneBTags":"requiring at least one b-tagged jet","geTwoBTags":"requiring at least two b-tagged jets"}
-tableColumnHeaders = {"default":"no b-tag requirement","geOneBTags":"$\geq$ 1 b-tagged jets","geTwoBTags":"$\geq$ 2 b-tagged jets"}
+tableColumnHeaders = {"default":"no b-tag requirement","noBTags":"veto on b-tagged jets","geOneBTags":"$\geq$ 1 b-tagged jets","geTwoBTags":"$\geq$ 2 b-tagged jets"}
 
 
 def makeDC(anaDict):
@@ -353,7 +353,7 @@ def produceFinalTable(shelves,region):
 
 	flavSysmTemplate = r"        Flavor-symmetric    & $%d\pm%d\pm%d$        & $%d\pm%d\pm%d$  &  $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ \\"+"\n"
 
-	dyTemplate = r"            Drell--Yan          & $%.1f\pm%.1f$            & $%.1f\pm%.1f$      & $%d\pm%d$ & $%d\pm%d$ & $%.1f\pm%.1f$  \\"+"\n"
+	dyTemplate = r"            Drell--Yan          & $%.1f\pm%.1f$            & $%.1f\pm%.1f$      & $%d\pm%d$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$  \\"+"\n"
 	
 	totalTemplate = r"            Total estimated          & $%d\pm%d$            & $%d\pm%d$      & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ \\"+"\n"
 
@@ -361,7 +361,7 @@ def produceFinalTable(shelves,region):
 #~ tableColumnHeaders = {"default":"no b-tag requirement","geOneBTags":"$\geq$ 1 b-tagged jets","geTwoBTags":"$\geq$ 2 b-tagged jets"}
 	
 	tables = []
-	for selection in ["default","geOneBTags","geTwoBTags"]:
+	for selection in ["default","noBTags","geOneBTags"]:
 		
 		resultsCentral = getResults(shelves,"central",selection)
 		resultsForward = getResults(shelves,"forward",selection)
@@ -448,7 +448,7 @@ def produceFlavSymTable(shelves):
 
 	tables = []
 	
-	for selection in ["default","geOneBTags","geTwoBTags"]:
+	for selection in ["default","noBTags","geOneBTags"]:
 
 		
 		resultsCentral = getResults(shelves,"central",selection)
@@ -927,7 +927,8 @@ def makeOverviewPlot2(countingShelves,region):
 	histObs.SetBinContent(30,resultsForwardGeTwoBTags["aboveZSF"])
 	
 	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
-	names = ["#geq 0 b-tags c","= 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 1 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 1 b-tags c","#geq 0 b-tags f","= 1 b-tags f","#geq 1 b-tags f"]
+	#~ names = ["#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 0 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f"]
+	names = ["inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Tagged c","b-Veto c","inclusive f","b-Veto f","b-Tagged f"]
 	
 	for index, name in enumerate(names):
 	
@@ -1237,6 +1238,439 @@ def makeOverviewPlot2(countingShelves,region):
 	
 	hCanvas.Print("edgeOverview_newSort.pdf")
 	hCanvas.Print("edgeOverview_newSort.root")
+	
+def makeOverviewPlotWithOnZ(countingShelves,region):
+
+	from helpers import createMyColors
+	from defs import myColors
+	colors = createMyColors()	
+
+	
+	resultsCentral = getResults(countingShelves,"central","default")
+	resultsForward = getResults(countingShelves,"forward","default")
+	resultsCentralGeOneBTags = getResults(countingShelves,"central","noBTags")
+	resultsForwardGeOneBTags = getResults(countingShelves,"forward","noBTags")
+	resultsCentralGeTwoBTags = getResults(countingShelves,"central","geOneBTags")
+	resultsForwardGeTwoBTags = getResults(countingShelves,"forward","geOneBTags")
+	
+	
+	histObs = ROOT.TH1F("histObs","histObs",17,0,17)
+	
+	histObs.SetMarkerColor(ROOT.kBlack)
+	histObs.SetLineColor(ROOT.kBlack)
+	histObs.SetMarkerStyle(20)
+	
+	histPred = ROOT.TH1F("histPred","histPred",17,0,17)
+	histFlavSym = ROOT.TH1F("histFlavSym","histFlavSym",17,0,17)
+	histDY = ROOT.TH1F("histDY","histDY",17,0,17)
+	
+	hCanvas = TCanvas("hCanvas", "Distribution", 800,800)
+	
+	plotPad = ROOT.TPad("plotPad","plotPad",0,0,1,1)
+	style=setTDRStyle()
+	style.SetPadBottomMargin(0.3)
+	plotPad.UseCurrentStyle()
+	plotPad.Draw()	
+	plotPad.cd()	
+	
+	
+	#~ observedCentral = observedTemplate%(resultsCentral["lowMass%s"%region],resultsCentral["belowZ%s"%region],resultsCentral["onZ%s"%region],resultsCentral["aboveZ%s"%region],resultsCentral["highMass%s"%region])
+	
+	#~ 
+	#~ histObs.SetBinContent(1,resultsCentral["lowMassSF"])
+	#~ histObs.SetBinContent(2,resultsCentralGeOneBTags["lowMassSF"])
+	#~ histObs.SetBinContent(3,resultsCentralGeTwoBTags["lowMassSF"])
+	#~ histObs.SetBinContent(4,resultsForward["lowMassSF"])
+	#~ histObs.SetBinContent(5,resultsForwardGeOneBTags["lowMassSF"])
+	#~ histObs.SetBinContent(6,resultsForwardGeTwoBTags["lowMassSF"])
+#~ 
+	#~ histObs.SetBinContent(7,resultsCentral["onZSF"])
+	#~ histObs.SetBinContent(8,resultsCentralGeOneBTags["onZSF"])
+	#~ histObs.SetBinContent(9,resultsCentralGeTwoBTags["onZSF"])
+	#~ histObs.SetBinContent(10,resultsForward["onZSF"])
+	#~ histObs.SetBinContent(11,resultsForwardGeOneBTags["onZSF"])
+	#~ histObs.SetBinContent(12,resultsForwardGeTwoBTags["onZSF"])
+#~ 
+	#~ histObs.SetBinContent(13,resultsCentral["highMassSF"])
+	#~ histObs.SetBinContent(14,resultsCentralGeOneBTags["highMassSF"])
+	#~ histObs.SetBinContent(15,resultsCentralGeTwoBTags["highMassSF"])
+	#~ histObs.SetBinContent(16,resultsForward["highMassSF"])
+	#~ histObs.SetBinContent(17,resultsForwardGeOneBTags["highMassSF"])	
+	#~ histObs.SetBinContent(18,resultsForwardGeTwoBTags["highMassSF"])
+#~ 
+	#~ 
+	#~ histObs.SetBinContent(19,resultsCentral["belowZSF"])
+	#~ histObs.SetBinContent(20,resultsCentralGeOneBTags["belowZSF"])
+	#~ histObs.SetBinContent(21,resultsCentralGeTwoBTags["belowZSF"])
+	#~ histObs.SetBinContent(22,resultsForward["belowZSF"])
+	#~ histObs.SetBinContent(23,resultsForwardGeOneBTags["belowZSF"])
+	#~ histObs.SetBinContent(24,resultsForwardGeTwoBTags["belowZSF"])
+	#~ 
+	#~ histObs.SetBinContent(25,resultsCentral["aboveZSF"])
+	#~ histObs.SetBinContent(26,resultsCentralGeOneBTags["aboveZSF"])
+	#~ histObs.SetBinContent(27,resultsCentralGeTwoBTags["aboveZSF"])		
+	#~ histObs.SetBinContent(28,resultsForward["aboveZSF"])
+	#~ histObs.SetBinContent(29,resultsForwardGeOneBTags["aboveZSF"])
+	#~ histObs.SetBinContent(30,resultsForwardGeTwoBTags["aboveZSF"])
+
+
+
+	### on-Z numbers from PAS draft
+
+	histObs.SetBinContent(1,22)
+	histObs.SetBinContent(2,7)
+	histObs.SetBinContent(3,3)		
+	histObs.SetBinContent(4,4)
+
+	histObs.SetBinContent(5,14)
+	histObs.SetBinContent(6,6)
+	histObs.SetBinContent(7,1)		
+	histObs.SetBinContent(8,3)
+
+	histObs.SetBinContent(9,13)
+	histObs.SetBinContent(10,6)
+	histObs.SetBinContent(11,1)		
+	histObs.SetBinContent(12,0)
+
+	histObs.SetBinContent(13,27)
+	histObs.SetBinContent(14,12)
+	histObs.SetBinContent(15,2)		
+	histObs.SetBinContent(16,3)
+	
+	histObs.SetBinContent(17,9)
+
+	
+	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
+	#~ names = ["#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 0 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f"]
+	names = ["E_{T}^{miss} 100-150 GeV","E_{T}^{miss} 150-225 GeV","E_{T}^{miss} 225-300 GeV","E_{T}^{miss} > 300 GeV","E_{T}^{miss} 100-150 GeV","E_{T}^{miss} 150-225 GeV","E_{T}^{miss} 225-300 GeV","E_{T}^{miss} > 300 GeV","E_{T}^{miss} 100-150 GeV","E_{T}^{miss} 150-225 GeV","E_{T}^{miss} 225-300 GeV","E_{T}^{miss} > 300 GeV","E_{T}^{miss} 100-150 GeV","E_{T}^{miss} 150-225 GeV","E_{T}^{miss} 225-300 GeV","E_{T}^{miss} > 300 GeV","ATLAS SR"]
+	
+	for index, name in enumerate(names):
+	
+		histObs.GetXaxis().SetBinLabel(index+1,name)
+	
+#~ 
+	histFlavSym.SetBinContent(1,19.9)
+	histFlavSym.SetBinContent(2,6.5)
+	histFlavSym.SetBinContent(3,2.4)
+	histFlavSym.SetBinContent(4,1.3)
+
+	histFlavSym.SetBinContent(5,7,5)
+	histFlavSym.SetBinContent(6,2.9)
+	histFlavSym.SetBinContent(7,5.5)
+	histFlavSym.SetBinContent(8,1.2)
+	
+	histFlavSym.SetBinContent(9,15.3)
+	histFlavSym.SetBinContent(10,3.5)
+	histFlavSym.SetBinContent(11,0.7)
+	histFlavSym.SetBinContent(12,1.3)
+
+	histFlavSym.SetBinContent(13,25.4)
+	histFlavSym.SetBinContent(14,5.4)
+	histFlavSym.SetBinContent(15,1.5)
+	histFlavSym.SetBinContent(16,1.2)
+	
+	histFlavSym.SetBinContent(17,11.6)	
+#~ 
+	#~ histFlavSym.SetBinContent(1,resultsCentral["lowMassPredSF"])
+	#~ histFlavSym.SetBinContent(2,resultsCentralGeOneBTags["lowMassPredSF"])
+	#~ histFlavSym.SetBinContent(3,resultsCentralGeTwoBTags["lowMassPredSF"])
+	#~ histFlavSym.SetBinContent(4,resultsForward["lowMassPredSF"])
+	#~ histFlavSym.SetBinContent(5,resultsForwardGeOneBTags["lowMassPredSF"])
+	#~ histFlavSym.SetBinContent(6,resultsForwardGeTwoBTags["lowMassPredSF"])
+#~ 
+	#~ histFlavSym.SetBinContent(7,resultsCentral["onZPredSF"])
+	#~ histFlavSym.SetBinContent(8,resultsCentralGeOneBTags["onZPredSF"])
+	#~ histFlavSym.SetBinContent(9,resultsCentralGeTwoBTags["onZPredSF"])
+	#~ histFlavSym.SetBinContent(10,resultsForward["onZPredSF"])
+	#~ histFlavSym.SetBinContent(11,resultsForwardGeOneBTags["onZPredSF"])
+	#~ histFlavSym.SetBinContent(12,resultsForwardGeTwoBTags["onZPredSF"])
+#~ 
+	#~ histFlavSym.SetBinContent(13,resultsCentral["highMassPredSF"])
+	#~ histFlavSym.SetBinContent(14,resultsCentralGeOneBTags["highMassPredSF"])
+	#~ histFlavSym.SetBinContent(15,resultsCentralGeTwoBTags["highMassPredSF"])
+	#~ histFlavSym.SetBinContent(16,resultsForward["highMassPredSF"])
+	#~ histFlavSym.SetBinContent(17,resultsForwardGeOneBTags["highMassPredSF"])	
+	#~ histFlavSym.SetBinContent(18,resultsForwardGeTwoBTags["highMassPredSF"])
+#~ 
+	#~ 
+	#~ histFlavSym.SetBinContent(19,resultsCentral["belowZPredSF"])
+	#~ histFlavSym.SetBinContent(20,resultsCentralGeOneBTags["belowZPredSF"])
+	#~ histFlavSym.SetBinContent(21,resultsCentralGeTwoBTags["belowZPredSF"])
+	#~ histFlavSym.SetBinContent(22,resultsForward["belowZPredSF"])
+	#~ histFlavSym.SetBinContent(23,resultsForwardGeOneBTags["belowZPredSF"])
+	#~ histFlavSym.SetBinContent(24,resultsForwardGeTwoBTags["belowZPredSF"])
+	#~ 
+	#~ histFlavSym.SetBinContent(25,resultsCentral["aboveZPredSF"])
+	#~ histFlavSym.SetBinContent(26,resultsCentralGeOneBTags["aboveZPredSF"])
+	#~ histFlavSym.SetBinContent(27,resultsCentralGeTwoBTags["aboveZPredSF"])		
+	#~ histFlavSym.SetBinContent(28,resultsForward["aboveZPredSF"])
+	#~ histFlavSym.SetBinContent(29,resultsForwardGeOneBTags["aboveZPredSF"])
+	#~ histFlavSym.SetBinContent(30,resultsForwardGeTwoBTags["aboveZPredSF"])
+#~ 
+#~ 
+	#~ histDY.SetBinContent(1,resultsCentral["lowMassZPredSF"])
+	#~ histDY.SetBinContent(2,resultsCentralGeOneBTags["lowMassZPredSF"])
+	#~ histDY.SetBinContent(3,resultsCentralGeTwoBTags["lowMassZPredSF"])
+	#~ histDY.SetBinContent(4,resultsForward["lowMassZPredSF"])
+	#~ histDY.SetBinContent(5,resultsForwardGeOneBTags["lowMassZPredSF"])
+	#~ histDY.SetBinContent(6,resultsForwardGeTwoBTags["lowMassZPredSF"])
+#~ 
+	#~ histDY.SetBinContent(7,resultsCentral["onZZPredSF"])
+	#~ histDY.SetBinContent(8,resultsCentralGeOneBTags["onZZPredSF"])
+	#~ histDY.SetBinContent(9,resultsCentralGeTwoBTags["onZZPredSF"])
+	#~ histDY.SetBinContent(10,resultsForward["onZZPredSF"])
+	#~ histDY.SetBinContent(11,resultsForwardGeOneBTags["onZZPredSF"])
+	#~ histDY.SetBinContent(12,resultsForwardGeTwoBTags["onZZPredSF"])
+#~ 
+	#~ histDY.SetBinContent(13,resultsCentral["highMassZPredSF"])
+	#~ histDY.SetBinContent(14,resultsCentralGeOneBTags["highMassZPredSF"])
+	#~ histDY.SetBinContent(15,resultsCentralGeTwoBTags["highMassZPredSF"])
+	#~ histDY.SetBinContent(16,resultsForward["highMassZPredSF"])
+	#~ histDY.SetBinContent(17,resultsForwardGeOneBTags["highMassZPredSF"])	
+	#~ histDY.SetBinContent(18,resultsForwardGeTwoBTags["highMassZPredSF"])
+#~ 
+	#~ 
+	#~ histDY.SetBinContent(19,resultsCentral["belowZZPredSF"])
+	#~ histDY.SetBinContent(20,resultsCentralGeOneBTags["belowZZPredSF"])
+	#~ histDY.SetBinContent(21,resultsCentralGeTwoBTags["belowZZPredSF"])
+	#~ histDY.SetBinContent(22,resultsForward["belowZZPredSF"])
+	#~ histDY.SetBinContent(23,resultsForwardGeOneBTags["belowZZPredSF"])
+	#~ histDY.SetBinContent(24,resultsForwardGeTwoBTags["belowZZPredSF"])
+	#~ 
+	#~ histDY.SetBinContent(25,resultsCentral["aboveZZPredSF"])
+	#~ histDY.SetBinContent(26,resultsCentralGeOneBTags["aboveZZPredSF"])
+	#~ histDY.SetBinContent(27,resultsCentralGeTwoBTags["aboveZZPredSF"])		
+	#~ histDY.SetBinContent(28,resultsForward["aboveZZPredSF"])
+	#~ histDY.SetBinContent(29,resultsForwardGeOneBTags["aboveZZPredSF"])
+	#~ histDY.SetBinContent(30,resultsForwardGeTwoBTags["aboveZZPredSF"])	
+	
+	
+	
+	errGraph = ROOT.TGraphAsymmErrors()
+	
+	for i in range(1,histFlavSym.GetNbinsX()+1):
+		errGraph.SetPoint(i,i-0.5,histFlavSym.GetBinContent(i))
+		
+
+#~ 
+	#~ errGraph.SetPointError(1,0.5,0.5,resultsCentral["lowMassTotalPredErrSF"],resultsCentral["lowMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(2,0.5,0.5,resultsCentral["belowZTotalPredErrSF"],resultsCentral["belowZTotalPredErrSF"])
+	#~ errGraph.SetPointError(3,0.5,0.5,resultsCentral["onZTotalPredErrSF"],resultsCentral["onZTotalPredErrSF"])
+	#~ errGraph.SetPointError(4,0.5,0.5,resultsCentral["aboveZTotalPredErrSF"],resultsCentral["aboveZTotalPredErrSF"])
+	#~ errGraph.SetPointError(5,0.5,0.5,resultsForward["highMassTotalPredErrSF"],resultsForward["highMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(6,0.5,0.5,resultsForward["lowMassTotalPredErrSF"],resultsForward["lowMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(7,0.5,0.5,resultsForward["belowZTotalPredErrSF"],resultsForward["belowZTotalPredErrSF"])
+	#~ errGraph.SetPointError(8,0.5,0.5,resultsForward["onZTotalPredErrSF"],resultsForward["onZTotalPredErrSF"])
+	#~ errGraph.SetPointError(9,0.5,0.5,resultsForward["aboveZTotalPredErrSF"],resultsForward["aboveZTotalPredErrSF"])
+	#~ errGraph.SetPointError(10,0.5,0.5,resultsForward["highMassTotalPredErrSF"],resultsForward["highMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(11,0.5,0.5,resultsCentralGeOneBTags["lowMassTotalPredErrSF"],resultsCentralGeOneBTags["lowMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(12,0.5,0.5,resultsCentralGeOneBTags["belowZTotalPredErrSF"],resultsCentralGeOneBTags["belowZTotalPredErrSF"])
+	#~ errGraph.SetPointError(13,0.5,0.5,resultsCentralGeOneBTags["onZTotalPredErrSF"],resultsCentralGeOneBTags["onZTotalPredErrSF"])
+	#~ errGraph.SetPointError(14,0.5,0.5,resultsCentralGeOneBTags["aboveZTotalPredErrSF"],resultsCentralGeOneBTags["aboveZTotalPredErrSF"])
+	#~ errGraph.SetPointError(15,0.5,0.5,resultsCentralGeOneBTags["highMassTotalPredErrSF"],resultsCentralGeOneBTags["highMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(16,0.5,0.5,resultsForwardGeOneBTags["lowMassTotalPredErrSF"],resultsForwardGeOneBTags["lowMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(17,0.5,0.5,resultsForwardGeOneBTags["belowZTotalPredErrSF"],resultsForwardGeOneBTags["belowZTotalPredErrSF"])
+	#~ errGraph.SetPointError(18,0.5,0.5,resultsForwardGeOneBTags["onZTotalPredErrSF"],resultsForwardGeOneBTags["onZTotalPredErrSF"])
+	#~ errGraph.SetPointError(19,0.5,0.5,resultsForwardGeOneBTags["aboveZTotalPredErrSF"],resultsForwardGeOneBTags["aboveZTotalPredErrSF"])
+	#~ errGraph.SetPointError(20,0.5,0.5,resultsForwardGeOneBTags["highMassTotalPredErrSF"],resultsForwardGeOneBTags["highMassTotalPredErrSF"])	
+	#~ errGraph.SetPointError(21,0.5,0.5,resultsCentralGeTwoBTags["lowMassTotalPredErrSF"],resultsCentralGeTwoBTags["lowMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(22,0.5,0.5,resultsCentralGeTwoBTags["belowZTotalPredErrSF"],resultsCentralGeTwoBTags["belowZTotalPredErrSF"])
+	#~ errGraph.SetPointError(23,0.5,0.5,resultsCentralGeTwoBTags["onZTotalPredErrSF"],resultsCentralGeTwoBTags["onZTotalPredErrSF"])
+	#~ errGraph.SetPointError(24,0.5,0.5,resultsCentralGeTwoBTags["aboveZTotalPredErrSF"],resultsCentralGeTwoBTags["aboveZTotalPredErrSF"])
+	#~ errGraph.SetPointError(25,0.5,0.5,resultsCentralGeTwoBTags["highMassTotalPredErrSF"],resultsCentralGeTwoBTags["highMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(26,0.5,0.5,resultsForwardGeTwoBTags["lowMassTotalPredErrSF"],resultsForwardGeTwoBTags["lowMassTotalPredErrSF"])
+	#~ errGraph.SetPointError(27,0.5,0.5,resultsForwardGeTwoBTags["belowZTotalPredErrSF"],resultsForwardGeTwoBTags["belowZTotalPredErrSF"])
+	#~ errGraph.SetPointError(28,0.5,0.5,resultsForwardGeTwoBTags["onZTotalPredErrSF"],resultsForwardGeTwoBTags["onZTotalPredErrSF"])
+	#~ errGraph.SetPointError(29,0.5,0.5,resultsForwardGeTwoBTags["aboveZTotalPredErrSF"],resultsForwardGeTwoBTags["aboveZTotalPredErrSF"])
+	#~ errGraph.SetPointError(30,0.5,0.5,resultsForwardGeTwoBTags["highMassTotalPredErrSF"],resultsForwardGeTwoBTags["highMassTotalPredErrSF"])
+
+	errGraph.SetPointError(1,0.5,0.5,4.4,4.4)
+	errGraph.SetPointError(2,0.5,0.5,1.9,1.9)
+	errGraph.SetPointError(3,0.5,0.5,1.1,1.1)
+	errGraph.SetPointError(4,0.5,0.5,0.5,0.5)
+
+	errGraph.SetPointError(5,0.5,0.5,2.4,2.4)
+	errGraph.SetPointError(6,0.5,0.5,1.5,1.5)
+	errGraph.SetPointError(7,0.5,0.5,2.3,2.3)
+	errGraph.SetPointError(8,0.5,0.5,1.0,1.0)
+
+	errGraph.SetPointError(9,0.5,0.5,3.0,3.0)
+	errGraph.SetPointError(10,0.5,0.5,1.1,1.1)
+	errGraph.SetPointError(11,0.5,0.5,0.2,0.2)
+	errGraph.SetPointError(12,0.5,0.5,1.0,1.0)
+
+	errGraph.SetPointError(13,0.5,0.5,4.8,4.8)
+	errGraph.SetPointError(14,0.5,0.5,2.1,2.1)
+	errGraph.SetPointError(15,0.5,0.5,1.0,1.0)
+	errGraph.SetPointError(16,0.5,0.5,1.0,1.0)
+
+	errGraph.SetPointError(17,0.5,0.5,2.9,2.9)	
+
+	errGraph.SetFillColor(myColors["MyBlue"])
+	errGraph.SetFillStyle(3001)	
+
+	histFlavSym.SetLineColor(ROOT.kBlue+3)
+	histFlavSym.SetLineWidth(2)
+	
+	histDY.SetLineColor(ROOT.kGreen+3)
+	histDY.SetFillColor(ROOT.kGreen+3)
+	histDY.SetFillStyle(3002)
+
+
+	#~ histFlavSym.SetFillColor(ROOT.kBlue-2)
+	#~ histDY.SetFillColor(ROOT.kGreen+2)
+	
+	from ROOT import THStack
+	
+	stack = THStack()
+	stack.Add(histDY)	
+	stack.Add(histFlavSym)
+
+	
+	
+	histObs.GetYaxis().SetRangeUser(0,60)
+	histObs.GetYaxis().SetTitle("Events")
+	histObs.LabelsOption("v")
+
+	histObs.UseCurrentStyle()
+	histObs.Draw("pe")
+
+	
+	
+	#~ hCanvas.DrawFrame(-0.5,0,30.5,65,"; %s ; %s" %("","Events"))
+	
+	latex = ROOT.TLatex()
+	latex.SetTextFont(42)
+	latex.SetTextAlign(31)
+	latex.SetTextSize(0.04)
+	latex.SetNDC(True)
+	latexCMS = ROOT.TLatex()
+	latexCMS.SetTextFont(61)
+	#latexCMS.SetTextAlign(31)
+	latexCMS.SetTextSize(0.06)
+	latexCMS.SetNDC(True)
+	latexCMSExtra = ROOT.TLatex()
+	latexCMSExtra.SetTextFont(52)
+	#latexCMSExtra.SetTextAlign(31)
+	latexCMSExtra.SetTextSize(0.045)
+	latexCMSExtra.SetNDC(True)		
+	
+
+
+	intlumi = ROOT.TLatex()
+	intlumi.SetTextAlign(12)
+	intlumi.SetTextSize(0.03)
+	intlumi.SetNDC(True)		
+
+	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"1.3")
+	
+	cmsExtra = "Preliminary"
+	latexCMS.DrawLatex(0.19,0.88,"CMS")
+	if "Simulation" in cmsExtra:
+		yLabelPos = 0.81	
+	else:
+		yLabelPos = 0.84	
+
+	latexCMSExtra.DrawLatex(0.19,yLabelPos,"%s"%(cmsExtra))
+
+	leg = ROOT.TLegend(0.4, 0.8, 0.925, 0.95,"","brNDC")
+	leg.SetNColumns(3)
+	leg.SetFillColor(10)
+	leg.SetLineColor(10)
+	leg.SetShadowColor(0)
+	leg.SetBorderSize(1)
+	
+	leg.AddEntry(histObs,"Data","pe")
+	leg.AddEntry(histFlavSym, "background","l")
+	#~ leg.AddEntry(histDY,"Drell-Yan", "f")
+	leg.AddEntry(errGraph,"uncert.", "f")	
+	
+
+	stack.Draw("samehist")
+	errGraph.Draw("same02")
+	
+	histObs.Draw("pesame")
+	
+	leg.Draw("same")
+
+	
+	
+	line1 = ROOT.TLine(8,0,8,45)
+	line2 = ROOT.TLine(16,0,16,45)
+	line3 = ROOT.TLine(18,0,18,45)
+	line4 = ROOT.TLine(24,0,24,45)
+
+	line1.SetLineColor(ROOT.kBlack)
+	line2.SetLineColor(ROOT.kBlack)
+	line3.SetLineColor(ROOT.kBlack)
+	line4.SetLineColor(ROOT.kBlack)
+
+	line1.SetLineWidth(2)
+	line2.SetLineWidth(2)
+	line3.SetLineWidth(4)
+	line4.SetLineWidth(2)
+
+	line1.Draw("same")
+	line2.Draw("same")
+	#~ line3.Draw("same")
+	#~ line4.Draw("same")
+	
+	line5 = ROOT.TLine(4,0,4,35)
+	line6 = ROOT.TLine(12,0,12,35)
+	line7 = ROOT.TLine(15,0,15,180)
+	line8 = ROOT.TLine(21,0,21,180)
+	line9 = ROOT.TLine(27,0,27,180)
+
+	line5.SetLineColor(ROOT.kBlack)
+	line6.SetLineColor(ROOT.kBlack)
+	line7.SetLineColor(ROOT.kBlack)
+	line8.SetLineColor(ROOT.kBlack)
+	line9.SetLineColor(ROOT.kBlack)
+
+	line5.SetLineWidth(2)
+	line6.SetLineWidth(2)
+	line7.SetLineWidth(2)
+	line8.SetLineWidth(2)
+	line9.SetLineWidth(2)
+	line5.SetLineStyle(ROOT.kDashed)
+	line6.SetLineStyle(ROOT.kDashed)
+	line7.SetLineStyle(ROOT.kDashed)
+	line8.SetLineStyle(ROOT.kDashed)
+	line9.SetLineStyle(ROOT.kDashed)
+
+	line5.Draw("same")
+	line6.Draw("same")
+	#~ line7.Draw("same")
+	#~ line8.Draw("same")
+	#~ line9.Draw("same")
+
+
+	label = ROOT.TLatex()
+	label.SetTextAlign(12)
+	label.SetTextSize(0.04)
+	label.SetTextColor(ROOT.kBlack)	
+	#~ label.SetTextAngle(45)	
+	
+	label.DrawLatex(2.,40,"#splitline{N_{jets} = 2-3}{H_{T} > 400 GeV}")
+	label.DrawLatex(10.5,40,"N_{jets} #geq 4")
+	
+	label = ROOT.TLatex()
+	label.SetTextAlign(12)
+	label.SetTextSize(0.04)
+	label.SetTextColor(ROOT.kBlack)	
+	label.SetTextAngle(45)	
+	
+	label.DrawLatex(1.5,20,"N_{b} = 0")
+	label.DrawLatex(5.5,20,"N_{b} #geq 1")
+	label.DrawLatex(9.5,20,"N_{b} = 0")
+	label.DrawLatex(13.5,20,"N_{b} #geq 1")
+
+
+
+	plotPad.RedrawAxis()
+	
+	hCanvas.Print("onZOverview.pdf")
+	hCanvas.Print("onZOverview.root")
 
 	
 def main():
@@ -1258,4 +1692,5 @@ def main():
 		#~ produceZTable(countingShelves,selection)
 	makeOverviewPlot(countingShelves,"SF")	
 	makeOverviewPlot2(countingShelves,"SF")	
+	makeOverviewPlotWithOnZ(countingShelves,"SF")	
 main()

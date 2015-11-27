@@ -85,16 +85,16 @@ class runRanges:
 		runCut = "&& (runNr > 256500 || runNr ==1) && runNr < 99999999"
 		label = "Run2015D"
 	class Run2015_25ns:
+		lumi = 2110
+		printval = "2.1"
+		lumiErr = 0.045*2110
+		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1)"
+		label = "Run2015_25ns"
+	class Run2015_Unblinded:
 		lumi = 1280.23
 		printval = "1.3"
 		lumiErr = 0.045*1264
-		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) && runNr < 258750"
-		label = "Run2015_25ns"
-	class Run2015_Unblinded:
-		lumi = 149.5
-		printval = "0.15"
-		lumiErr = 0.045*149.5
-		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) && runNr <= 257599"
+		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1) && runNr <= 258750"
 		label = "Run2015_Unblinded"
 	class Run2015_50ns:
 		lumi = 71.52
@@ -135,6 +135,10 @@ class theCuts:
 			cut = "p4.M()> 81 && p4.M() < 101"
 			label = "81 GeV < m_{ll} < 101 GeV"
 			name = "zMass"
+		class looseZ:
+			cut = "p4.M()> 70 && p4.M() < 110"
+			label = "70 GeV < m_{ll} < 110 GeV"
+			name = "looseZ"
 		class highMass:
 			cut = "p4.M() > 120"
 			label = "m_{ll} > 120 GeV"
@@ -197,6 +201,10 @@ class theCuts:
 			cut = "((pt1 > pt2)*(pt1 > 30)|| (pt2 > pt1)*(pt2 > 30))"
 			label = "leading p_{T} > 30 GeV"
 			name = "leadingPt30"
+		class leadingPt40:
+			cut = "((pt1 > pt2)*(pt1 > 40)|| (pt2 > pt1)*(pt2 > 40))"
+			label = "leading p_{T} > 40 GeV"
+			name = "leadingPt40"
 
 	class nJetsCuts:
 		class noCut:
@@ -1243,19 +1251,21 @@ class thePlots:
 	nVtxPlotTriggerMC = Plot(theVariables.nVtx,[],binning=[15,0,30,"Events / 2",[]])				
 	tralingEtaPlotTriggerMC = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])				
 
-	nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[11,-0.5,10.5,"Events",[]])
+	nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[6,-0.5,11.5,"Events",[]])
 	nBJetsPlotTrigger = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
 	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
-	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
-	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[3,0,120,"Events / 5 GeV",[]])
+	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[5,20,120,"Events / 5 GeV",[]])
+	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[5,20,120,"Events / 5 GeV",[]])
 	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30")
 	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30Single")
+	trailingPtPlotTriggerLeading30SingleOnZ = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30,theCuts.massCuts.looseZ],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30SingleOnZ")
+	trailingPtPlotTriggerLeading40Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt40],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt40Single")
 	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[4,20,300,"Events / 40 GeV",[]])							
 	mllPlotTriggerLeading30Single = Plot(theVariables.Mll,[theCuts.ptCuts.leadingPt30],binning=[7,20,300,"Events / 40 GeV",[]],additionalName = "leadingPt30Single")							
-	htPlotTrigger = Plot(theVariables.HT,[],binning=[20,200,1000,"Events / 40 GeV",[]])				
+	htPlotTrigger = Plot(theVariables.HT,[],binning=[10,200,1000,"Events / 40 GeV",[]])				
 	metPlotTrigger = Plot(theVariables.Met,[],binning=[4,0,200,"Events / 20 GeV",[]])				
-	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[10,0,30,"Events / 2",[]])				
-	tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])
+	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[8,0,32,"Events / 2",[]])				
+	tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[6,0,2.4,"Events / 0.3",[]])
 
 			
 	### plots for isolation efficiency measurements
