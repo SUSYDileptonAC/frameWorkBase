@@ -4,11 +4,11 @@ class zPredictions:
 	class default:
 		class SF:
 			class central:
-				val = 43.7
-				err = 10.1
+				val = 58.8
+				err = 7.8
 			class forward:
-				val = 16.6
-				err = 3.9
+				val = 22.9
+				err = 2.9
 		class EE:
 			class central:
 				val = 5
@@ -26,10 +26,10 @@ class zPredictions:
 	class geOneBTags:
 		class SF:
 			class central:
-				val = 10.2
-				err = 2.5
+				val = 14.8
+				err = 2.1
 			class forward:
-				val = 4.2
+				val = 5.8
 				err = 1.2
 		class EE:
 			class central:
@@ -48,11 +48,11 @@ class zPredictions:
 	class noBTags:
 		class SF:
 			class central:
-				val = 33.5
+				val = 44.0
 				err = 7.6
 			class forward:
-				val = 12.4
-				err = 2.7
+				val = 17.1
+				err = 2.6
 		class EE:
 			class central:
 				val = 2
@@ -169,6 +169,10 @@ class mllBins:
 		low = 101
 		high = 120
 		
+	class highMassRSFOF:
+		low = 110
+		high = 1000
+		
 class regionsToUse:
 	class triggerEfficiencies:
 		class central: 
@@ -247,5 +251,5 @@ class cutNCountXChecks:
 
 class versions:
 	cmssw = "sw7412"
-	cuts = "cutsV28"
+	cuts = "cutsV29"
 	masterListForMC = "Master74X_25nsMC_ReMiniAOD.ini"

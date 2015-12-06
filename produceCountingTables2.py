@@ -353,7 +353,7 @@ def produceFinalTable(shelves,region):
 
 	flavSysmTemplate = r"        Flavor-symmetric    & $%d\pm%d\pm%d$        & $%d\pm%d\pm%d$  &  $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ \\"+"\n"
 
-	dyTemplate = r"            Drell--Yan          & $%.1f\pm%.1f$            & $%.1f\pm%.1f$      & $%d\pm%d$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$  \\"+"\n"
+	dyTemplate = r"            Drell--Yan          & $%.1f\pm%.1f$            & $%.1f\pm%.1f$      & $%.1f\pm%.1f$ & $%.1f\pm%.1f$ & $%.1f\pm%.1f$  \\"+"\n"
 	
 	totalTemplate = r"            Total estimated          & $%d\pm%d$            & $%d\pm%d$      & $%d\pm%d$ & $%d\pm%d$ & $%d\pm%d$ \\"+"\n"
 
@@ -758,7 +758,7 @@ def makeOverviewPlot(countingShelves,region):
 
 	
 	
-	histObs.GetYaxis().SetRangeUser(0,65)
+	histObs.GetYaxis().SetRangeUser(0,100)
 	histObs.GetYaxis().SetTitle("Events")
 	histObs.LabelsOption("v")
 
@@ -1104,7 +1104,7 @@ def makeOverviewPlot2(countingShelves,region):
 
 	
 	
-	histObs.GetYaxis().SetRangeUser(0,500)
+	histObs.GetYaxis().SetRangeUser(0,800)
 	histObs.GetYaxis().SetTitle("Events")
 	histObs.LabelsOption("v")
 
@@ -1138,7 +1138,7 @@ def makeOverviewPlot2(countingShelves,region):
 	intlumi.SetTextSize(0.03)
 	intlumi.SetNDC(True)		
 
-	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"1.3")
+	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"2.2")
 	
 	cmsExtra = "Preliminary"
 	latexCMS.DrawLatex(0.19,0.88,"CMS")
@@ -1317,27 +1317,27 @@ def makeOverviewPlotWithOnZ(countingShelves,region):
 
 	### on-Z numbers from PAS draft
 
-	histObs.SetBinContent(1,22)
-	histObs.SetBinContent(2,7)
-	histObs.SetBinContent(3,3)		
-	histObs.SetBinContent(4,4)
+	histObs.SetBinContent(1,28)
+	histObs.SetBinContent(2,6)
+	histObs.SetBinContent(3,5)		
+	histObs.SetBinContent(4,6)
 
-	histObs.SetBinContent(5,14)
+	histObs.SetBinContent(5,21)
 	histObs.SetBinContent(6,6)
 	histObs.SetBinContent(7,1)		
 	histObs.SetBinContent(8,3)
 
-	histObs.SetBinContent(9,13)
-	histObs.SetBinContent(10,6)
-	histObs.SetBinContent(11,1)		
+	histObs.SetBinContent(9,20)
+	histObs.SetBinContent(10,10)
+	histObs.SetBinContent(11,2)		
 	histObs.SetBinContent(12,0)
 
-	histObs.SetBinContent(13,27)
-	histObs.SetBinContent(14,12)
-	histObs.SetBinContent(15,2)		
+	histObs.SetBinContent(13,43)
+	histObs.SetBinContent(14,22)
+	histObs.SetBinContent(15,3)		
 	histObs.SetBinContent(16,3)
 	
-	histObs.SetBinContent(17,9)
+	histObs.SetBinContent(17,12)
 
 	
 	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
@@ -1349,27 +1349,27 @@ def makeOverviewPlotWithOnZ(countingShelves,region):
 		histObs.GetXaxis().SetBinLabel(index+1,name)
 	
 #~ 
-	histFlavSym.SetBinContent(1,19.9)
-	histFlavSym.SetBinContent(2,6.5)
-	histFlavSym.SetBinContent(3,2.4)
-	histFlavSym.SetBinContent(4,1.3)
+	histFlavSym.SetBinContent(1,28.1)
+	histFlavSym.SetBinContent(2,8.6)
+	histFlavSym.SetBinContent(3,3.2)
+	histFlavSym.SetBinContent(4,1.9)
 
-	histFlavSym.SetBinContent(5,7,5)
-	histFlavSym.SetBinContent(6,2.9)
-	histFlavSym.SetBinContent(7,5.5)
-	histFlavSym.SetBinContent(8,1.2)
+	histFlavSym.SetBinContent(5,14.3)
+	histFlavSym.SetBinContent(6,5.7)
+	histFlavSym.SetBinContent(7,5.0)
+	histFlavSym.SetBinContent(8,1.5)
 	
-	histFlavSym.SetBinContent(9,15.3)
-	histFlavSym.SetBinContent(10,3.5)
-	histFlavSym.SetBinContent(11,0.7)
-	histFlavSym.SetBinContent(12,1.3)
+	histFlavSym.SetBinContent(9,23.2)
+	histFlavSym.SetBinContent(10,8.2)
+	histFlavSym.SetBinContent(11,0.8)
+	histFlavSym.SetBinContent(12,1.4)
 
-	histFlavSym.SetBinContent(13,25.4)
-	histFlavSym.SetBinContent(14,5.4)
-	histFlavSym.SetBinContent(15,1.5)
-	histFlavSym.SetBinContent(16,1.2)
+	histFlavSym.SetBinContent(13,44.6)
+	histFlavSym.SetBinContent(14,16.7)
+	histFlavSym.SetBinContent(15,0.6)
+	histFlavSym.SetBinContent(16,1.4)
 	
-	histFlavSym.SetBinContent(17,11.6)	
+	histFlavSym.SetBinContent(17,12.2)	
 #~ 
 	#~ histFlavSym.SetBinContent(1,resultsCentral["lowMassPredSF"])
 	#~ histFlavSym.SetBinContent(2,resultsCentralGeOneBTags["lowMassPredSF"])
@@ -1484,27 +1484,27 @@ def makeOverviewPlotWithOnZ(countingShelves,region):
 	#~ errGraph.SetPointError(29,0.5,0.5,resultsForwardGeTwoBTags["aboveZTotalPredErrSF"],resultsForwardGeTwoBTags["aboveZTotalPredErrSF"])
 	#~ errGraph.SetPointError(30,0.5,0.5,resultsForwardGeTwoBTags["highMassTotalPredErrSF"],resultsForwardGeTwoBTags["highMassTotalPredErrSF"])
 
-	errGraph.SetPointError(1,0.5,0.5,4.4,4.4)
-	errGraph.SetPointError(2,0.5,0.5,1.9,1.9)
-	errGraph.SetPointError(3,0.5,0.5,1.1,1.1)
-	errGraph.SetPointError(4,0.5,0.5,0.5,0.5)
+	errGraph.SetPointError(1,0.5,0.5,4.8,5.4)
+	errGraph.SetPointError(2,0.5,0.5,1.9,3.2)
+	errGraph.SetPointError(3,0.5,0.5,1.0,2.5)
+	errGraph.SetPointError(4,0.5,0.5,0.7,1.4)
 
-	errGraph.SetPointError(5,0.5,0.5,2.4,2.4)
-	errGraph.SetPointError(6,0.5,0.5,1.5,1.5)
-	errGraph.SetPointError(7,0.5,0.5,2.3,2.3)
-	errGraph.SetPointError(8,0.5,0.5,1.0,1.0)
+	errGraph.SetPointError(5,0.5,0.5,3.3,4.4)
+	errGraph.SetPointError(6,0.5,0.5,2.1,3.4)
+	errGraph.SetPointError(7,0.5,0.5,2.0,3.3)
+	errGraph.SetPointError(8,0.5,0.5,0.9,2.4)
 
-	errGraph.SetPointError(9,0.5,0.5,3.0,3.0)
-	errGraph.SetPointError(10,0.5,0.5,1.1,1.1)
-	errGraph.SetPointError(11,0.5,0.5,0.2,0.2)
-	errGraph.SetPointError(12,0.5,0.5,1.0,1.0)
+	errGraph.SetPointError(9,0.5,0.5,3.7,4.9)
+	errGraph.SetPointError(10,0.5,0.5,2.1,3.4)
+	errGraph.SetPointError(11,0.5,0.5,0.2,1.2)
+	errGraph.SetPointError(12,0.5,0.5,0.9,2.4)
 
-	errGraph.SetPointError(13,0.5,0.5,4.8,4.8)
-	errGraph.SetPointError(14,0.5,0.5,2.1,2.1)
-	errGraph.SetPointError(15,0.5,0.5,1.0,1.0)
-	errGraph.SetPointError(16,0.5,0.5,1.0,1.0)
+	errGraph.SetPointError(13,0.5,0.5,6.6,7.7)
+	errGraph.SetPointError(14,0.5,0.5,3.9,5.1)
+	errGraph.SetPointError(15,0.5,0.5,0.3,1.2)
+	errGraph.SetPointError(16,0.5,0.5,0.9,2.4)
 
-	errGraph.SetPointError(17,0.5,0.5,2.9,2.9)	
+	errGraph.SetPointError(17,0.5,0.5,2.8,4.0)	
 
 	errGraph.SetFillColor(myColors["MyBlue"])
 	errGraph.SetFillStyle(3001)	
@@ -1528,7 +1528,7 @@ def makeOverviewPlotWithOnZ(countingShelves,region):
 
 	
 	
-	histObs.GetYaxis().SetRangeUser(0,60)
+	histObs.GetYaxis().SetRangeUser(0,100)
 	histObs.GetYaxis().SetTitle("Events")
 	histObs.LabelsOption("v")
 
@@ -1562,7 +1562,7 @@ def makeOverviewPlotWithOnZ(countingShelves,region):
 	intlumi.SetTextSize(0.03)
 	intlumi.SetNDC(True)		
 
-	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"1.3")
+	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"2.2")
 	
 	cmsExtra = "Preliminary"
 	latexCMS.DrawLatex(0.19,0.88,"CMS")
@@ -1651,8 +1651,8 @@ def makeOverviewPlotWithOnZ(countingShelves,region):
 	label.SetTextColor(ROOT.kBlack)	
 	#~ label.SetTextAngle(45)	
 	
-	label.DrawLatex(2.,40,"#splitline{N_{jets} = 2-3}{H_{T} > 400 GeV}")
-	label.DrawLatex(10.5,40,"N_{jets} #geq 4")
+	label.DrawLatex(2.,60,"#splitline{N_{jets} = 2-3}{H_{T} > 400 GeV}")
+	label.DrawLatex(10.5,60,"N_{jets} #geq 4")
 	
 	label = ROOT.TLatex()
 	label.SetTextAlign(12)

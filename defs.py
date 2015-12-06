@@ -85,9 +85,9 @@ class runRanges:
 		runCut = "&& (runNr > 256500 || runNr ==1) && runNr < 99999999"
 		label = "Run2015D"
 	class Run2015_25ns:
-		lumi = 2110
-		printval = "2.1"
-		lumiErr = 0.045*2110
+		lumi = 2190
+		printval = "2.2"
+		lumiErr = 0.045*2190
 		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1)"
 		label = "Run2015_25ns"
 	class Run2015_Unblinded:

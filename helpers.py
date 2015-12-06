@@ -24,7 +24,7 @@ def loadPickles(path):
 		result.update(pickle.load(pklFile))
 	return result
 
-def readTreeFromFile(path, dileptonCombination, modifier = ""):
+def readTreeFromFile(path, dileptonCombination, modifier = "",versionNr="cutsV29"):
 	"""
 	helper functionfrom argparse import ArgumentParser
 	path: path to .root file containing simulated events
@@ -37,7 +37,8 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	result = TChain()
 	#~ result.SetProof(True)
 	if modifier == "":
-		result.Add("%s/%sDileptonFinalTrees/%sDileptonTree"%(path, versions.cuts, dileptonCombination))
+		#~ result.Add("%s/%sDileptonFinalTrees/%sDileptonTree"%(path, versions.cuts, dileptonCombination))
+		result.Add("%s/%sDileptonFinalTrees/%sDileptonTree"%(path, versionNr, dileptonCombination))
 	else:
 		if "Single" in modifier:
 			result.Add("%s/%sDilepton%sFinalTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
@@ -46,7 +47,8 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 		elif "baseTrees" in modifier:
 			result.Add("%s/%sDileptonBaseTrees/%sDileptonTree"%(path, versions.cuts, dileptonCombination))
 		else:
-			result.Add("%s/%sDilepton%sFinalTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
+			#~ result.Add("%s/%sDilepton%sFinalTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
+			result.Add("%s/%sDilepton%sFinalTrees/%sDileptonTree"%( path, versionNr, modifier, dileptonCombination))
 	return result
 	
 def totalNumberOfGeneratedEvents(path,source="",modifier=""):
@@ -82,7 +84,10 @@ def readTrees(path, dileptonCombination,source = "", modifier = ""):
 	"""
 	result = {}
 	for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems():
-		result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier)
+		if sampleName == "TT_Dilepton_Powheg_Spring15_25ns" or sampleName == "WZTo2L2Q_aMCatNLO_Spring15_25ns" or sampleName == "ZZTo2L2Q_aMCatNLO_Spring15_25ns" or "Data" in sampleName or "HT_Run2015" in sampleName:
+			result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV29")
+		else:
+			result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV28")
 		
 	return result
 
@@ -104,9 +109,11 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 		source = "HT_"
 
 	#~ # This is even more stupid and tries to deal with uncleaned datasets. This has to improve otherwise it will drive you crazy at some point!
-	for filePath in glob("%s/%sv*.root"%(path,versions.cmssw)):
+	#~ for filePath in glob("%s/%sv*.root"%(path,versions.cmssw)):
+	for filePath in glob("%s/*.root"%(path)):
 		if source == "":
-			sampleName = match(".*%sv.*\.processed.*\.(.*).root"%versions.cmssw, filePath).groups()[0]		
+			#~ sampleName = match(".*%sv.*\.processed.*\.(.*).root"%versions.cmssw, filePath).groups()[0]		
+			sampleName = match(".*\.processed.*\.(.*).root", filePath).groups()[0]		
 		else:
 			sampleName = ""
 			if source == "Summer12" or source == "Fake":
@@ -115,7 +122,8 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 				sourceInsert = source
 				if source == "SingleMuon":
 					sourceInsert = "SingleMu"
-				sample =  match(".*%sv.*\.%s.*\.(%s.*).root"%(versions.cmssw,versions.cuts,sourceInsert), filePath)
+				#~ sample =  match(".*%sv.*\.%s.*\.(%s.*).root"%(versions.cmssw,versions.cuts,sourceInsert), filePath)
+				sample =  match(".*\.%s.*\.(%s.*).root"%(versions.cuts,sourceInsert), filePath)
 				
 			if sample is not None:					
 				sampleName = sample.groups()[0]
