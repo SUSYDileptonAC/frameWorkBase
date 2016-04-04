@@ -85,10 +85,11 @@ class runRanges:
 		runCut = "&& (runNr > 256500 || runNr ==1) && runNr < 99999999"
 		label = "Run2015D"
 	class Run2015_25ns:
-		lumi = 2190
-		printval = "2.2"
-		lumiErr = 0.045*2190
-		runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1)"
+		lumi = 2260
+		printval = "2.3"
+		lumiErr = 0.045*2260
+		#~ runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1)"
+		runCut = "&& runNr < 99999999"
 		label = "Run2015_25ns"
 	class Run2015_Unblinded:
 		lumi = 1280.23
@@ -1726,6 +1727,7 @@ defineMyColors = {
         'Brown' : (70, 35, 10),
 
         'MyBlue' : (36, 72, 206),
+        'MyBlueOverview' : (150, 150, 255),
         'MyDarkBlue' : (18, 36, 103),
         'MyGreen' : (70, 164, 60),
         'AnnBlueTitle' : (29, 47, 126),
@@ -1746,7 +1748,168 @@ myColors = {
             'W11Rare':  630,
             }
 
-
+class sbottom_masses:
+	class m_b_200:
+		cross_section8TeV = 18.52
+		cross_section13TeV = 64.51
+	class m_b_210:
+		cross_section8TeV = 14.7
+	class m_b_220:
+		cross_section8TeV = 11.5
+	class m_b_225:
+		cross_section8TeV = 9.91
+		cross_section13TeV = 36.38
+	class m_b_230:
+		cross_section8TeV = 9.02 
+	class m_b_240:
+		cross_section8TeV = 7.16 
+	class m_b_250:
+		cross_section8TeV = 5.576
+		cross_section13TeV = 21.59
+	class m_b_260:
+		cross_section8TeV = 4.61
+	class m_b_270:
+		cross_section8TeV = 3.74 
+	class m_b_275:
+		cross_section8TeV = 3.278
+		cross_section13TeV = 13.32
+	class m_b_280:
+		cross_section8TeV = 3.04 
+	class m_b_290:
+		cross_section8TeV = 2.49 
+	class m_b_300:
+		cross_section8TeV = 1.996
+		cross_section13TeV = 8.516
+	class m_b_310:
+		cross_section8TeV = 1.70
+	class m_b_320:
+		cross_section8TeV = 1.41
+	class m_b_325:
+		cross_section8TeV = 1.253
+		cross_section13TeV = 5.605
+	class m_b_330:
+		cross_section8TeV = 1.18 
+	class m_b_340:
+		cross_section8TeV = 0.988
+	class m_b_350:
+		cross_section = 0.8073
+		cross_section13TeV = 3.787
+	class m_b_360:
+		cross_section8TeV = 0.702
+	class m_b_370:
+		cross_section8TeV = 0.595
+	class m_b_375:
+		cross_section8TeV = 0.5314
+		cross_section13TeV = 2.808
+	class m_b_380:
+		cross_section8TeV = 0.507
+	class m_b_390:
+		cross_section8TeV = 0.432
+	class m_b_400:
+		cross_section8TeV = 0.3568
+		cross_section13TeV = 1.83537
+	class m_b_410:
+		cross_section8TeV = 0.317
+	class m_b_420:
+		cross_section8TeV = 0.273
+	class m_b_425:
+		cross_section8TeV = 0.2438
+		cross_section13TeV = 1.312
+	class m_b_430:
+		cross_section8TeV = 0.235
+	class m_b_440:
+		cross_section8TeV = 0.203
+	class m_b_450:
+		cross_section8TeV = 0.1697 
+		cross_section13TeV = 0.9483
+	class m_b_460:
+		cross_section8TeV = 0.153 
+	class m_b_470:
+		cross_section8TeV = 0.133  
+	class m_b_475:
+		cross_section8TeV = 0.1193 
+		cross_section13TeV = 0.6971
+	class m_b_480:
+		cross_section8TeV = 0.116  
+	class m_b_490:
+		cross_section8TeV = 0.101 
+	class m_b_500: 
+		cross_section8TeV = 0.08558 
+		cross_section13TeV = 0.5185
+	class m_b_510:
+		cross_section8TeV = 0.0774 
+	class m_b_520:
+		cross_section8TeV = 0.0679
+	class m_b_525:
+		cross_section8TeV = 0.06186
+		cross_section13TeV = 0.3903
+	class m_b_530:
+		cross_section8TeV = 0.0597
+	class m_b_540:
+		cross_section8TeV = 0.0525
+	class m_b_550:
+		cross_section8TeV = 0.04521
+		cross_section13TeV = 0.2961
+	class m_b_560:
+		cross_section8TeV = 0.0410
+	class m_b_570:
+		cross_section8TeV = 0.0366
+	class m_b_575:
+		cross_section8TeV = 0.03340
+		cross_section13TeV = 0.2261
+	class m_b_580:
+		cross_section8TeV = 0.0320
+	class m_b_590:
+		cross_section8TeV = 0.0285
+	class m_b_600:	
+		cross_section8TeV = 0.02480	
+		cross_section13TeV = 0.1746	
+	class m_b_610:
+		cross_section8TeV = 0.0226		
+	class m_b_620:
+		cross_section8TeV = 0.0200		
+	class m_b_625:	
+		cross_section8TeV = 0.01853	
+		cross_section13TeV = 0.1364	
+	class m_b_630:
+		cross_section8TeV = 0.0178		
+	class m_b_640:
+		cross_section8TeV = 0.0160		
+	class m_b_650:	
+		cross_section8TeV = 0.01396	
+		cross_section13TeV = 0.1070	
+	class m_b_660:
+		cross_section8TeV = 0.0127		
+	class m_b_670:
+		cross_section8TeV = 0.0113		
+	class m_b_675:	
+		cross_section8TeV = 0.01061	
+		cross_section13TeV = 0.08449	
+	class m_b_680:
+		cross_section8TeV = 0.0101		
+	class m_b_690:
+		cross_section8TeV = 0.00907		
+	class m_b_700:	
+		cross_section8TeV = 0.008114	
+		cross_section13TeV = 0.06705
+	class m_b_725:		
+		cross_section13TeV = 0.0536438
+	class m_b_750:		
+		cross_section13TeV = 0.0431418
+	class m_b_775:		
+		cross_section13TeV = 0.0348796
+	class m_b_800:		
+		cross_section13TeV = 0.0283338
+	class m_b_825:		
+		cross_section13TeV = 0.0230866
+	class m_b_850:		
+		cross_section13TeV = 0.0189612
+	class m_b_875:		
+		cross_section13TeV =  	0.015625
+	class m_b_900:		
+		cross_section13TeV = 0.0128895
+	class m_b_950:		
+		cross_section13TeV = 0.00883465
 	
 
 	

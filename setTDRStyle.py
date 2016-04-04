@@ -1,8 +1,12 @@
+from array import *
+
 def setTDRStyle():
 	import ROOT
 	from ROOT import TStyle
 	from ROOT import kWhite
 	from ROOT import kTRUE
+	
+	
 	
 	
 	tdrStyle =  TStyle("tdrStyle","Style for P-TDR")
@@ -44,7 +48,29 @@ def setTDRStyle():
 	tdrStyle.SetHistLineStyle(0)
 	tdrStyle.SetHistLineWidth(1)
 	# tdrStyle->SetLegoInnerR(Float_t rad = 0.5);
-	# tdrStyle->SetNumberContours(Int_t number = 20);
+	
+	# define the palette for z axis
+	palette = []
+	NRGBs = 5
+	NCont = 255
+	stops = array("d",[0.00,0.34,0.61,0.84,1.00])
+	red = array("d",[0.50,0.50,1.00,1.00,1.00])
+	green = array("d",[0.50,1.00,1.00,0.60,0.50])
+	blue = array("d",[1.00,1.00,0.50,0.40,0.50])
+	FI = ROOT.TColor.CreateGradientColorTable(NRGBs,stops,red,green,blue,NCont)
+	for i in range(0,NCont):
+		palette.append(FI+i)
+	tdrStyle.SetPalette(NCont,array("i",palette));
+	tdrStyle.SetNumberContours(NCont);
+	
+	#~ NRGBs = 5
+	#~ NCont = 255
+	#~ stops = array("d",[0.00,0.34,0.61,0.84,1.00])
+	#~ red = array("d",[0.50,0.50,1.00,1.00,1.00])
+	#~ green = array("d",[0.50,1.00,1.00,0.60,0.50])
+	#~ blue = array("d",[1.00,1.00,0.50,0.40,0.50])
+	#~ ROOT.TColor.CreateGradientColorTable(NRGBs,stops,red,green,blue,NCont)
+	#~ tdrStyle.SetNumberContours(NCont);
 	
 	tdrStyle.SetEndErrorSize(2)
 	#  tdrStyle->SetErrorMarker(20);
@@ -140,7 +166,7 @@ def setTDRStyle():
 	#tdrStyle->SetBarOffset(Float_t baroff = 0.5);
 	#tdrStyle->SetBarWidth(Float_t barwidth = 0.5);
 	#tdrStyle->SetPaintTextFormat(const char* format = "g");
-	tdrStyle.SetPalette(1)
+	#~ tdrStyle.SetPalette(1)
 	#tdrStyle->SetTimeOffset(Double_t toffset);
 	#tdrStyle->SetHistMinimumZero(kTRUE);
 	

@@ -1,14 +1,148 @@
+class OtherPredictions:
+	class default:
+		class SF:
+			class central:
+				val = 16.7
+				err = 8.0
+			class forward:
+				val = 5.8
+				err = 8.0
+		#~ class EE:
+			#~ class central:
+				#~ val = 16.7
+                                #~ err = 8.0
+			#~ class forward:
+                                #~ val = 5.8
+				#~ err = 8.0
+		#~ class MM:
+			#~ class central:
+				#~ val = 16.7
+                                #~ err = 8.0
+			#~ class forward:
+                                #~ val = 5.8
+				#~ err = 8.0
+	class geOneBTags:
+		class SF:
+			class central:
+				val = 3.0
+				err = 8.0
+			class forward:
+				val = 0.9
+				err = 8.2
+		#~ class EE:
+			#~ class central:
+				#~ val = 3.0
+				#~ err = 8.0
+			#~ class forward:
+				#~ val = 0.9
+				#~ err = 8.2
+		#~ class MM:
+			#~ class central:
+				#~ val = 3.0
+				#~ err = 8.0
+			#~ class forward:
+				#~ val = 0.9
+				#~ err = 8.0
+	class noBTags:
+		class SF:
+			class central:
+				val = 13.7
+				err = 8.0
+			class forward:
+				val = 4.9
+				err = 8.0
+		#~ class EE:
+			#~ class central:
+				#~ val = 13.7
+				#~ err = 8.0
+			#~ class forward:
+				#~ val = 4.9
+				#~ err = 8.0
+		#~ class MM:
+			#~ class central:
+				#~ val = 13.7
+				#~ err = 8.0
+			#~ class forward:
+				#~ val = 4.9
+				#~ err = 8.0
 
+class OnlyZPredictions:
+	class default:
+		class SF:
+			class central:
+				val = 45.3
+				err = 8.0
+			class forward:
+				val = 18.3
+				err = 8.0
+		#~ class EE:
+			#~ class central:
+				#~ val = 45.3
+                                #~ err = 8.0
+			#~ class forward:
+                                #~ val = 18.3
+				#~ err = 8.0
+		#~ class MM:
+			#~ class central:
+				#~ val = 45.3
+                                #~ err = 8.0
+			#~ class forward:
+                                #~ val = 18.3
+				#~ err = 8.0
+	class geOneBTags:
+		class SF:
+			class central:
+				val = 12.6
+				err = 8.0
+			class forward:
+				val = 5.1
+				err = 8.2
+		#~ class EE:
+			#~ class central:
+				#~ val = 12.6
+				#~ err = 8.0
+			#~ class forward:
+				#~ val = 5.1
+				#~ err = 8.2
+		#~ class MM:
+			#~ class central:
+				#~ val = 12.6
+				#~ err = 8.0
+			#~ class forward:
+				#~ val = 5.1
+				#~ err = 8.0
+	class noBTags:
+		class SF:
+			class central:
+				val = 32.7
+				err = 8.0
+			class forward:
+				val = 13.2
+				err = 8.0
+		#~ class EE:
+			#~ class central:
+				#~ val = 32.7
+				#~ err = 8.0
+			#~ class forward:
+				#~ val = 13.2
+				#~ err = 8.0
+		#~ class MM:
+			#~ class central:
+				#~ val = 32.7
+				#~ err = 8.0
+			#~ class forward:
+				#~ val = 13.2
+				#~ err = 8.0
 
 class zPredictions:
 	class default:
 		class SF:
 			class central:
-				val = 58.8
-				err = 7.8
+				val = 62.0
+				err = 8.2
 			class forward:
-				val = 22.9
-				err = 2.9
+				val = 24.1
+				err = 3.1
 		class EE:
 			class central:
 				val = 5
@@ -26,11 +160,11 @@ class zPredictions:
 	class geOneBTags:
 		class SF:
 			class central:
-				val = 14.8
-				err = 2.1
+				val = 15.6
+				err = 2.2
 			class forward:
-				val = 5.8
-				err = 1.2
+				val = 6.0
+				err = 1.3
 		class EE:
 			class central:
 				val = 2
@@ -48,11 +182,11 @@ class zPredictions:
 	class noBTags:
 		class SF:
 			class central:
-				val = 44.0
-				err = 7.6
+				val = 46.4
+				err = 7.9
 			class forward:
-				val = 17.1
-				err = 2.6
+				val = 18.1
+				err = 2.8
 		class EE:
 			class central:
 				val = 2
@@ -70,8 +204,8 @@ class zPredictions:
 	class geTwoBTags:
 		class SF:
 			class central:
-				val = 2.2
-				err = 1.7
+				val = 2.3
+				err = 1.8
 			class forward:
 				val = 0.8
 				err = 0.8

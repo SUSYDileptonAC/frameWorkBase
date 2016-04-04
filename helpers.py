@@ -84,7 +84,7 @@ def readTrees(path, dileptonCombination,source = "", modifier = ""):
 	"""
 	result = {}
 	for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems():
-		if sampleName == "TT_Dilepton_Powheg_Spring15_25ns" or sampleName == "WZTo2L2Q_aMCatNLO_Spring15_25ns" or sampleName == "ZZTo2L2Q_aMCatNLO_Spring15_25ns" or "Data" in sampleName or "HT_Run2015" in sampleName:
+		if sampleName == "TT_Dilepton_Powheg_Spring15_25ns" or sampleName == "WZTo2L2Q_aMCatNLO_Spring15_25ns" or sampleName == "ZZTo2L2Q_aMCatNLO_Spring15_25ns" or "Data" in sampleName or "HT_Run2015" in sampleName or "T6bbllslepton" in sampleName:
 			result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV29")
 		else:
 			result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV28")
@@ -299,26 +299,7 @@ class Process:
 			cut = plot.cuts
 
 		weightNorm = 1./0.99
-
-		if signal:
-
-
-
-			MultiQuarkScaleFactor = "((nGenSUSYLeptons == 0 && nGenSUSYNeutrinos == 0) * 9 * 0.4887)"
-			NeutrinoQuarkScaleFactor = "((nGenSUSYLeptons == 0 && nGenSUSYNeutrinos == 2) * 9./2. * 0.2796)"
-			MultiNeutrinoScaleFactor = "((nGenSUSYLeptons == 0 && nGenSUSYNeutrinos == 4) * 9 * 0.04)"
-			DileptonNeutrinoScaleFactor = "((nGenSUSYLeptons == 2 && nGenSUSYNeutrinos == 2) * 9./2. * 0.0404)"
-			DileptonQuarkScaleFactor = "((nGenSUSYLeptons == 2 && nGenSUSYNeutrinos == 0) * 9./2. * 0.1411)"
-			MultileptonScaleFactor = "((nGenSUSYLeptons == 4)*9*0.0102)"
 			
-			signalWeight = "(%s+%s+%s+%s+%s+%s)*sbottomWeight"%(MultiQuarkScaleFactor,NeutrinoQuarkScaleFactor,MultiNeutrinoScaleFactor,DileptonNeutrinoScaleFactor,DileptonQuarkScaleFactor,MultileptonScaleFactor)
-			
-			cut = cut+"*"+signalWeight
-		#~ cut = cut.replace("*weightUp","")	
-		#~ 
-		#~ cut = cut.replace("*weightDown","")						
-		#~ cut = cut.replace("*weight","")			
-		#~ cut = cut.replace("weight*","genWeight*")			
 
 		for index, sample in enumerate(self.samples):
 			for name, tree in tree1.iteritems(): 
@@ -348,6 +329,7 @@ class Process:
 				for name, tree in tree2.iteritems(): 
 					if name == sample:
 						if doTopReweighting and "TT" in name:
+							print name
 							if TopWeightUp:
 								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
 							elif TopWeightDown:	
