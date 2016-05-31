@@ -971,8 +971,6 @@ class thePlots:
 	LeadingEtaPlot = Plot(theVariables.LeadingEta,[])		
 	eta2Plot = Plot(theVariables.Eta2,[])
 
-	ptElePlot = Plot(theVariables.PtEle,[])		
-	ptMuPlot = Plot(theVariables.PtMu,[])
 	trailingPtPlot = Plot(theVariables.TrailingPt,[])
 	trailingPtPlot100 = Plot(theVariables.TrailingPt,[],binning = [16,20,100,"Events / 5 Gev",[]],additionalName = "range100")
 	leadingPtPlot = Plot(theVariables.LeadingPt,[])
@@ -1072,8 +1070,6 @@ class thePlots:
 
 	nVtxPlotWeights = Plot(theVariables.nVtx,[],binning=[60,0,60,"Events / 1",[]])				
 
-	
-class Signals:
 	
 		
 class Backgrounds:

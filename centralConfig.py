@@ -288,11 +288,11 @@ class plotLists:
 
 
 class cutNCountXChecks:
-	cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"isoCuts":["TightIso"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
+	cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
 
 
 
 class versions:
 	cmssw = "sw7414"
 	cuts = "cutsV31"
-	masterListForMC = "Master74X_25nsMC_ReMiniAOD.ini"
+	masterListForMC = "../frameWorkBase/MasterList.ini"
