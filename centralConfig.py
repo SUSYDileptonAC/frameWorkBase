@@ -7,20 +7,6 @@ class OtherPredictions:
 			class forward:
 				val = 5.8
 				err = 8.0
-		#~ class EE:
-			#~ class central:
-				#~ val = 16.7
-                                #~ err = 8.0
-			#~ class forward:
-                                #~ val = 5.8
-				#~ err = 8.0
-		#~ class MM:
-			#~ class central:
-				#~ val = 16.7
-                                #~ err = 8.0
-			#~ class forward:
-                                #~ val = 5.8
-				#~ err = 8.0
 	class geOneBTags:
 		class SF:
 			class central:
@@ -29,20 +15,6 @@ class OtherPredictions:
 			class forward:
 				val = 0.9
 				err = 8.2
-		#~ class EE:
-			#~ class central:
-				#~ val = 3.0
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 0.9
-				#~ err = 8.2
-		#~ class MM:
-			#~ class central:
-				#~ val = 3.0
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 0.9
-				#~ err = 8.0
 	class noBTags:
 		class SF:
 			class central:
@@ -51,20 +23,6 @@ class OtherPredictions:
 			class forward:
 				val = 4.9
 				err = 8.0
-		#~ class EE:
-			#~ class central:
-				#~ val = 13.7
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 4.9
-				#~ err = 8.0
-		#~ class MM:
-			#~ class central:
-				#~ val = 13.7
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 4.9
-				#~ err = 8.0
 
 class OnlyZPredictions:
 	class default:
@@ -75,20 +33,6 @@ class OnlyZPredictions:
 			class forward:
 				val = 18.3
 				err = 8.0
-		#~ class EE:
-			#~ class central:
-				#~ val = 45.3
-                                #~ err = 8.0
-			#~ class forward:
-                                #~ val = 18.3
-				#~ err = 8.0
-		#~ class MM:
-			#~ class central:
-				#~ val = 45.3
-                                #~ err = 8.0
-			#~ class forward:
-                                #~ val = 18.3
-				#~ err = 8.0
 	class geOneBTags:
 		class SF:
 			class central:
@@ -97,20 +41,6 @@ class OnlyZPredictions:
 			class forward:
 				val = 5.1
 				err = 8.2
-		#~ class EE:
-			#~ class central:
-				#~ val = 12.6
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 5.1
-				#~ err = 8.2
-		#~ class MM:
-			#~ class central:
-				#~ val = 12.6
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 5.1
-				#~ err = 8.0
 	class noBTags:
 		class SF:
 			class central:
@@ -119,20 +49,6 @@ class OnlyZPredictions:
 			class forward:
 				val = 13.2
 				err = 8.0
-		#~ class EE:
-			#~ class central:
-				#~ val = 32.7
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 13.2
-				#~ err = 8.0
-		#~ class MM:
-			#~ class central:
-				#~ val = 32.7
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 13.2
-				#~ err = 8.0
 
 class zPredictions:
 	class default:
@@ -350,13 +266,8 @@ class runRanges:
 class backgroundLists:
 	#~ default = ["Rare","SingleTop","TTJets_SpinCorrelations","Diboson","DrellYanTauTau","DrellYan"]
 	default = ["TT_Powheg","DrellYan"]
-	#~ trigger = ["TTJets_SpinCorrelations"]
 	trigger = ["TT_Powheg"]
-	iso = ["TT_Powheg","DrellYan"]
 	rSFOF = ["TT_Powheg","DrellYan"]
-	nonPrompt = ["TT_Powheg","DrellYan"]
-	Loose = ["TT_Powheg","DrellYan"]
-	#~ Loose = ["DrellYan"]
 	rareStudies = ["WW","WZ","ZZ","RareNonZ","RareZ"]
 	
 class plotLists:
@@ -375,8 +286,6 @@ class plotLists:
 	rOutIn =  ["metPlotROutIn","nJetsPlotROutIn"]
 	fake =  ["trailingPtPlot100","tralingEtaPlot","metPlot","htPlot",]
 
-class baselineTrigger: 
-	name = "PFHT"
 
 class cutNCountXChecks:
 	cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"isoCuts":["TightIso"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
@@ -384,6 +293,6 @@ class cutNCountXChecks:
 
 
 class versions:
-	cmssw = "sw7412"
-	cuts = "cutsV29"
+	cmssw = "sw7414"
+	cuts = "cutsV31"
 	masterListForMC = "Master74X_25nsMC_ReMiniAOD.ini"

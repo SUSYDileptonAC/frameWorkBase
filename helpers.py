@@ -7,12 +7,11 @@ from defs import myColors
 from ConfigParser import ConfigParser
 from locations import locations
 from math import sqrt
-config_path = locations.masterListPath
 config = ConfigParser()
 
 from centralConfig import versions
 
-config.read("%s/%s"%(config_path,versions.masterListForMC))
+config.read(versions.masterListForMC))
 
 
 def loadPickles(path):
@@ -24,7 +23,7 @@ def loadPickles(path):
 		result.update(pickle.load(pklFile))
 	return result
 
-def readTreeFromFile(path, dileptonCombination, modifier = "",versionNr="cutsV29"):
+def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	"""
 	helper functionfrom argparse import ArgumentParser
 	path: path to .root file containing simulated events
@@ -37,21 +36,12 @@ def readTreeFromFile(path, dileptonCombination, modifier = "",versionNr="cutsV29
 	result = TChain()
 	#~ result.SetProof(True)
 	if modifier == "":
-		#~ result.Add("%s/%sDileptonFinalTrees/%sDileptonTree"%(path, versions.cuts, dileptonCombination))
-		result.Add("%s/%sDileptonFinalTrees/%sDileptonTree"%(path, versionNr, dileptonCombination))
+		result.Add("%s/*DileptonFinalTrees/%sDileptonTree"%(path, dileptonCombination))
 	else:
-		if "Single" in modifier:
-			result.Add("%s/%sDilepton%sFinalTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
-		elif "Fake" in modifier:
-			result.Add("%s/%sDilepton%sTree/Trees/Iso"%( path, versions.cuts, modifier))
-		elif "baseTrees" in modifier:
-			result.Add("%s/%sDileptonBaseTrees/%sDileptonTree"%(path, versions.cuts, dileptonCombination))
-		else:
-			#~ result.Add("%s/%sDilepton%sFinalTrees/%sDileptonTree"%( path, versions.cuts, modifier, dileptonCombination))
-			result.Add("%s/%sDilepton%sFinalTrees/%sDileptonTree"%( path, versionNr, modifier, dileptonCombination))
+		result.Add("%s/Dilepton%sFinalTrees/%sDileptonTree"%( path,  modifier, dileptonCombination))
 	return result
 	
-def totalNumberOfGeneratedEvents(path,source="",modifier=""):
+def totalNumberOfGeneratedEvents(path):
 	"""
 	path: path to directory containing all sample files
 
@@ -61,21 +51,13 @@ def totalNumberOfGeneratedEvents(path,source="",modifier=""):
 	from ROOT import TFile
 	result = {}
 	#~ print path
-
-	if "baseTrees" in source:
-		for sampleName, filePath in getFilePathsAndSampleNames(path,source).iteritems():
-			rootFile = TFile(filePath, "read")
-			result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)
-		for sampleName, filePath in getFilePathsAndSampleNames(path,"baseTrees").iteritems():
-			rootFile = TFile(filePath, "read")
-			result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)
-	else:				
-		for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems():
-			rootFile = TFile(filePath, "read")
-			result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)				
+			
+	for sampleName, filePath in getFilePathsAndSampleNames(path).iteritems():
+		rootFile = TFile(filePath, "read")
+		result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)				
 	return result
 	
-def readTrees(path, dileptonCombination,source = "", modifier = ""):
+def readTrees(path, dileptonCombination, modifier = ""):
 	"""
 	path: path to directory containing all sample files
     dileptonCombination: "EMu", "EMu", or pyroot"EMu" for electron-electron, electron-muon, or muon-muon events
@@ -83,15 +65,12 @@ def readTrees(path, dileptonCombination,source = "", modifier = ""):
 	returns: dict of sample names ->  trees containing events (for all samples for one dileptonCombination)
 	"""
 	result = {}
-	for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems():
-		if sampleName == "TT_Dilepton_Powheg_Spring15_25ns" or sampleName == "WZTo2L2Q_aMCatNLO_Spring15_25ns" or sampleName == "ZZTo2L2Q_aMCatNLO_Spring15_25ns" or "Data" in sampleName or "HT_Run2015" in sampleName or "T6bbllslepton" in sampleName:
-			result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV29")
-		else:
-			result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV28")
+	for sampleName, filePath in getFilePathsAndSampleNames(path).iteritems():
+		result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier)
 		
 	return result
 
-def getFilePathsAndSampleNames(path,source="",modifier = ""):
+def getFilePathsAndSampleNames(path):
 	"""
 	helper function
 	path: path to directory containing all sample files
@@ -102,31 +81,10 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 	from glob import glob
 	from re import match
 	result = {}
-	#This is stupid and deals with the mismatch between tasks and datasetnames. Take better care of this in Run II!
-	if source == "AlphaT":
-		source = "HTMHT_"
-	if source == "PFHT":
-		source = "HT_"
 
-	#~ # This is even more stupid and tries to deal with uncleaned datasets. This has to improve otherwise it will drive you crazy at some point!
-	#~ for filePath in glob("%s/%sv*.root"%(path,versions.cmssw)):
-	for filePath in glob("%s/*.root"%(path)):
-		if source == "":
-			#~ sampleName = match(".*%sv.*\.processed.*\.(.*).root"%versions.cmssw, filePath).groups()[0]		
-			sampleName = match(".*\.processed.*\.(.*).root", filePath).groups()[0]		
-		else:
-			sampleName = ""
-			if source == "Summer12" or source == "Fake":
-				sample =  match(".*%sv.*\.%s.*\.(.*).root"%(versions.cmssw,versions.cuts), filePath)
-			else:
-				sourceInsert = source
-				if source == "SingleMuon":
-					sourceInsert = "SingleMu"
-				#~ sample =  match(".*%sv.*\.%s.*\.(%s.*).root"%(versions.cmssw,versions.cuts,sourceInsert), filePath)
-				sample =  match(".*\.%s.*\.(%s.*).root"%(versions.cuts,sourceInsert), filePath)
-				
-			if sample is not None:					
-				sampleName = sample.groups()[0]
+
+	for filePath in glob("%s/*.root"%(path)):		
+		sampleName = match(".*\.processed.*\.(.*).root", filePath).groups()[0]		
 		#for the python enthusiats: yield sampleName, filePath is more efficient here :)
 		if sampleName is not "":
 			result[sampleName] = filePath
@@ -134,7 +92,7 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 
 
 	
-def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,smearDY=False,binning=None,doPUWeights = False):
+def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,smearDY=False,binning=None):
 	"""
 	tree: tree to create histo from)
 	variable: variable to plot (must be a branch of the tree)
@@ -157,40 +115,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 		result = TH1F(name, "", len(binning)-1, array("f",binning))
 		
 	result.Sumw2()
-	if smearDY and variable == "met":
-		r = ROOT.TRandom3()
-		tempTree = tree.CopyTree(weight)
-		for ev in tempTree:
-			result.Fill(ev.met*r.Gaus(1.08,0.1),getattr(ev,weight.split("*(")[0]))
-			
-		tempTree.IsA().Destructor(tempTree)
-		#myobject.IsA().Destructor(myobject)	
-			#print getattr(ev,weight.split("*(")[0])
-	elif doPUWeights:
-		tempTree = tree.CopyTree(weight)
-		
-		for ev in tempTree:
-			if variable == "p4.M()":
-				result.Fill(ev.p4.M(),getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
-			elif variable == "(pt2>pt1)*eta1+(pt1>pt2)*eta2":
-				if ev.pt2 > ev.pt1: 
-					result.Fill(ev.eta1,getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
-				elif ev.pt2 < ev.pt1: 
-					result.Fill(ev.eta2,getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
-			elif variable == "(pt1>pt2)*pt2+(pt2>pt1)*pt1":
-				if ev.pt2 > ev.pt1: 
-					result.Fill(ev.pt1,getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
-				elif ev.pt2 < ev.pt1: 
-					result.Fill(ev.pt2,getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
-			else:	
-				result.Fill(getattr(ev,variable),getattr(ev,"genWeight")*getVtxWeight(getattr(ev,"nVertices")))
-			
-		tempTree.IsA().Destructor(tempTree)
-		#myobject.IsA().Destructor(myobject)	
-			#print getattr(ev,weight.split("*(")[0])
-	else:
-		tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
-		#~ tree.Draw("%s"%(variable), weight, "goff", nEvents)
+	tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
 	result.SetBinContent(nBins,result.GetBinContent(nBins)+result.GetBinContent(nBins+1))
 	if result.GetBinContent(nBins) >= 0.:
 		result.SetBinError(nBins,sqrt(result.GetBinContent(nBins)))
@@ -225,8 +150,6 @@ def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, la
 
 	tree.Draw("%s:%s>>%s"%(variable2,variable, name), weight, "goff", nEvents)
 	
-	#~ for ev in tree:
-		#~ result.Fill(getattr(ev,variable),abs(getattr(ev,variable2)))
 	return result
 
 
@@ -276,7 +199,7 @@ class Process:
 			self.nEvents.append(Counts[sample])
 
 		
-	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,TopWeightUp=False,TopWeightDown=False,signal=False,doTopReweighting=True,doPUWeights=False):
+	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,TopWeightUp=False,TopWeightDown=False,signal=False,doTopReweighting=True):
 		#~ doTopReweighting = False
 		if len(plot.binning) == 0:
 			self.histo = TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
@@ -306,15 +229,15 @@ class Process:
 				if name == sample:
 					if doTopReweighting and "TT" in name:						
 						if TopWeightUp:
-							tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
+							tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
 						elif TopWeightDown:	
-							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
+							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
 						else:	
-							tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
+							tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
 					
 					
 					else:
-						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning,doPUWeights=doPUWeights)
+						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
 						
 					if self.normalized:	
 						#~ print lumi
@@ -331,13 +254,13 @@ class Process:
 						if doTopReweighting and "TT" in name:
 							print name
 							if TopWeightUp:
-								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
+								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
 							elif TopWeightDown:	
-								tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
+								tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
 							else:	
-								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights)
+								tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
 						else:
-							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning,doPUWeights=doPUWeights)
+							tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
 						
 
 						if self.normalized:
@@ -360,7 +283,7 @@ class TheStack:
 	theHistogramXsecDown = ROOT.TH1F()
 	theHistogramTheoUp = ROOT.TH1F()
 	theHistogramTheoDown = ROOT.TH1F()
-	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None,JESUp=False,JESDown=False,TopWeightUp=False,TopWeightDown=False,PileUpUp=False,PileUpDown=False,doTopReweighting=True,theoUncert = 0.,doPUWeights = False):
+	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None,JESUp=False,JESDown=False,TopWeightUp=False,TopWeightDown=False,PileUpUp=False,PileUpDown=False,doTopReweighting=True,theoUncert = 0.):
 		self.theStack = THStack()
 		self.theHistogram = ROOT.TH1F()
 		self.theHistogram.Sumw2()
@@ -394,11 +317,11 @@ class TheStack:
 			temphist = TH1F()
 			temphist.Sumw2()
 			if TopWeightUp:
-				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,TopWeightUp=True,doTopReweighting=True,doPUWeights = doPUWeights)
+				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,TopWeightUp=True,doTopReweighting=True)
 			elif TopWeightDown:	
-				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,TopWeightDown=True,doTopReweighting=True,doPUWeights = doPUWeights)
+				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,TopWeightDown=True,doTopReweighting=True)
 			else:	
-				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,doTopReweighting=doTopReweighting,doPUWeights = doPUWeights)
+				temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,doTopReweighting=doTopReweighting)
 			if saveIntegrals:
 				
 				errIntMC = ROOT.Double()

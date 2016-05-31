@@ -144,13 +144,6 @@ class RatioGraph:
 			denError = self.denominator.GetBinError(iBin)
 			x = self.numerator.GetBinCenter(iBin)
 			width = self.numerator.GetBinWidth(iBin)
-			
-			#~ print "DEBUG RATIO: " 
-			#~ print iBin
-			#~ print num 
-			#~ print numError
-			#~ print den
-			#~ print denError
 
 			# assure that bin is in view range
 			# ignore empty starting bins
@@ -166,15 +159,6 @@ class RatioGraph:
 				else:
 					tempRatio = Ratio(num, den, math.pow(numError, 2.0), math.pow(denError, 2.0), x, width)
 					
-				#~ if (self.adaptiveBinning):
-					#~ print "test"
-					#~ if (tempRatio.isFullEnough()):
-						#~ print "test2"
-						#~ ratios.append(tempRatio)
-						#~ tempratio = None
-				#~ else:
-					#~ ratios.append(tempRatio)
-					#~ tempratio = None
 				if (tempRatio.isFullEnough(self.adaptiveBinning)):
 					 
 					self.binMerging.append(iBin)
@@ -200,11 +184,6 @@ class RatioGraph:
 			widths.append(ratio.errorX)
 
 
-		#~ log.logDebug("xs = %s" % xs)
-		#~ log.logDebug("ys = %s" % ys)
-		#~ log.logDebug("yErrors = %s" % yErrors)
-		#~ log.logDebug("widths = %s" % widths)
-
 		graph = ROOT.TGraphAsymmErrors(len(xs), array("d", xs), array("d", ys), array("d", widths), array("d", widths), array("d", yErrors), array("d", yErrors))
 		graph.SetLineColor(self.color)
 		graph.SetMarkerColor(self.color)
@@ -223,12 +202,7 @@ class RatioGraph:
 			if (error.size != None):
 				if (error.add):
 					log.logInfo("Quadractically adding error '%s' with size %f" % (error.name, error.size))
-					totalConstantUncertainty = (totalConstantUncertainty**2+error.size**2)**0.5
-					#~ xCenter = 0.5 * (error.xMin + error.xMax)
-					#~ xWidth = 0.5 * (error.xMax - error.xMin)
-					#~ graph = ROOT.TGraphErrors(1, array("d", [xCenter]), array("d", [1.0]), array("d", [xWidth]), array("d", [error.size]))
-					#~ graph.SetFillColor(error.color)
-					#~ errorGraphsToAdd.Add(graph)					
+					totalConstantUncertainty = (totalConstantUncertainty**2+error.size**2)**0.5			
 				else:
 
 					log.logInfo("Adding error '%s' with size %f" % (error.name, error.size))
@@ -270,30 +244,18 @@ class RatioGraph:
 								upErrors.append(0.0)
 								downErrors.append(max(1.0 - errorUp.ratio, 1.0 - errorDown.ratio))
 
-				#~ if (iError + 1 < len(self.errors) and self.errors[iError + 1].add):
-
+				
 				if (iError -1 is not -1  ):
-					#~ print iError
-					#~ if (self.errors[iError + 1].size != None):
 					log.logHighlighted("Found uncertainty to be added. Will do so, now.")
-					#~ size = self.errors[iError -1].size
-					#~ upErrors = [math.sqrt(prev ** 2 + errorGraphs[numErrorGraphs-1].GetErrorYhigh(index) ** 2 + totalConstantUncertainty**2) for index, prev in enumerate(upErrors)]
-					#~ downErrors = [math.sqrt(prev ** 2 + errorGraphs[numErrorGraphs-1].GetErrorYlow(index) ** 2 + totalConstantUncertainty**2) for index, prev in enumerate(downErrors)]
 					upErrors = [math.sqrt(prev ** 2 + errorGraphs[numErrorGraphs-1].GetErrorYhigh(index) ** 2 + totalConstantUncertainty**2) for index, prev in enumerate(upErrors)]
 					downErrors = [math.sqrt(prev ** 2 + errorGraphs[numErrorGraphs-1].GetErrorYlow(index) ** 2 + totalConstantUncertainty**2) for index, prev in enumerate(downErrors)]
-					#~ else:
-						#~ log.logError("Uncertainty to be added does not have fixed size. Adding not implemented, yet.")
-
+					
 				graph = ROOT.TGraphAsymmErrors(len(xs), array("d", xs), array("d", ys), array("d", widths), array("d", widths), array("d", downErrors), array("d", upErrors))
 				graph.SetFillColor(error.color)
 				graph.SetFillStyle(error.fillStyle)
 				errorGraphs.append(graph)
-				#~ print downErrors
-				#~ print upErrors
 				numErrorGraphs = numErrorGraphs+1
 		
-		#~ num = errorGraphs[-1].Merge(errorGraphsToAdd)
-		#~ print num
 		return errorGraphs
 
 	def draw(self, pad,redrawAxis,drawAsHist=False,addChi2=False,chi2Pos =0.8):
@@ -305,7 +267,6 @@ class RatioGraph:
 		self.hAxis = ROOT.TH2F("hAxis", "", nBinsX, self.xMin, self.xMax, nBinsY, self.yMin, self.yMax)
 		if redrawAxis:
 			self.hAxis.Draw("AXIS")
-		#~ self.hAxis.GetYaxis().SetNdivisions(10, 10, self.ndivisions)
 		
 		self.hAxis.GetYaxis().SetNdivisions(408)
 		self.hAxis.SetTitleOffset(0.4, "Y")
@@ -334,9 +295,7 @@ class RatioGraph:
 		self.oneLine3 = ROOT.TLine(self.xMin, 1.5, self.xMax, 1.5)
 		self.oneLine3.SetLineStyle(2)
 		self.oneLine3.Draw()
-		#~ if redrawAxis:
-		#~ self.hAxis.Draw("SAMEAXIS")
-
+		
 		
 		
 		if drawAsHist:
@@ -344,18 +303,6 @@ class RatioGraph:
 			self.graph.Draw("SAMEhist")
 		else:
 			self.graph.Draw("SAMEpZ")
-
-		
-		
-
-		#~ if addChi2:
-			#~ 
-			#~ from ROOT import TLatex
-			#~ latex= TLatex()
-			#~ latex.SetNDC()
-			#~ latex.SetTextSize(0.1)
-			#~ latex.SetTextColor(self.color)
-			#~ latex.DrawLatex(0.2,chi2Pos, "#chi^{2}/nDF = %.1f/%.1d"%(self.chi2, self.nDF))	
 
 
 		pad.Update()
@@ -424,10 +371,7 @@ class RatioError:
 				denUpError = self.denominatorUp.GetBinError(iBin)
 				denDown = self.denominatorDown.GetBinContent(iBin)
 				denDownError = self.denominatorDown.GetBinError(iBin)
-				#~ log.logDebug("den: %f +- %f" % (den, denError))
-				#~ log.logDebug("denup: %f +- %f" % (denUp, denUpError))
-				#~ log.logDebug("dendown: %f +- %f" % (denDown, denDownError))
-
+				
 				x = self.denominator.GetBinCenter(iBin)
 				width = self.denominator.GetBinWidth(iBin)
 
@@ -436,8 +380,7 @@ class RatioError:
 					ratioUp = Ratio(denUp, den, math.pow(denUpError, 2.0), math.pow(denError, 2.0), x, width)
 					ratioDown = Ratio(denDown, den, math.pow(denDownError, 2.0), math.pow(denError, 2.0), x, width)
 
-					#~ log.logInfo("ratioUp: %f, ratioDown: %f" % (ratioUp.ratio, ratioDown.ratio))
-
+					
 					if (tempRatioUp != None):
 						tempRatioUp.addRatio(ratioUp)
 						tempRatioDown.addRatio(ratioDown)
@@ -445,7 +388,6 @@ class RatioError:
 						tempRatioUp = ratioUp
 						tempRatioDown = ratioDown
 
-					#~ if (tempRatioUp.isFullEnough(self.rebinErrorBoundary) and tempRatioDown.isFullEnough(self.rebinErrorBoundary)):
 					if (iBin == self.binMerging[nBin]):
 						nBin = nBin+1
 						self.__ratiosUp__.append(tempRatioUp)

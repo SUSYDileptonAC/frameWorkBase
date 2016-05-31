@@ -2,7 +2,7 @@
 import pickle
 import os
 import sys
-from centralConfig import regionsToUse, baselineTrigger, runRanges, systematics
+from centralConfig import regionsToUse, runRanges, systematics
 
 def readPickle(name,regionName,runName,MC=False):
 	
@@ -19,24 +19,7 @@ def readPickle(name,regionName,runName,MC=False):
 			print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName) 		
 			sys.exit()
 
-	return result		
-
-def readTriggerPickle(name,regionName,runName,source,MC=False):
-	
-	if MC:
-		if os.path.isfile("shelves/%s_%s_%s_%s_MC.pkl"%(name,regionName,source,runName)):
-			result = pickle.load(open("shelves/%s_%s_%s_%s_MC.pkl"%(name,regionName,source,runName),"rb"))
-		else:
-			print "shelves/%s_%s_%s_%s.pkl not found, exiting"%(name,regionName,source,runName) 		
-			sys.exit()		
-	else:
-		if os.path.isfile("shelves/%s_%s_%s_%s.pkl"%(name,regionName,source,runName)):
-			result = pickle.load(open("shelves/%s_%s_%s_%s.pkl"%(name,regionName,source,runName),"rb"))
-		else:
-			print "shelves/%s_%s_%s_%s.pkl not found, exiting"%(name,regionName,source,runName) 		
-			sys.exit()
-
-	return result		
+	return result			
 
 def getROutInClass(classTemplate,shelve,shelveMC,massRange,combination,label):
 
@@ -318,8 +301,8 @@ class rMuE:
 	rMuEPartFinal = rMuEPart%(classRMuEInclusive , classRMuECentral, classRMuEForward)
 	
 
-	shelvesTrigger = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name)}
-	shelvesTriggerMC = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name,MC=True),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name,MC=True), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name,MC=True)}
+	shelvesTrigger = {"inclusive":readPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name),"central": readPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name), "forward":readPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name)}
+	shelvesTriggerMC = {"inclusive":readPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name,MC=True),"central": readPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, MC=True), "forward":readPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name,MC=True)}
 	
 	triggerPart = """
 

@@ -4,7 +4,7 @@ import sys
 
 
 from corrections import rSFOF, rEEOF, rMMOF, rOutIn, rOutInEE, rOutInMM, rMuE, rSFOFTrig, rSFOFFact
-from centralConfig import zPredictions, regionsToUse, runRanges, baselineTrigger
+from centralConfig import zPredictions, regionsToUse, runRanges
 
 import argparse	
 import subprocess
@@ -27,23 +27,6 @@ def readPickle(name,regionName,runName,MC=False):
 			result = pickle.load(open("shelves/%s_%s_%s.pkl"%(name,regionName,runName),"rb"))
 		else:
 			print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName) 		
-			sys.exit()
-
-	return result	
-
-def readTriggerPickle(name,regionName,runName,source,MC=False):
-	
-	if MC:
-		if os.path.isfile("shelves/%s_%s_%s_%s_MC.pkl"%(name,regionName,source,runName)):
-			result = pickle.load(open("shelves/%s_%s_%s_%s_MC.pkl"%(name,regionName,source,runName),"rb"))
-		else:
-			print "shelves/%s_%s_%s_%s.pkl not found, exiting"%(name,regionName,source,runName) 		
-			sys.exit()		
-	else:
-		if os.path.isfile("shelves/%s_%s_%s_%s.pkl"%(name,regionName,source,runName)):
-			result = pickle.load(open("shelves/%s_%s_%s_%s.pkl"%(name,regionName,source,runName),"rb"))
-		else:
-			print "shelves/%s_%s_%s_%s.pkl not found, exiting"%(name,regionName,source,runName) 		
 			sys.exit()
 
 	return result		
@@ -534,8 +517,8 @@ def produceCombinedRSFOFTable():
 def produceTriggerEffTables():
 
 
-	shelvesTrigger = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name)}
-	shelvesTriggerMC = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name,MC=True),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name,MC=True), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name,MC=True)}	
+	shelvesTrigger = {"inclusive":readPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name),"central": readPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name), "forward":readPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name)}
+	shelvesTriggerMC = {"inclusive":readPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name,MC=True),"central": readPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, MC=True), "forward":readPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name,MC=True)}	
 
 
 
@@ -634,25 +617,12 @@ def produceTriggerEffTables():
 
 	
 def main():
-	
-	parser = argparse.ArgumentParser(description='rMuE measurements.')
-	
-	parser.add_argument("-w", "--write", action="store_true", dest="write", default=False,
-						  help="write tables to thesis repo.")
 
-
-	args = parser.parse_args()	
-	if args.write:
-		import os
-		for table in os.listdir("tab/"): 
-			bashCommand = "cp tab/%s /home/jan/Doktorarbeit/Thesis/tab/"%table
-			process = subprocess.Popen(bashCommand.split())		
-	else:	
-		produceRMuETable()
-		produceRSFOFTable()
-		produceTriggerEffTables()
-		produceFactorizationTable()
-		produceCombinedRSFOFTable()
-		produceROutInTable()
+	produceRMuETable()
+	produceRSFOFTable()
+	produceTriggerEffTables()
+	produceFactorizationTable()
+	produceCombinedRSFOFTable()
+	produceROutInTable()
 
 main()
