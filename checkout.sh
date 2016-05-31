@@ -30,11 +30,11 @@ cd rMuE
 mkdir fig
 mkdir shelves
 
-cd rOutIn
+cd ../rOutIn
 mkdir fig
 mkdir shelves
 
-cd rSFOF
+cd ../rSFOF
 mkdir fig
 mkdir tab
 mkdir shelves
