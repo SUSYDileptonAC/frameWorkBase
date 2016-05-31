@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TEMPVAR=`pwd`
+mkdir shelves
 cd ../
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/DataMC.git
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/countsAndCorrections.git
