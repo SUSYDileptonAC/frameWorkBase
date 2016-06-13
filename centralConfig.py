@@ -75,6 +75,9 @@ class OnlyZPredictions:
 			class forward:
 				val = 18.3
 				err = 8.0
+			class inclusive:
+				val = 63.6
+				err = 11.0
 		#~ class EE:
 			#~ class central:
 				#~ val = 45.3
@@ -143,6 +146,9 @@ class zPredictions:
 			class forward:
 				val = 24.1
 				err = 3.1
+			class inclusive:
+				val = 86.1
+				err = 8.8
 		class EE:
 			class central:
 				val = 5
@@ -360,7 +366,8 @@ class backgroundLists:
 	rareStudies = ["WW","WZ","ZZ","RareNonZ","RareZ"]
 	
 class plotLists:
-	default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot"]
+	default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot","nVtxPlot"]
+	#~ default = ["nVtxPlot"]
 	#~ default = ["tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot"]
 	#~ default = ["leadingPtPlot"]
 	#~ trigger = ["nJetsPlotTrigger","leadingPtPlotTriggerTrailing10","leadingPtPlotTrigger","leadingPtPlotTrigger2515","leadingPtPlotTrigger2520","leadingPtPlotTrigger2525","trailigPtPlotTrigger","trailigPtPlotTrigger2515","trailigPtPlotTrigger2520","trailigPtPlotTrigger2525","trailigPtPlotTriggerLeading30","mllPlotTrigger","mllPlotTrigger2515","mllPlotTrigger2520","mllPlotTrigger2525","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
@@ -384,6 +391,8 @@ class cutNCountXChecks:
 
 
 class versions:
-	cmssw = "sw7412"
-	cuts = "cutsV29"
-	masterListForMC = "Master74X_25nsMC_ReMiniAOD.ini"
+	#~ cmssw = "sw7412"
+	cmssw = "sw8010"
+	cuts = "cutsV31"
+	#~ masterListForMC = "Master74X_25nsMC_ReMiniAOD.ini"
+	masterListForMC = "Master80X_MC.ini"

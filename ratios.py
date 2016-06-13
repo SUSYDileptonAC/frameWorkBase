@@ -312,7 +312,7 @@ class RatioGraph:
 		self.hAxis.SetTitleSize(0.15, "Y")
 		self.hAxis.SetYTitle(self.title)
 		self.hAxis.GetXaxis().SetLabelSize(0.0)
-		self.hAxis.GetYaxis().SetLabelSize(0.15)
+		self.hAxis.GetYaxis().SetLabelSize(0.1)
 
 		if self.labelSize is None:
 			self.hAxis.SetTitleSize(0.15, "Y")

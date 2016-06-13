@@ -89,7 +89,7 @@ class runRanges:
 		printval = "2.3"
 		lumiErr = 0.045*2260
 		#~ runCut = "&& ( (runNr > 254230 && runNr < 254833) || runNr > 254852 || runNr ==1)"
-		runCut = "&& runNr < 99999999"
+		runCut = "&& deltaR > 0.3 && miniIsoEffArea1 < 0.1 && miniIsoEffArea2 < 0.1 && runNr < 99999999 "
 		label = "Run2015_25ns"
 	class Run2015_Unblinded:
 		lumi = 1280.23
@@ -103,16 +103,30 @@ class runRanges:
 		lumiErr = 0.045*71.52
 		runCut = "&& (  runNr < 251884 || runNr == 254833 || runNr ==1) "
 		label = "Run2015_50ns"
+		
+	class Run2016B_Unblinded:
+		lumi = 589.3
+		printval = "0.59"
+		lumiErr = 0.045*589.3
+		runCut = "&& ( (runNr >= 271036 && runNr <= 273730) || runNr ==1)"
+		label = "Run2016B_Unblinded"
+
+	class Run2016B:
+		lumi = 804.2
+		printval = "0.59"
+		lumiErr = 0.045*804.2
+		runCut = "&& ( (runNr >= 271036 && runNr <= 274240) || runNr ==1)"
+		label = "Run2016B"
 
 		
 class Region:
-	#~ cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20 && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && p4.M() > 20 && deltaR > 0.3 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
-	#~ cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
-	#~ cut = " chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25))  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.3 && p4.M() > 20"
-	#~ cutToUse = "genWeight*weight*(chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25)) && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3)"
-	#~ cut = " chargeProduct < 0 && miniIsoEffArea1 < 0.01 && miniIsoEffArea2 < 0.01 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.3 && p4.M() > 20"
-	cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.3 && p4.M() > 20"
-	cutToUse = "genWeight*weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.3)"
+	#~ cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20 && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && p4.M() > 20 && deltaR > 0.1 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
+	#~ cutToUse = "weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.1 && !((runNr == 194480 && lumiSec >= 9 && lumiSec <=16) || (runNr == 195552 && lumiSec >= 1392 && lumiSec <=1393) || (runNr == 196218 && lumiSec >= 738 && lumiSec <=738) || (runNr == 196239 && lumiSec >= 498 && lumiSec <=502) || (runNr == 199832 && lumiSec >= 58 && lumiSec <=62) || (runNr == 199832 && lumiSec >= 65 && lumiSec <=118) || (runNr == 199832 && lumiSec >= 121 && lumiSec <=139) || (runNr == 199832 && lumiSec >= 142 && lumiSec <=286) || (runNr == 199834 && lumiSec >= 1 && lumiSec <=9) || (runNr == 199834 && lumiSec >= 11 && lumiSec <=11) || (runNr == 199834 && lumiSec >= 14 && lumiSec <=18) || (runNr == 199834 && lumiSec >= 21 && lumiSec <=54) || (runNr == 199834 && lumiSec >= 56 && lumiSec <=57) || (runNr == 199834 && lumiSec >= 62 && lumiSec <=65) || (runNr == 199834 && lumiSec >= 69 && lumiSec <=284) || (runNr == 199834 && lumiSec >= 286 && lumiSec <=503) || (runNr == 199834 && lumiSec >= 505 && lumiSec <=942) || (runNr == 199967 && lumiSec >= 60 && lumiSec <=120) || (runNr == 199967 && lumiSec >= 122 && lumiSec <=170) || (runNr == 199967 && lumiSec >= 172 && lumiSec <=198) || (runNr == 200160 && lumiSec >= 52 && lumiSec <=68) || (runNr == 200161 && lumiSec >= 1 && lumiSec <=97) || (runNr == 200161 && lumiSec >= 100 && lumiSec <=112) || (runNr == 200174 && lumiSec >= 81 && lumiSec <=84) || (runNr == 200177 && lumiSec >= 1 && lumiSec <=56) || (runNr == 200178 && lumiSec >= 1 && lumiSec <=38) || (runNr == 200186 && lumiSec >= 1 && lumiSec <=3) || (runNr == 200186 && lumiSec >= 6 && lumiSec <=24) || (runNr == 203709 && lumiSec >= 1 && lumiSec <=121) || (runNr == 203742 && lumiSec >= 1 && lumiSec <=29) || (runNr == 203777 && lumiSec >= 103 && lumiSec <=113) || (runNr == 203830 && lumiSec >= 82 && lumiSec <=182) || (runNr == 203832 && lumiSec >= 1 && lumiSec <=11) || (runNr == 203833 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203833 && lumiSec >= 73 && lumiSec <=128) || (runNr == 203834 && lumiSec >= 1 && lumiSec <=40) || (runNr == 203835 && lumiSec >= 1 && lumiSec <=70) || (runNr == 203835 && lumiSec >= 73 && lumiSec <=358) || (runNr == 203853 && lumiSec >= 122 && lumiSec <=222) || (runNr == 208352 && lumiSec >= 1 && lumiSec <=15) || (runNr == 208352 && lumiSec >= 17 && lumiSec <=17) || (runNr == 208352 && lumiSec >= 19 && lumiSec <=19))"
+	#~ cut = " chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25))  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.1 && p4.M() > 20"
+	#~ cutToUse = "genWeight*weight*(chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25)) && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.1)"
+	#~ cut = " chargeProduct < 0 && miniIsoEffArea1 < 0.01 && miniIsoEffArea2 < 0.01 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.1 && p4.M() > 20"
+	cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.1 && p4.M() > 20"
+	cutToUse = "genWeight*weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.1)"
 	title = "Inclusive dilepton selection"
 	latex = "Inclusive dilepton selection"
 	labelRegion = "p_{T}^{l} > 20 GeV |#eta^{l}| < 2.4"
@@ -580,6 +594,14 @@ class theVariables:
 		nBins = 11
 		labelX = "n_{b-tagged jets}"
 		labelY = "Events"	
+	class nLightLeptons:
+		variable = "nLightLeptons"
+		name = "NLightLeptons"
+		xMin = -0.5
+		xMax = 6.5
+		nBins = 7
+		labelX = "n_{light leptons}"
+		labelY = "Events"	
 	class deltaR:
 		variable = "deltaR"
 		name = "DeltaR"
@@ -627,7 +649,8 @@ class Regions:
 		name = "SignalATLAS"
 		logY = False
 	class SignalInclusive(Region):
-		cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) && (%s)"%Region.cut
+		#~ cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) && (%s)"%Region.cut
+		cut = "(nJets >= 2 && met > 150) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Inclusive Signal Region"
 		titel = "Inclusive SR"
@@ -637,7 +660,8 @@ class Regions:
 
 
 	class SignalForward(Region):
-		cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		#~ cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		cut = "(nJets >= 2 && met > 150) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Forward Signal Region"
 		titel = "Forward SR"
@@ -658,7 +682,8 @@ class Regions:
 		trigEffs = triggerEffs.forward
 
 	class SignalCentral(Region):
-		cut = "((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		#~ cut = "((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		cut = "(nJets >= 2 && met > 150) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelSubRegion = "Central Signal Region"
 		labelRegion = Region.labelRegion.replace("< 2.4","< 1.4")
 		titel = "Central SR"
@@ -1226,6 +1251,8 @@ class thePlots:
 	nBJetsPlot = Plot(theVariables.nBJets,[])
 	nBJetsPlotLowMass = Plot(theVariables.nBJets,[theCuts.massCuts.edgeMass])
 	nBJetsPlotHighMass = Plot(theVariables.nBJets,[theCuts.massCuts.highMass])
+	
+	nLightLeptonsPlot = Plot(theVariables.nLightLeptons,[])
 
 	deltaRPlot = Plot(theVariables.deltaR,[])
 	deltaRPlotLowMass = Plot(theVariables.deltaR,[theCuts.massCuts.edgeMass])
@@ -1256,7 +1283,7 @@ class thePlots:
 	nBJetsPlotTrigger = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
 	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
 	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[5,20,120,"Events / 5 GeV",[]])
-	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[5,20,120,"Events / 5 GeV",[]])
+	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[5,20,120,"Events / 20 GeV",[]])
 	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30")
 	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30Single")
 	trailingPtPlotTriggerLeading30SingleOnZ = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30,theCuts.massCuts.looseZ],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30SingleOnZ")
@@ -1305,6 +1332,15 @@ class thePlots:
 	
 class Signals:
 	
+	class T6bbllslepton:
+		subprocesses = ["T6bbllslepton_msbottom_550_mneutralino_175"]
+		label 		 = "m_{#tilde{b}} = 550 GeV m_{#tilde{#chi_{0}^{2}}} = 175 GeV"
+		fillcolor    = ROOT.kWhite
+		linecolor    = ROOT.kRed-7
+		uncertainty	 = 0.
+		scaleFac     = 1.
+		additionalSelection = None 	
+		
 	class SimplifiedModel_mB_225_mn2_150_mn1_80:
 		subprocesses = ["SUSY_Simplified_Model_Madgraph_FastSim_T6bblledge_225_150_80_8TeV"]
 		label 		 = "m_{#tilde{b}} = 225 GeV m_{#tilde{#chi_{0}^{2}}} = 150 GeV"
@@ -1388,6 +1424,128 @@ class Signals:
 		additionalSelection = None
 		
 class Backgrounds:
+	
+	class T6bbllslepton:
+		subprocesses = ["T6bbllslepton_msbottom_550_mneutralino_250"]
+		label 		 = "m_{#tilde{b}} = 550 GeV m_{#tilde{#chi_{0}^{2}}} = 175 GeV"
+		fillcolor    = ROOT.kWhite
+		linecolor    = ROOT.kRed-7
+		uncertainty	 = 0.
+		scaleFac     = 1.
+		additionalSelection = None 
+	
+	class TTJets_Madgraph:
+		subprocesses = ["TTJets_Dilepton_Madgraph_MLM_Spring16_25ns_v1"]
+		#~ label = "Madgraph t#bar{t} PU20BX25"
+		label = "Madgraph t#bar{t} + jets"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TT_aMCatNLO:
+		subprocesses = ["TT_aMCatNLO_FXFX_Spring16_25ns"]
+		#~ label = "Madgraph t#bar{t} PU20BX25"
+		label = "aMC@NLO t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TTJets_aMCatNLO:
+		subprocesses = ["TTJets_aMCatNLO_FXFX_Spring16_25ns"]
+		#~ label = "Madgraph t#bar{t} PU20BX25"
+		label = "aMC@NLO t#bar{t} +jets"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+	class TT_Powheg:
+		subprocesses = ["TT_Dilepton_Powheg_Spring16_25ns"]
+		#~ label = "Madgraph t#bar{t} PU20BX25"
+		label = "Powheg t#bar{t}"
+		fillcolor = 855
+		linecolor = ROOT.kBlack
+		uncertainty = 0.07
+		scaleFac     = 1.0
+		additionalSelection = None
+
+	class DrellYan:
+		#~ subprocesses = ["ZJets_aMCatNLO_Spring16_25ns","AStar_aMCatNLO_Spring16_25ns"]
+		subprocesses = ["ZJets_Madgraph_Spring16_25ns","AStar_aMCatNLO_Spring16_25ns"]
+		label = "DY+jets"
+		fillcolor = 401
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)"
+		#~ additionalSelection = None
+	class DrellYanLO:
+		subprocesses = ["ZJets_Madgraph_Spring16_25ns","AStar_Madgraph_Spring16_25ns"]
+		label = "DY+jets"
+		fillcolor = 401
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)"
+		#~ additionalSelection = None
+	class WJets:
+		subprocesses = ["WJetsToLNu_aMCatNLO_Spring16_25ns"]
+		label = "W+jets"
+		fillcolor = 401
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = None
+	class DrellYanTauTau:
+		#~ subprocesses = ["ZJets_aMCatNLO_Spring16_25ns","AStar_aMCatNLO_Spring16_25ns"]
+		subprocesses = ["ZJets_Madgraph_Spring16_25ns","AStar_aMCatNLO_Spring16_25ns"]
+		label = "DY+jets (#tau#tau)"
+		fillcolor = ROOT.kOrange
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = "(abs(motherPdgId1) == 15 && abs(motherPdgId2) == 15)"
+	class SingleTop:
+		subprocesses = ["ST_sChannel_4f_aMCatNLO_Spring16_25ns","ST_antitop_tChannel_4f_Powheg_Spring16_25ns","ST_top_tChannel_4f_Powheg_Spring16_25ns","ST_antitop_tWChannel_5f_Powheg_Spring16_25ns","ST_top_tWChannel_5f_Powheg_Spring16_25ns"]
+		label = "Single t"
+		fillcolor = 854
+		linecolor = ROOT.kBlack
+		uncertainty = 0.06
+		scaleFac     = 1.
+		additionalSelection = None
+		
+	class Rare:
+		subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Spring16_25ns","TTZToQQ_aMCatNLO_FXFX_Spring16_25ns","TTWToLNu_aMCatNLO_FXFX_Spring16_25ns","TTG_aMCatNLO_FXFX_Spring16_25ns","WZZ_aMCatNLO_FXFX_Spring16_25ns","WWZ_aMCatNLO_FXFX_Spring16_25ns","ZZZ_aMCatNLO_FXFX_Spring16_25ns"]
+		#~ subprocesses = ["TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","4T_aMCatNLO_FXFX_Spring15_25ns","TZQ_LL_aMCatNLO_Spring15_25ns","WZZ_aMCatNLO_FXFX_Spring15_25ns","WWZ_aMCatNLO_FXFX_Spring15_25ns","ZZZ_aMCatNLO_FXFX_Spring15_25ns"]
+		label = "Other SM"
+		fillcolor = 630
+		linecolor = ROOT.kBlack
+		uncertainty = 0.5
+		scaleFac     = 1.	
+		additionalSelection = None			
+
+	class Diboson:
+		#~ subprocesses = ["ZZTo4L_Powheg_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns"]
+		subprocesses = ["WWTo2L2Nu_Powheg_Spring16_25ns","WWToLNuQQ_Powheg_Spring16_25ns","WZTo1L1Nu2Q_aMCatNLO_Spring16_25ns","WZTo1L3Nu_aMCatNLO_Spring16_25ns","WZTo3LNu_Powheg_Spring16_25ns","WZTo2L2Q_aMCatNLO_Spring16_25ns","ZZTo4Q_aMCatNLO_Spring16_25ns","ZZTo4L_Powheg_Spring16_25ns","ZZTo2Q2Nu_aMCatNLO_Spring16_25ns","ZZTo2L2Q_aMCatNLO_Spring16_25ns"]
+		label = "WW,WZ,ZZ"
+		fillcolor = 920
+		linecolor = ROOT.kBlack	
+		uncertainty = 0.04
+		scaleFac     = 1.	
+		additionalSelection = None	
+			
+class Backgrounds2015:
+	
+	class T6bbllslepton:
+		subprocesses = ["T6bbllslepton_msbottom_550_mneutralino_250"]
+		label 		 = "m_{#tilde{b}} = 550 GeV m_{#tilde{#chi_{0}^{2}}} = 175 GeV"
+		fillcolor    = ROOT.kWhite
+		linecolor    = ROOT.kRed-7
+		uncertainty	 = 0.
+		scaleFac     = 1.
+		additionalSelection = None 
 	
 	class TTJets_Madgraph:
 		subprocesses = ["TTJets_Dilepton_Madgraph_MLM_Spring15_25ns_v1"]

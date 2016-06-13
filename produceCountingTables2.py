@@ -71,7 +71,7 @@ def getDataCards(shelves,combination,selection):
 	
 	results = {"central":getResults(shelves,"central",selection),"forward":getResults(shelves,"forward",selection)}
 	for etaRegion in ["forward","central"]:
-		for region in ["lowMass","onZ","highMass"]:
+		for region in ["lowMass","belowZ","onZ","aboveZ","highMass"]:
 			theDict = {
 				"nObs": int(results[etaRegion]["%s%s"%(region,combination)]),
 				"uncertEM":  1.+results[etaRegion]["r%sOFErr"%(combination)] ,
@@ -1618,8 +1618,9 @@ def main():
 	produceFinalTable(countingShelves,"SF")
 	produceFinalTable(countingShelves,"EE")
 	produceFinalTable(countingShelves,"MM")
-	#~ 
-		#~ getDataCards(countingShelves,"SF",selection)
+	
+	for selection in ["default","geOneBTags","noBTags"]:
+		getDataCards(countingShelves,"SF",selection)
 		#~ getDataCards(countingShelves,"EE",selection)
 		#~ getDataCards(countingShelves,"MM",selection)
 	produceFlavSymTable(countingShelves)
