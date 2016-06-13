@@ -331,7 +331,7 @@ def makeOverviewPlot(countingShelves,region):
 	
 	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
 	#~ names = ["#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 0 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f"]
-	names = ["inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f"]
+	names = ["inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)"]
 	
 	for index, name in enumerate(names):
 	
@@ -689,7 +689,7 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	
 	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
 	#~ names = ["#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 0 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f"]
-	names = ["inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f","inclusive c","b-Veto c","b-Tagged c","inclusive f","b-Veto f","b-Tagged f"]
+	names = ["inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)"]
 	
 	for index, name in enumerate(names):
 	
@@ -852,7 +852,8 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	errGraph.SetFillColor(myColors["MyBlueOverview"])
 	errGraph.SetFillStyle(3001)
 
-	histFlavSym.SetLineColor(ROOT.kBlue+2)
+	histFlavSym.SetLineColor(ROOT.kBlue+3)
+	histFlavSym.SetFillColor(ROOT.kWhite)
 	histFlavSym.SetLineWidth(3)
 	
 	histOnlyDY.SetLineColor(ROOT.kGreen+2)
@@ -900,7 +901,7 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	latexCMS = ROOT.TLatex()
 	latexCMS.SetTextFont(61)
 	#latexCMS.SetTextAlign(31)
-	latexCMS.SetTextSize(0.06)
+	latexCMS.SetTextSize(0.075)
 	latexCMS.SetNDC(True)
 	latexCMSExtra = ROOT.TLatex()
 	latexCMSExtra.SetTextFont(52)
@@ -918,7 +919,7 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"2.3")
 	
 	cmsExtra = "Preliminary"
-	latexCMS.DrawLatex(0.19,0.88,"CMS")
+	latexCMS.DrawLatex(0.19,0.87,"CMS")
 	if "Simulation" in cmsExtra:
 		yLabelPos = 0.81	
 	else:
@@ -940,7 +941,7 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	#~ leg.AddEntry(errGraph,"Total uncert.", "f")	
 	
 	
-	leg1 = ROOT.TLegend(0.4, 0.85, 0.925, 0.95,"","brNDC")
+	leg1 = ROOT.TLegend(0.42, 0.84, 0.57, 0.93,"","brNDC")
 	leg1.SetNColumns(2)
 	leg1.SetFillColor(10)
 	leg1.SetLineColor(10)
@@ -948,20 +949,28 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	leg1.SetBorderSize(1)
 	
 	
-	leg1.AddEntry(histObs,"Data    ","pe")
-	leg1.AddEntry(histTotal, "Total backgrounds","l")
+	leg1.AddEntry(histObs,"  Data  ","pe")
 	
-	
-	leg2 = ROOT.TLegend(0.41, 0.75, 0.925, 0.85,"","brNDC")
-	leg2.SetNColumns(3)
+	leg2 = ROOT.TLegend(0.65, 0.84, 0.95, 0.93,"","brNDC")
+	leg2.SetNColumns(2)
 	leg2.SetFillColor(10)
 	leg2.SetLineColor(10)
 	leg2.SetShadowColor(0)
 	leg2.SetBorderSize(1)
 	
-	leg2.AddEntry(errGraph,"Total uncert. ", "f")	
-	leg2.AddEntry(histOnlyDY,"Z+jets  ", "f")
-	leg2.AddEntry(histOther,"Other SM", "f")
+	leg2.AddEntry(errGraph,"Total uncertainty  ", "f")
+	
+	
+	leg3 = ROOT.TLegend(0.41, 0.74, 0.925, 0.84,"","brNDC")
+	leg3.SetNColumns(3)
+	leg3.SetFillColor(10)
+	leg3.SetLineColor(10)
+	leg3.SetShadowColor(0)
+	leg3.SetBorderSize(1)
+	
+	leg3.AddEntry(histFlavSym,"Flavor symmetric", "f")	
+	leg3.AddEntry(histOnlyDY,"Z+jets  ", "f")
+	leg3.AddEntry(histOther,"Other SM", "f")
 	
 
 	#~ errGraph.Draw("same02")
@@ -973,6 +982,7 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	
 	leg1.Draw("same")
 	leg2.Draw("same")
+	leg3.Draw("same")
 
 	
 	
@@ -1032,11 +1042,11 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	label.SetTextColor(ROOT.kBlack)	
 	label.SetTextAngle(45)	
 	
-	label.DrawLatex(1,430,"low-mass")
+	label.DrawLatex(1.4,430,"low-mass")
 	label.DrawLatex(7,430,"below-Z")
 	label.DrawLatex(14,430,"on-Z")
 	label.DrawLatex(19,430,"above-Z")
-	label.DrawLatex(25,430,"high-mass")
+	label.DrawLatex(25.4,430,"high-mass")
 
 
 	plotPad.RedrawAxis()
@@ -1306,7 +1316,7 @@ def makeOverviewPlotWithOnZ():
 	#~ latexCMSExtra.DrawLatex(0.19,yLabelPos,"%s"%(cmsExtra))
 
 	
-	leg1 = ROOT.TLegend(0.4, 0.85, 0.925, 0.95,"","brNDC")
+	leg1 = ROOT.TLegend(0.42, 0.86, 0.57, 0.93,"","brNDC")
 	leg1.SetNColumns(2)
 	leg1.SetFillColor(10)
 	leg1.SetLineColor(10)
@@ -1314,20 +1324,28 @@ def makeOverviewPlotWithOnZ():
 	leg1.SetBorderSize(1)
 	
 	
-	leg1.AddEntry(histObs,"Data    ","pe")
-	leg1.AddEntry(histTotal, "Total backgrounds","l")
+	leg1.AddEntry(histObs,"  Data  ","pe")
 	
-	
-	leg2 = ROOT.TLegend(0.41, 0.75, 0.925, 0.85,"","brNDC")
-	leg2.SetNColumns(3)
+	leg2 = ROOT.TLegend(0.65, 0.86, 0.95, 0.93,"","brNDC")
+	leg2.SetNColumns(2)
 	leg2.SetFillColor(10)
 	leg2.SetLineColor(10)
 	leg2.SetShadowColor(0)
 	leg2.SetBorderSize(1)
 	
-	leg2.AddEntry(errGraph,"Total uncert. ", "f")	
-	leg2.AddEntry(histDY,"Z+jets  ", "f")
-	leg2.AddEntry(histMC,"Other SM", "f")
+	leg2.AddEntry(errGraph,"Total uncertainty  ", "f")
+	
+	
+	leg3 = ROOT.TLegend(0.41, 0.78, 0.925, 0.86,"","brNDC")
+	leg3.SetNColumns(3)
+	leg3.SetFillColor(10)
+	leg3.SetLineColor(10)
+	leg3.SetShadowColor(0)
+	leg3.SetBorderSize(1)
+	
+	leg3.AddEntry(histFlavSym,"Flavor symmetric", "f")	
+	leg3.AddEntry(histDY,"Z+jets  ", "f")
+	leg3.AddEntry(histMC,"Other SM", "f")
 	
 	
 
@@ -1342,6 +1360,7 @@ def makeOverviewPlotWithOnZ():
 	
 	leg1.Draw("same")
 	leg2.Draw("same")
+	leg3.Draw("same")
 
 	
 	
