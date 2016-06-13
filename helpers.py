@@ -268,7 +268,7 @@ class Process:
                 self.histo.SetLineColor(process.linecolor)
                 self.histo.SetFillColor(process.fillcolor)
                 self.uncertainty = process.uncertainty
-                self.scaleFac = 1.
+                self.scaleFac = process.scaleFac
                 self.additionalSelection = process.additionalSelection
                 self.normalized = normalized
                 for sample in self.samples:
@@ -323,7 +323,7 @@ class Process:
                                                 #~ print self.xsecs[index]
                                                 #~ print self.nEvents[index]
                                                 #~ print self.negWeightFractions[index]         
-                                                tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/(self.nEvents[index]*(1-2*self.negWeightFractions[index]))))
+                                                tempHist.Scale((self.scaleFac*lumi*scalefacTree1*self.xsecs[index]/(self.nEvents[index]*(1-2*self.negWeightFractions[index]))))
                                         self.histo.Add(tempHist.Clone())
 
                         if tree2 != "None":             
@@ -342,7 +342,7 @@ class Process:
                                                 
 
                                                 if self.normalized:
-                                                        tempHist.Scale((lumi*self.xsecs[index]*scalefacTree2/(self.nEvents[index]*(1-2*self.negWeightFractions[index]))))
+                                                        tempHist.Scale((self.scaleFac*lumi*self.xsecs[index]*scalefacTree2/(self.nEvents[index]*(1-2*self.negWeightFractions[index]))))
 
                                                 self.histo.Add(tempHist.Clone())
                 self.histo.SetFillColor(self.theColor)
