@@ -111,12 +111,138 @@ class runRanges:
 		runCut = "&& ( (runNr >= 271036 && runNr <= 273730) || runNr ==1)"
 		label = "Run2016B_Unblinded"
 
-	class Run2016B:
+	class Run2016B_600_800pb:
+		lumi = 214.9
+		printval = "0.21"
+		lumiErr = 0.045*214.9
+		runCut = "&& ( (runNr > 273730 && runNr <= 274240) || runNr ==1)"
+		label = "Run2016B_600_800pb"
+
+	class Run2016B_274241_274286:
+		lumi = 400.
+		printval = "0.4"
+		lumiErr = 0.045*400.
+		runCut = "&& ( (runNr >= 274241 && runNr <= 274286) || runNr ==1)"
+		label = "Run2016B_274241_274286"
+
+	class Run2016B_274314_274338:
+		lumi = 400.
+		printval = "0.4"
+		lumiErr = 0.045*400.
+		runCut = "&& ( (runNr >= 274314 && runNr <= 274338) || runNr ==1)"
+		label = "Run2016B_274314_274338"
+
+	class Run2016B_274339_274421:
+		lumi = 400.
+		printval = "0.4"
+		lumiErr = 0.045*400.
+		runCut = "&& ( (runNr >= 274339 && runNr <= 274421) || runNr ==1)"
+		label = "Run2016B_274339_274421"
+		
+	class Run2016B_274422_274443:
+		lumi = 530.
+		printval = "0.53"
+		lumiErr = 0.045*530.
+		runCut = "&& ( (runNr >= 274422 && runNr <= 274443) || runNr ==1)"
+		label = "Run2016B_274422_274443"
+
+	class Run2016B_800pb:
 		lumi = 804.2
-		printval = "0.59"
+		printval = "0.80"
 		lumiErr = 0.045*804.2
 		runCut = "&& ( (runNr >= 271036 && runNr <= 274240) || runNr ==1)"
-		label = "Run2016B"
+		label = "Run2016B_800pb"
+
+	class Run2016B_2fb:
+		lumi = 2070.
+		printval = "2.07"
+		lumiErr = 0.045*2070.
+		runCut = "&& ( (runNr >= 271036 && runNr <= 274421) || runNr ==1)"
+		label = "Run2016B_2fb"
+
+	class Run2016B_2_6fb:
+		lumi = 2600.
+		printval = "2.6"
+		lumiErr = 0.045*2600.
+		runCut = "&& ( (runNr >= 271036 && runNr <= 274443) || runNr ==1)"
+		label = "Run2016B_2_6fb"
+
+	class Run2016B_1st_fb:
+		lumi = 990.
+		printval = "1.0"
+		lumiErr = 0.045*990.
+		runCut = "&& ( (runNr >= 271036 && runNr < 274250) || runNr ==1)"
+		label = "Run2016B_1st_fb"
+
+	class Run2016B_2nd_fb:
+		lumi = 1050.
+		printval = "1.1"
+		lumiErr = 0.045*1050.
+		runCut = "&& ( (runNr >= 274250 && runNr <= 274388) || runNr ==1)"
+		label = "Run2016B_2nd_fb"
+
+	class Run2016B_3rd_fb:
+		lumi = 960.
+		printval = "1.0"
+		lumiErr = 0.045*960.
+		runCut = "&& ( (runNr > 274388 && runNr <= 274971) || runNr ==1)"
+		label = "Run2016B_3rd_fb"
+
+	class Run2016B_4th_fb:
+		lumi = 1010.
+		printval = "1.0"
+		lumiErr = 0.045*1010.
+		runCut = "&& ( (runNr > 274971 && runNr <= 275125) || runNr ==1)"
+		label = "Run2016B_4th_fb"
+
+	class Run2016B_4fb:
+		lumi = 3990.
+		printval = "4.0"
+		lumiErr = 0.045*3990.
+		runCut = "&& ( (runNr >= 271036 && runNr <= 275125) || runNr ==1)"
+		label = "Run2016B_4fb"
+
+	class Run2016_6_3fb:
+		lumi = 6260.
+		printval = "6.3"
+		lumiErr = 0.045*6260.
+		runCut = "&& ( (runNr >= 271036 && runNr <= 275783) || runNr ==1)"
+		label = "Run2016_6_3fb"
+
+	class Run2016_12_9fb:
+		lumi = 12900.
+		printval = "12.9"
+		lumiErr = 0.045*12900.
+		runCut = "&& ( (runNr >= 271036 && runNr <= 276811) || runNr ==1)"
+		label = "Run2016_12_9fb"
+
+	class Run2016_7_7fb:
+		lumi = 7650.
+		printval = "7.7"
+		lumiErr = 0.045*7650.
+		runCut = "&& ( (runNr >= 271036 && runNr <= 276097) || runNr ==1)"
+		label = "Run2016_7_7fb"
+
+	class Run2016_2_3fb_above_4fb:
+		lumi = 2270.
+		printval = "2.3"
+		lumiErr = 0.045*2270.
+		runCut = "&& ( (runNr > 275125 && runNr <= 275783) || runNr ==1)"
+		label = "Run2016_2_3fb_above_4fb"
+
+	class Run2016_above_4fb:
+		lumi = 3660.
+		printval = "3.7"
+		lumiErr = 0.045*3660.
+		runCut = "&& ( (runNr > 275125 && runNr <= 276097) || runNr ==1)"
+		label = "Run2016_above_4fb"
+
+	class Run2016_last_1_4fb:
+		lumi = 1390.
+		printval = "1.4"
+		lumiErr = 0.045*1390.
+		runCut = "&& ( (runNr > 275783 && runNr <= 276097) || runNr ==1)"
+		label = "Run2016_last_1_4fb"
 
 		
 class Region:
@@ -125,8 +251,10 @@ class Region:
 	#~ cut = " chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25))  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.1 && p4.M() > 20"
 	#~ cutToUse = "genWeight*weight*(chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25)) && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.1)"
 	#~ cut = " chargeProduct < 0 && miniIsoEffArea1 < 0.01 && miniIsoEffArea2 < 0.01 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.1 && p4.M() > 20"
-	cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.1 && p4.M() > 20"
-	cutToUse = "genWeight*weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.1)"
+	#~ cut = " chargeProduct < 0 && pt1 > 20 && pt2 > 20  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.1 && p4.M() > 20"
+	cut = " chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25))  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && deltaR > 0.1 && p4.M() > 20"
+	#~ cutToUse = "genWeight*weight*(chargeProduct < 0 && pt1 > 20 && pt2 > 20 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.1)"
+	cutToUse = "genWeight*weight*(chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25)) && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.1)"
 	title = "Inclusive dilepton selection"
 	latex = "Inclusive dilepton selection"
 	labelRegion = "p_{T}^{l} > 20 GeV |#eta^{l}| < 2.4"
@@ -138,6 +266,32 @@ class Region:
 	
 class theCuts:
 	class massCuts:
+		class default:
+			cut = "p4.M() > 20"
+			label = "m_{ll} = 20 GeV"
+			name = "fullMassRange"
+		class edgeMass:
+			cut = "p4.M()> 20 && p4.M() < 70"
+			label = "20 GeV < m_{ll} < 70 GeV"
+			name = "edgeMass"
+		class lowMass:
+			cut = "p4.M()> 20 && p4.M() < 81"
+			label = "20 GeV < m_{ll} < 81 GeV"
+			name = "lowMass"
+		class zMass:
+			cut = "p4.M()> 81 && p4.M() < 101"
+			label = "81 GeV < m_{ll} < 101 GeV"
+			name = "zMass"
+		class looseZ:
+			cut = "p4.M()> 70 && p4.M() < 110"
+			label = "70 GeV < m_{ll} < 110 GeV"
+			name = "looseZ"
+		class highMass:
+			cut = "p4.M() > 101"
+			label = "m_{ll} > 1101 GeV"
+			name = "highMass"
+			
+	class massCutsOld:
 		class default:
 			cut = "p4.M() > 20"
 			label = "m_{ll} = 20 GeV"
@@ -408,6 +562,16 @@ class theCuts:
 			label = "N_{Vtx} #geq 17"
 			name = "HighPU"
 
+	class nLLCuts:
+		class lowNLL:
+			cut = "nLL < 21"
+			label = "NLL < 21"
+			name = "LowNLL"
+		class highNLL:
+			cut = "nLL >= 21"
+			label = "NLL #geq 21"
+			name = "HighNLL"
+
 
 class theVariables:
 	class Eta1:
@@ -554,22 +718,32 @@ class theVariables:
 		nBins = 20
 		labelX = "H_{T} [GeV]"
 		labelY = "Events / 40 GeV"	
+	#~ class Mll:
+		#~ variable = "p4.M()"
+		#~ #variable = "mll"
+		#~ name = "Mll"
+		#~ xMin = 20
+		#~ xMax = 120
+		#~ nBins = 20
+		#~ labelX = "m_{ll} [GeV]"
+		#~ labelY = "Events / 5 GeV"	
 	class Mll:
 		variable = "p4.M()"
+		##~ variable = "mll"
 		name = "Mll"
 		xMin = 20
 		xMax = 300
 		nBins = 28
 		labelX = "m_{ll} [GeV]"
 		labelY = "Events / 10 GeV"	
-	#~ class Mll:
-		#~ variable = "p4.M()"
-		#~ name = "Mll"
-		#~ xMin = 20
-		#~ xMax = 305
-		#~ nBins = 57
-		#~ labelX = "m_{ll} [GeV]"
-		#~ labelY = "Events / 5 GeV"	
+	class nLL:
+		variable = "nLL"
+		name = "NLL"
+		xMin = 10
+		xMax = 40
+		nBins = 30
+		labelX = "NLL"
+		labelY = "Events"	
 	class Ptll:
 		variable = "p4.Pt()"
 		name = "Ptll"
@@ -578,6 +752,14 @@ class theVariables:
 		nBins = 40
 		labelX = "p_{T}^{ll} [GeV]"
 		labelY = "Events / 10 GeV"	
+	class sumMlb:
+		variable = "sumMlb"
+		name = "sumMlb"
+		xMin = 0
+		xMax = 800
+		nBins = 40
+		labelX = "#sum mlb [GeV]"
+		labelY = "Events / 20 GeV"	
 	class nJets:
 		variable = "nJets"
 		name = "NJets"
@@ -609,6 +791,14 @@ class theVariables:
 		xMax = 4
 		nBins = 20
 		labelX = "#Delta R_{ll}"
+		labelY = "Events / 0.2"	
+	class deltaPhi:
+		variable = "abs(deltaPhi)"
+		name = "DeltaPhi"
+		xMin = 0
+		xMax = 3.2
+		nBins = 16
+		labelX = "#Delta #phi_{ll}"
 		labelY = "Events / 0.2"	
 	class nVtx:
 		variable = "nVertices"
@@ -648,9 +838,18 @@ class Regions:
 		latex = "ATLAS Signal Region"
 		name = "SignalATLAS"
 		logY = False
+		
 	class SignalInclusive(Region):
-		#~ cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) && (%s)"%Region.cut
 		cut = "(nJets >= 2 && met > 150) && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "Inclusive Signal Region"
+		titel = "Inclusive SR"
+		latex = "Inclusive Signal Region"
+		name = "SignalInclusive"
+		logY = False
+		
+	class SignalInclusiveOld(Region):
+		cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Inclusive Signal Region"
 		titel = "Inclusive SR"
@@ -660,8 +859,17 @@ class Regions:
 
 
 	class SignalForward(Region):
-		#~ cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		cut = "(nJets >= 2 && met > 150) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "Forward Signal Region"
+		titel = "Forward SR"
+		latex = "Forward Signal Region"
+		name = "SignalForward"
+		logY = False
+		trigEffs = triggerEffs.forward	
+			
+	class SignalForwardOld(Region):
+		cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Forward Signal Region"
 		titel = "Forward SR"
@@ -682,8 +890,17 @@ class Regions:
 		trigEffs = triggerEffs.forward
 
 	class SignalCentral(Region):
-		#~ cut = "((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		cut = "(nJets >= 2 && met > 150) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		labelSubRegion = "Central Signal Region"
+		labelRegion = Region.labelRegion.replace("< 2.4","< 1.4")
+		titel = "Central SR"
+		latex = "Central Signal Region"
+		name = "SignalCentral"
+		trigEffs = triggerEffs.central
+		logY = False
+
+	class SignalCentralOld(Region):
+		cut = "((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelSubRegion = "Central Signal Region"
 		labelRegion = Region.labelRegion.replace("< 2.4","< 1.4")
 		titel = "Central SR"
@@ -694,6 +911,36 @@ class Regions:
 
 		
 	class Control(Region):
+		cut = "nJets == 2  && 100 <  met && met < 150 && (%s)"%Region.cut
+		#~ cut = "nJets >= 2  && 100 < met && met < 150 && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "Control Region"		
+		titel = "CR"
+		latex = "Control Region"
+		name = "Control"
+		logY = True
+	class ControlForward(Region):
+		cut = "nJets == 2  && 100 <  met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		#~ cut = "nJets >= 2  && 100 < met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "Control Region Forward"		
+		titel = "CR"
+		latex = "Control Region Forward"
+		name = "ControlForward"
+		logY = True
+		trigEffs = triggerEffs.forward
+	class ControlCentral(Region):
+		cut = "nJets == 2  && 100 <  met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		#~ cut = "nJets >= 2  && 100 < met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "Control Region Central"		
+		titel = "CR"
+		latex = "Control Region Central"
+		name = "ControlCentral"
+		logY = True
+		trigEffs = triggerEffs.central		
+		
+	class ControlOld(Region):
 		#~ cut = "nJets == 2  && 100 <  met && met < 150 && (%s)"%Region.cut
 		cut = "nJets == 2  && 100 < met && met < 150 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
@@ -702,7 +949,7 @@ class Regions:
 		latex = "Control Region"
 		name = "Control"
 		logY = True
-	class ControlForward(Region):
+	class ControlForwardOld(Region):
 		#~ cut = "nJets == 2  && 100 <  met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		cut = "nJets == 2  && 100 < met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
@@ -712,7 +959,7 @@ class Regions:
 		name = "ControlForward"
 		logY = True
 		trigEffs = triggerEffs.forward
-	class ControlCentral(Region):
+	class ControlCentralOld(Region):
 		#~ cut = "nJets == 2  && 100 <  met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		cut = "nJets == 2  && 100 < met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
@@ -782,7 +1029,8 @@ class Regions:
 		logY = True
 		
 	class InclusiveBlinded(Region):
-		cut = "!((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && (%s)"%Region.cut
+		#~ cut = "!((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && (%s)"%Region.cut
+		cut = "(!(nJets >= 2 && met > 150) && (%s))"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = ""			
 		titel = "InclusiveBlinded"
@@ -1113,27 +1361,39 @@ class Plot:
 						nJetsCutEqual.append(cut)
 				for cut in nJetsCutUp:
 					if "weight" and "(((" in cut:
-						self.cuts = self.cuts.replace(cut,"weight*(((")
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*(((")
+					elif "weight" and "((!(" in cut:
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*((!(")
+					elif "weight" and "((" in cut:
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*((")
 					elif "weight" in cut:
-						self.cuts = self.cuts.replace(cut,"weight*(")
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*(")
 					elif "(" in cut:
 						self.cuts = self.cuts.replace(cut.split("(")[1],"")
 					else:
 						self.cuts = self.cuts.replace(cut,"")
 				for cut in nJetsCutDown:
 					if "weight" and "(((" in cut:
-						self.cuts = self.cuts.replace(cut,"weight*(((")
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*(((")
+					elif "weight" and "((!(" in cut:
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*((!(")
+					elif "weight" and "((" in cut:
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*((")
 					elif "weight" in cut:
-						self.cuts = self.cuts.replace(cut,"weight*(")
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*(")
 					elif "(" in cut:
 						self.cuts = self.cuts.replace(cut.split("(")[1],"")
 					else:
 						self.cuts = self.cuts.replace(cut,"")
 				for cut in nJetsCutEqual:
 					if "weight" and "(((" in cut:
-						self.cuts = self.cuts.replace(cut,"weight*(((")
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*(((")
+					elif "weight" and "((!(" in cut:
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*((!(")
+					elif "weight" and "((" in cut:
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*((")
 					elif "weight" in cut:
-						self.cuts = self.cuts.replace(cut,"weight*(")
+						self.cuts = self.cuts.replace(cut,"genWeight*weight*(")
 					elif "(" in cut:
 						self.cuts = self.cuts.replace(cut.split("(")[1],"")
 					else:
@@ -1152,7 +1412,8 @@ class thePlots:
 
 	metPlot = Plot(theVariables.Met,[])
 	rawMetPlot = Plot(theVariables.RawMet,[])
-	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
+	metPlotEdgeMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
+	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.lowMass])
 	metPlotZMass = Plot(theVariables.Met,[theCuts.massCuts.zMass])
 	metPlotHighMass = Plot(theVariables.Met,[theCuts.massCuts.highMass])
 	metPlotLowPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.lowPU])
@@ -1182,7 +1443,8 @@ class thePlots:
 	
 	metPlotNoClean = Plot(theVariables.Met,[],binning = [15,0,150,"Events / 10 Gev",[]],additionalName = "NoClean",DoCleanCuts=False)
 	
-	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
+	metPlotEdgeMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
+	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.lowMass])
 	metPlotOnZ = Plot(theVariables.Met,[theCuts.massCuts.zMass])
 	metPlotLowPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.lowPU,theCuts.massCuts.edgeMass])
 	metPlotMidPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.midPU,theCuts.massCuts.edgeMass])
@@ -1202,10 +1464,12 @@ class thePlots:
 	metPlotType1 = Plot(theVariables.Type1Met,[theCuts.massCuts.edgeMass])
 	metPlotCalo = Plot(theVariables.CaloMet,[theCuts.massCuts.edgeMass])
 	metPlotTc = Plot(theVariables.TcMet,[theCuts.massCuts.edgeMass])
-	mhtPlotLowMass = Plot(theVariables.MHT,[theCuts.massCuts.edgeMass])		
+	mhtPlotEdgeMass = Plot(theVariables.MHT,[theCuts.massCuts.edgeMass])		
+	mhtPlotLowMass = Plot(theVariables.MHT,[theCuts.massCuts.lowMass])		
 	
 	htPlot = Plot(theVariables.HT,[])		
-	htPlotLowMass = Plot(theVariables.HT,[theCuts.massCuts.edgeMass])		
+	htPlotEdgeMass = Plot(theVariables.HT,[theCuts.massCuts.edgeMass])		
+	htPlotLowMass = Plot(theVariables.HT,[theCuts.massCuts.lowMass])		
 	htPlotHighMass = Plot(theVariables.HT,[theCuts.massCuts.highMass])	
 	htPlotUntertaintyHighMET = Plot(theVariables.HT,[theCuts.metCuts.met150])	
 	htPlotUntertaintyLowMET = Plot(theVariables.HT,[theCuts.metCuts.met100])
@@ -1222,12 +1486,18 @@ class thePlots:
 	trailingPtPlot = Plot(theVariables.TrailingPt,[])
 	trailingPtPlot100 = Plot(theVariables.TrailingPt,[],binning = [16,20,100,"Events / 5 Gev",[]],additionalName = "range100")
 	leadingPtPlot = Plot(theVariables.LeadingPt,[])
-	trailingPtPlotLowMass = Plot(theVariables.TrailingPt,[theCuts.massCuts.edgeMass])
-	leadingPtPlotLowMass = Plot(theVariables.LeadingPt,[theCuts.massCuts.edgeMass])
+	trailingPtPlotEdgeMass = Plot(theVariables.TrailingPt,[theCuts.massCuts.edgeMass])
+	trailingPtPlotLowMass = Plot(theVariables.TrailingPt,[theCuts.massCuts.lowMass])
+	leadingPtPlotEdgeMass = Plot(theVariables.LeadingPt,[theCuts.massCuts.edgeMass])
+	leadingPtPlotLowMass = Plot(theVariables.LeadingPt,[theCuts.massCuts.lowMass])
 	trailingPtPlotHighMass = Plot(theVariables.TrailingPt,[theCuts.massCuts.highMass])
 	leadingPtPlotHighMass = Plot(theVariables.LeadingPt,[theCuts.massCuts.highMass])
 
 	trailingIsoPlot = Plot(theVariables.TrailingIso,[])
+	
+	nLLPlot = Plot(theVariables.nLL,[])
+	nLLPlotLowMll = Plot(theVariables.nLL,[theCuts.massCuts.lowMass])
+	nLLPlotHighMll = Plot(theVariables.nLL,[theCuts.massCuts.highMass])
 
 
 
@@ -1237,30 +1507,41 @@ class thePlots:
 	mllPlotGeOneBTags = Plot(theVariables.Mll,[theCuts.bTags.geOneBTags])
 	mllPlotNoBTags = Plot(theVariables.Mll,[theCuts.bTags.noBTags])
 	mllPlotGeTwoBTags = Plot(theVariables.Mll,[theCuts.bTags.geTwoBTags])
-	mllPlotLowMass = Plot(theVariables.Mll,[theCuts.massCuts.edgeMass])
+	mllPlotEdgeMass = Plot(theVariables.Mll,[theCuts.massCuts.edgeMass])
+	mllPlotLowMass = Plot(theVariables.Mll,[theCuts.massCuts.lowMass])
 	mllPlotHighMass = Plot(theVariables.Mll,[theCuts.massCuts.highMass])
 	mllPlotOnZ = Plot(theVariables.Mll,[theCuts.massCuts.zMass])
 	mllPlotZpeak = Plot(theVariables.Mll,[],binning = [30,60,120,"Events / 2 Gev",[]],additionalName = "ZPeak")
+	mllPlotLowNLL = Plot(theVariables.Mll,[theCuts.nLLCuts.lowNLL])
+	mllPlotHighNLL = Plot(theVariables.Mll,[theCuts.nLLCuts.highNLL])
 
 	nJetsPlot = Plot(theVariables.nJets,[])
 	leadingJetPtPlot = Plot(theVariables.leadingJetPt,[])
 	subleadingJetPtPlot = Plot(theVariables.subleadingJetPt,[])
-	nJetsPlotLowMass = Plot(theVariables.nJets,[theCuts.massCuts.edgeMass])
+	nJetsPlotEdgeMass = Plot(theVariables.nJets,[theCuts.massCuts.edgeMass])
+	nJetsPlotLowMass = Plot(theVariables.nJets,[theCuts.massCuts.lowMass])
 	nJetsPlotHighMass = Plot(theVariables.nJets,[theCuts.massCuts.highMass])
 
 	nBJetsPlot = Plot(theVariables.nBJets,[])
-	nBJetsPlotLowMass = Plot(theVariables.nBJets,[theCuts.massCuts.edgeMass])
+	nBJetsPlotEdgeMass = Plot(theVariables.nBJets,[theCuts.massCuts.edgeMass])
+	nBJetsPlotLowMass = Plot(theVariables.nBJets,[theCuts.massCuts.lowMass])
 	nBJetsPlotHighMass = Plot(theVariables.nBJets,[theCuts.massCuts.highMass])
 	
 	nLightLeptonsPlot = Plot(theVariables.nLightLeptons,[])
 
 	deltaRPlot = Plot(theVariables.deltaR,[])
-	deltaRPlotLowMass = Plot(theVariables.deltaR,[theCuts.massCuts.edgeMass])
+	deltaRPlotEdgeMass = Plot(theVariables.deltaR,[theCuts.massCuts.edgeMass])
+	deltaRPlotLowMass = Plot(theVariables.deltaR,[theCuts.massCuts.lowMass])
 	deltaRPlotHighMass = Plot(theVariables.deltaR,[theCuts.massCuts.highMass])
 
 	ptllPlot = Plot(theVariables.Ptll,[])
-	ptllPlotLowMass = Plot(theVariables.Ptll,[theCuts.massCuts.edgeMass])
+	ptllPlotEdgeMass = Plot(theVariables.Ptll,[theCuts.massCuts.edgeMass])
+	ptllPlotLowMass = Plot(theVariables.Ptll,[theCuts.massCuts.lowMass])
 	ptllPlotHighMass = Plot(theVariables.Ptll,[theCuts.massCuts.highMass])
+	
+	sumMlbPlot = Plot(theVariables.sumMlb,[])
+	
+	deltaPhiPlot = Plot(theVariables.deltaPhi,[])
 
 	nVtxPlot = Plot(theVariables.nVtx,[],binning=[40,0,40,"Events",[]])				
 
@@ -1282,8 +1563,8 @@ class thePlots:
 	nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[6,-0.5,11.5,"Events",[]])
 	nBJetsPlotTrigger = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
 	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
-	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[5,20,120,"Events / 5 GeV",[]])
-	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[5,20,120,"Events / 20 GeV",[]])
+	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[7,20,300,"Events / 40 GeV",[]])
+	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[7,20,300,"Events / 40 GeV",[]])
 	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30")
 	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30Single")
 	trailingPtPlotTriggerLeading30SingleOnZ = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30,theCuts.massCuts.looseZ],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30SingleOnZ")
@@ -1293,7 +1574,14 @@ class thePlots:
 	htPlotTrigger = Plot(theVariables.HT,[],binning=[10,200,1000,"Events / 40 GeV",[]])				
 	metPlotTrigger = Plot(theVariables.Met,[],binning=[4,0,200,"Events / 20 GeV",[]])				
 	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[8,0,32,"Events / 2",[]])				
-	tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[6,0,2.4,"Events / 0.3",[]])
+	#~ tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[6,0,2.4,"Events / 0.3",[]])
+	#~ leadingEtaPlotTrigger = Plot(theVariables.AbsLeadingEta,[],binning=[6,0,2.4,"Events / 0.3",[]])
+	tralingEtaPlotTrigger = Plot(theVariables.TrailingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])
+	leadingEtaPlotTrigger = Plot(theVariables.LeadingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])
+	
+	deltaPhiPlotTrigger = Plot(theVariables.deltaPhi,[],binning=[8,0,3.2,"Events / 0.4",[]])				
+	ptllPlotTrigger = Plot(theVariables.Ptll,[],binning=[8,0,320,"Events / 40 GeV",[]])			
+	sumMlbPlotTrigger = Plot(theVariables.sumMlb,[],binning=[10,0,500,"Events / 50 GeV",[]])	
 
 			
 	### plots for isolation efficiency measurements
@@ -1316,7 +1604,14 @@ class thePlots:
 	metPlotRMuE = Plot(theVariables.Met,[],binning=[-1,0,250,"Events / 20 GeV",range(0,100,10)+range(100,150,25)+range(150,250,50)])				
 	nVtxPlotRMuE = Plot(theVariables.nVtx,[],binning=[40,0,40,"Events / 1",[]])				
 	tralingEtaPlotRMuE = Plot(theVariables.AbsTrailingEta,[],binning=[-1,0,2.55,"Events / 0.3",[i*0.14 for i in range(0,10)]+[i*0.2+1.4 for i in range(0,6)]])				
+	leadingEtaPlotRMuE = Plot(theVariables.AbsLeadingEta,[],binning=[-1,0,2.55,"Events / 0.3",[i*0.14 for i in range(0,10)]+[i*0.2+1.4 for i in range(0,6)]])				
+	#~ tralingEtaPlotRMuE = Plot(theVariables.TrailingEta,[],binning=[-1,-2.55,2.55,"Events / 0.3",[i*0.2-2.5 for i in range(0,6)]+[i*0.14-1.4 for i in range(0,20)]+[i*0.2+1.4 for i in range(0,6)]])				
+	#~ leadingEtaPlotRMuE = Plot(theVariables.LeadingEta,[],binning=[-1,-2.55,2.55,"Events / 0.3",[i*0.2-2.5 for i in range(0,6)]+[i*0.14-1.4 for i in range(0,20)]+[i*0.2+1.4 for i in range(0,6)]])				
 	deltaRPlotRMuE = Plot(theVariables.deltaR,[],binning=[-1,0,5.5,"Events / 0.3",[0.2*i for i in range(10)]+[2+0.5*i for i in range(7)]])				
+	#~ deltaPhiPlotRMuE = Plot(theVariables.deltaPhi,[],binning=[-1,0,3.2,"Events / 0.2",[0.2*i for i in range(10)]+[2+0.3*i for i in range(4)]])				
+	deltaPhiPlotRMuE = Plot(theVariables.deltaPhi,[],binning=[16,0,3.2,"Events / 0.2",[]])				
+	ptllPlotRMuE = Plot(theVariables.Ptll,[],binning=[-1,0,250,"Events / 20 GeV",range(0,100,10)+range(100,150,25)+range(150,250,50)])			
+	sumMlbPlotRMuE = Plot(theVariables.sumMlb,[],binning=[-1,0,500,"Events / 20 GeV",range(0,300,25)+range(300,500,50)])			
 			
 								
 	mllPlotRMuESignal = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])
@@ -1435,7 +1730,7 @@ class Backgrounds:
 		additionalSelection = None 
 	
 	class TTJets_Madgraph:
-		subprocesses = ["TTJets_Dilepton_Madgraph_MLM_Spring16_25ns_v1"]
+		subprocesses = ["TTJets_Dilepton_Madgraph_MLM_Spring16_25ns"]
 		#~ label = "Madgraph t#bar{t} PU20BX25"
 		label = "Madgraph t#bar{t} + jets"
 		fillcolor = 855
@@ -1499,8 +1794,8 @@ class Backgrounds:
 		scaleFac     = 1.	
 		additionalSelection = None
 	class DrellYanTauTau:
-		#~ subprocesses = ["ZJets_aMCatNLO_Spring16_25ns","AStar_aMCatNLO_Spring16_25ns"]
-		subprocesses = ["ZJets_Madgraph_Spring16_25ns","AStar_aMCatNLO_Spring16_25ns"]
+		subprocesses = ["ZJets_aMCatNLO_Spring16_25ns","AStar_aMCatNLO_Spring16_25ns"]
+		#~ subprocesses = ["ZJets_Madgraph_Spring16_25ns","AStar_aMCatNLO_Spring16_25ns"]
 		label = "DY+jets (#tau#tau)"
 		fillcolor = ROOT.kOrange
 		linecolor = ROOT.kBlack	
@@ -1508,7 +1803,8 @@ class Backgrounds:
 		scaleFac     = 1.	
 		additionalSelection = "(abs(motherPdgId1) == 15 && abs(motherPdgId2) == 15)"
 	class SingleTop:
-		subprocesses = ["ST_sChannel_4f_aMCatNLO_Spring16_25ns","ST_antitop_tChannel_4f_Powheg_Spring16_25ns","ST_top_tChannel_4f_Powheg_Spring16_25ns","ST_antitop_tWChannel_5f_Powheg_Spring16_25ns","ST_top_tWChannel_5f_Powheg_Spring16_25ns"]
+		#~ subprocesses = ["ST_sChannel_4f_aMCatNLO_Spring16_25ns","ST_antitop_tChannel_4f_Powheg_Spring16_25ns","ST_top_tChannel_4f_Powheg_Spring16_25ns","ST_antitop_tWChannel_5f_Powheg_Spring16_25ns","ST_top_tWChannel_5f_Powheg_Spring16_25ns"]
+		subprocesses = ["ST_sChannel_4f_aMCatNLO_Spring16_25ns","ST_antitop_tChannel_4f_Powheg_Spring16_25ns","ST_antitop_tWChannel_5f_Powheg_Spring16_25ns","ST_top_tWChannel_5f_Powheg_Spring16_25ns"]
 		label = "Single t"
 		fillcolor = 854
 		linecolor = ROOT.kBlack

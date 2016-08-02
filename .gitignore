@@ -17,3 +17,6 @@ syntax: glob
 *.so
 locations.py
 
+shelves/*
+dataCards/*
+

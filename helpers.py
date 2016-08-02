@@ -1,7 +1,7 @@
 import ROOT
 import gc
 from array import array
-from ROOT import TCanvas, TPad, TH1F, TH2F, TH1I, THStack, TLegend, TMath
+from ROOT import TCanvas, TPad, TH1F, TH2F, TH1I, THStack, TLegend, TMath, TFile
 from defs import defineMyColors
 from defs import myColors
 from ConfigParser import ConfigParser
@@ -24,7 +24,7 @@ def loadPickles(path):
 		result.update(pickle.load(pklFile))
 	return result
 
-def readTreeFromFile(path, dileptonCombination, modifier = "",versionNr="cutsV31"):
+def readTreeFromFile(path, dileptonCombination, modifier = "",versionNr="cutsV33"):
 	"""
 	helper functionfrom argparse import ArgumentParser
 	path: path to .root file containing simulated events
@@ -84,10 +84,12 @@ def readTrees(path, dileptonCombination,source = "", modifier = ""):
 	"""
 	result = {}
 	for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems():
-		#~ if sampleName == "TT_Dilepton_Powheg_Spring15_25ns" or sampleName == "WZTo2L2Q_aMCatNLO_Spring15_25ns" or sampleName == "ZZTo2L2Q_aMCatNLO_Spring15_25ns" or "Data" in sampleName or "HT_Run2015" in sampleName or "T6bbllslepton" in sampleName:
-			#~ result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV29")
+		#~ print sampleName
+		#~ ##~ if sampleName == "TT_Dilepton_Powheg_Spring15_25ns" or sampleName == "WZTo2L2Q_aMCatNLO_Spring15_25ns" or sampleName == "ZZTo2L2Q_aMCatNLO_Spring15_25ns" or "Data" in sampleName or "HT_Run2015" in sampleName or "T6bbllslepton" in sampleName:
+		#~ if sampleName == "HT_Run2016B" or sampleName == "MergedData":
+			#~ result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV32")
 		#~ else:
-			#~ result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV28")
+			#~ result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier,versionNr="cutsV31")
 		result[sampleName] = readTreeFromFile(filePath, dileptonCombination , modifier)
 		
 	return result
@@ -120,10 +122,10 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 			if source == "Summer12" or source == "Fake":
 				sample =  match(".*%sv.*\.%s.*\.(.*).root"%(versions.cmssw,versions.cuts), filePath)
 			else:
-				print source 
-				print versions.cuts
-				print filePath
-				print ".*%sv.*\.%s.*\.(%s.*).root"%(versions.cmssw,versions.cuts,source)
+				#~ print source 
+				#~ print versions.cuts
+				#~ print filePath
+				#~ print ".*%sv.*\.%s.*\.(%s.*).root"%(versions.cmssw,versions.cuts,source)
 				sourceInsert = source
 				if source == "SingleMuon":
 					sourceInsert = "SingleMu"
@@ -233,6 +235,7 @@ def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, la
 	#~ for ev in tree:
 		#~ result.Fill(getattr(ev,variable),abs(getattr(ev,variable2)))
 	return result
+	
 
 
 def createMyColors():
