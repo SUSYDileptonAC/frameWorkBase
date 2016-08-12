@@ -190,20 +190,6 @@ class theCuts:
 			cut = "deltaR > 2.5"
 			label = "#Delta R(ll) > 2.5"
 			name = "HighDR"
-			
-	class dPhiCuts:
-		class lowDPhi:
-			cut = "abs(deltaPhi) < 1.0"
-			label = "#Delta #phi (ll) < 1.0"
-			name = "LowDPhi"
-		class midDPhi:
-			cut = "abs(deltaPhi) > 1.0 && (deltaPhi) < 2.0"
-			label = "1.0 < #Delta #phi (ll) < 2.0"
-			name = "MidDPhi"
-		class highDPhi:
-			cut = "abs(deltaPhi) > 2.0"
-			label = "#Delta #phi (ll) > 2.0"
-			name = "HighDPhi"
 
 	class dEtaCuts:
 		class lowDEta:
@@ -377,13 +363,13 @@ class theVariables:
 		nBins = 40
 		labelX = "E_{T}^{miss} [GeV]"
 		labelY = "Events / 10 GeV"	
-	class RawMet:
-		variable = "uncorrectedMet"
-		name = "RawMET"
+	class GenMet:
+		variable = "genMet"
+		name = "GenMET"
 		xMin = 0
 		xMax = 400
 		nBins = 40
-		labelX = "uncorr. E_{T}^{miss} [GeV]"
+		labelX = "gen E_{T}^{miss} [GeV]"
 		labelY = "Events / 10 GeV"	
 	class MHT:
 		variable = "mht"
@@ -450,7 +436,7 @@ class theVariables:
 		labelX = "N_{Vertex}"
 		labelY = "Events"	
 	class leadingJetPt:
-		variable = "jet1pt"
+		variable = "jet1.Pt()"
 		name = "leadingJetPt"
 		xMin = 0
 		xMax = 400
@@ -458,7 +444,7 @@ class theVariables:
 		labelX = "leading p_{T}^{jet} [GeV]"
 		labelY = "Events / 10 GeV"	
 	class subleadingJetPt:
-		variable = "jet2pt"
+		variable = "jet2.Pt()"
 		name = "subleadingJetPt"
 		xMin = 0
 		xMax = 400
@@ -810,16 +796,16 @@ class Plot:
 			self.tree2 = "None"		
 	def cleanCuts(self):
 		if self.doCleanCuts:
-			if self.variable == "met" or self.variable == "type1Met" or self.variable == "tcMet" or self.variable == "caloMet" or self.variable == "mht":
+			if self.variable == "met" or self.variable == "genMet" or self.variable == "mht":
 				cuts = self.cuts.split("&&")
 				metCutUp = []
 				metCutDown = [] 
 				for cut in cuts:
-					if "met >" in cut:
+					if "%s >"%self.variable in cut:
 						metCutUp.append(cut)
-					elif "met <" in cut:
+					elif "%s <"%self.variable in cut:
 						metCutDown.append(cut)
-					elif "< met" in cut:
+					elif "< %s"%self.variable in cut:
 						metCutDown.append(cut)
 				for cut in metCutUp:
 					self.cuts = self.cuts.replace(cut.split(")")[0],"")
@@ -911,27 +897,12 @@ class Plot:
 class thePlots:
 
 	metPlot = Plot(theVariables.Met,[])
-	rawMetPlot = Plot(theVariables.RawMet,[])
+	genMetPlot = Plot(theVariables.GenMet,[])
 	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
 	metPlotZMass = Plot(theVariables.Met,[theCuts.massCuts.zMass])
 	metPlotHighMass = Plot(theVariables.Met,[theCuts.massCuts.highMass])
-	metPlotLowPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.lowPU])
-	metPlotMidPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.midPU])
-	metPlotHighPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.highPU])
-	metPlot0Jets = Plot(theVariables.Met,[theCuts.nJetsCuts.noJet])
-	metPlot1Jets = Plot(theVariables.Met,[theCuts.nJetsCuts.OneJet])
-	metPlot2Jets = Plot(theVariables.Met,[theCuts.nJetsCuts.TwoJet])
-	metPlot3Jets = Plot(theVariables.Met,[theCuts.nJetsCuts.ThreeJet])
 	metPlotnoBTags = Plot(theVariables.Met,[theCuts.bTags.noBTags])
 	metPlotwithBTags = Plot(theVariables.Met,[theCuts.bTags.geOneBTags])
-	metPlotCentralBarrel = Plot(theVariables.Met,[theCuts.etaCuts.CentralBarrel])
-	metPlotOuterBarrel = Plot(theVariables.Met,[theCuts.etaCuts.OuterBarrel])
-	metPlotEndcap = Plot(theVariables.Met,[theCuts.etaCuts.Endcap])
-	metPlotlowDR = Plot(theVariables.Met,[theCuts.dRCuts.lowDR])
-	metPlotmidDR = Plot(theVariables.Met,[theCuts.dRCuts.midDR])
-	metPlothighDR = Plot(theVariables.Met,[theCuts.dRCuts.highDR])
-	metPlotUncertaintyHighMET = Plot(theVariables.Met,[theCuts.htCuts.ht100,theCuts.nJetsCuts.geTwoJetCut])
-	metPlotUncertaintyLowMET = Plot(theVariables.Met,[theCuts.nJetsCuts.geThreeJetCut])
 	metPlot100 = Plot(theVariables.Met,[],binning = [30,100,400,"Events / 10 Gev",[]],additionalName = "MET100")
 	metPlot100 = Plot(theVariables.Met,[],binning = [30,100,400,"Events / 10 Gev",[]],additionalName = "MET100")
 	metPlot100NoClean = Plot(theVariables.Met,[],binning = [30,100,400,"Events / 10 Gev",[]],additionalName = "MET100Cuts",DoCleanCuts=False)
@@ -941,35 +912,17 @@ class thePlots:
 	
 	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
 	metPlotOnZ = Plot(theVariables.Met,[theCuts.massCuts.zMass])
-	metPlotLowPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.lowPU,theCuts.massCuts.edgeMass])
-	metPlotMidPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.midPU,theCuts.massCuts.edgeMass])
-	metPlotHighPileUp = Plot(theVariables.Met,[theCuts.pileUpCuts.highPU,theCuts.massCuts.edgeMass])
-	metPlot0Jets = Plot(theVariables.Met,[theCuts.nJetsCuts.noJet,theCuts.massCuts.edgeMass])
-	metPlot1Jets = Plot(theVariables.Met,[theCuts.nJetsCuts.OneJet,theCuts.massCuts.edgeMass])
-	metPlot2Jets = Plot(theVariables.Met,[theCuts.nJetsCuts.TwoJet,theCuts.massCuts.edgeMass])
-	metPlot3Jets = Plot(theVariables.Met,[theCuts.nJetsCuts.ThreeJet,theCuts.massCuts.edgeMass])
 	metPlotnoBTags = Plot(theVariables.Met,[theCuts.bTags.noBTags,theCuts.massCuts.edgeMass])
 	metPlotwithBTags = Plot(theVariables.Met,[theCuts.bTags.geOneBTags,theCuts.massCuts.edgeMass])
-	metPlotCentralBarrel = Plot(theVariables.Met,[theCuts.etaCuts.CentralBarrel,theCuts.massCuts.edgeMass])
-	metPlotOuterBarrel = Plot(theVariables.Met,[theCuts.etaCuts.OuterBarrel,theCuts.massCuts.edgeMass])
-	metPlotEndcap = Plot(theVariables.Met,[theCuts.etaCuts.Endcap,theCuts.massCuts.edgeMass])
-	metPlotlowDR = Plot(theVariables.Met,[theCuts.dRCuts.lowDR,theCuts.massCuts.edgeMass])
-	metPlotmidDR = Plot(theVariables.Met,[theCuts.dRCuts.midDR,theCuts.massCuts.edgeMass])
-	metPlothighDR = Plot(theVariables.Met,[theCuts.dRCuts.highDR,theCuts.massCuts.edgeMass])
-	mhtPlotLowMass = Plot(theVariables.MHT,[theCuts.massCuts.edgeMass])		
 	
 	htPlot = Plot(theVariables.HT,[])		
 	htPlotLowMass = Plot(theVariables.HT,[theCuts.massCuts.edgeMass])		
 	htPlotHighMass = Plot(theVariables.HT,[theCuts.massCuts.highMass])	
-	htPlotUntertaintyHighMET = Plot(theVariables.HT,[theCuts.metCuts.met150])	
-	htPlotUntertaintyLowMET = Plot(theVariables.HT,[theCuts.metCuts.met100])
 
 	mhtPlot = Plot(theVariables.MHT,[])
-
-	eta1Plot = Plot(theVariables.Eta1,[])		
+	
 	tralingEtaPlot = Plot(theVariables.TrailingEta,[])		
-	LeadingEtaPlot = Plot(theVariables.LeadingEta,[])		
-	eta2Plot = Plot(theVariables.Eta2,[])
+	LeadingEtaPlot = Plot(theVariables.LeadingEta,[])
 
 	trailingPtPlot = Plot(theVariables.TrailingPt,[])
 	trailingPtPlot100 = Plot(theVariables.TrailingPt,[],binning = [16,20,100,"Events / 5 Gev",[]],additionalName = "range100")
@@ -1048,11 +1001,8 @@ class thePlots:
 	nBJetsPlotRMuE = Plot(theVariables.nBJets,[],binning=[7,-0.5,6.5,"Events",[]])
 	leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[16,20,100,"Events / 5 GeV",[]])
 	trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[18,10,100,"Events / 5 GeV",[]])
-	#~ leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "PU4BX50")
-	#~ trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[18,10,100,"Events / 5 GeV",[]],additionalName = "PU4BX50")
 	trailingPtPlotRMuELeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "leadingPt30")
-	mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)])							
-	#~ mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)],additionalName = "PU4BX50")							
+	mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)])													
 	htPlotRMuE = Plot(theVariables.HT,[],binning=[-1,0,400,"Events / 40 GeV",range(0,300,50)+range(300,800,100)])				
 	metPlotRMuE = Plot(theVariables.Met,[],binning=[-1,0,250,"Events / 20 GeV",range(0,100,10)+range(100,150,25)+range(150,250,50)])				
 	nVtxPlotRMuE = Plot(theVariables.nVtx,[],binning=[40,0,40,"Events / 1",[]])				
@@ -1061,7 +1011,6 @@ class thePlots:
 			
 								
 	mllPlotRMuESignal = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])
-	#~ mllPlotRMuESignal = Plot(theVariables.Mll,[],binning=[5,20,300,"Events / 10 GeV",[20,70,81,101,120,300]])
 	
 					
 	mllPlotROutIn = Plot(theVariables.Mll,[],binning=[1000,0,1000,"Events / 1 GeV",[]])				
@@ -1070,13 +1019,22 @@ class thePlots:
 
 	nVtxPlotWeights = Plot(theVariables.nVtx,[],binning=[60,0,60,"Events / 1",[]])				
 
+class Signals:
+	
+	class T6bbllslepton_550_175:
+		subprocesses = ["T6bbllslepton_msbottom_550_mneutralino_175"]
+		label 		 = "m_{#tilde{b}} = 550 GeV m_{#tilde{#chi_{0}^{2}}} = 175 GeV"
+		fillcolor    = ROOT.kWhite
+		linecolor    = ROOT.kRed-7
+		uncertainty	 = 0.
+		scaleFac     = 1.
+		additionalSelection = None 	
 	
 		
 class Backgrounds:
 	
 	class TTJets_Madgraph:
 		subprocesses = ["TTJets_Dilepton_Madgraph_MLM_Spring15_25ns_v1"]
-		#~ label = "Madgraph t#bar{t} PU20BX25"
 		label = "Madgraph t#bar{t} + jets"
 		fillcolor = 855
 		linecolor = ROOT.kBlack
@@ -1085,7 +1043,6 @@ class Backgrounds:
 		additionalSelection = None
 	class TT_aMCatNLO:
 		subprocesses = ["TT_aMCatNLO_FXFX_Spring15_25ns"]
-		#~ label = "Madgraph t#bar{t} PU20BX25"
 		label = "aMC@NLO t#bar{t}"
 		fillcolor = 855
 		linecolor = ROOT.kBlack
@@ -1094,7 +1051,6 @@ class Backgrounds:
 		additionalSelection = None
 	class TTJets_aMCatNLO:
 		subprocesses = ["TTJets_aMCatNLO_FXFX_Spring15_25ns"]
-		#~ label = "Madgraph t#bar{t} PU20BX25"
 		label = "aMC@NLO t#bar{t} +jets"
 		fillcolor = 855
 		linecolor = ROOT.kBlack
@@ -1103,7 +1059,6 @@ class Backgrounds:
 		additionalSelection = None
 	class TT_Powheg:
 		subprocesses = ["TT_Dilepton_Powheg_Spring15_25ns"]
-		#~ label = "Madgraph t#bar{t} PU20BX25"
 		label = "Powheg t#bar{t}"
 		fillcolor = 855
 		linecolor = ROOT.kBlack
@@ -1119,7 +1074,6 @@ class Backgrounds:
 		uncertainty = 0.04
 		scaleFac     = 1.	
 		additionalSelection = "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)"
-		#~ additionalSelection = None
 	class DrellYanLO:
 		subprocesses = ["ZJets_Madgraph_Spring15_25ns","AStar_Madgraph_Spring15_25ns"]
 		label = "DY+jets"
@@ -1128,7 +1082,6 @@ class Backgrounds:
 		uncertainty = 0.04
 		scaleFac     = 1.	
 		additionalSelection = "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)"
-		#~ additionalSelection = None
 	class WJets:
 		subprocesses = ["WJetsToLNu_aMCatNLO_Spring15_25ns"]
 		label = "W+jets"
@@ -1156,7 +1109,6 @@ class Backgrounds:
 		
 	class Rare:
 		subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Spring15_25ns","TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","WZZ_aMCatNLO_FXFX_Spring15_25ns","WWZ_aMCatNLO_FXFX_Spring15_25ns","ZZZ_aMCatNLO_FXFX_Spring15_25ns"]
-		#~ subprocesses = ["TTZToQQ_aMCatNLO_FXFX_Spring15_25ns","TTWToLNu_aMCatNLO_FXFX_Spring15_25ns","TTG_aMCatNLO_FXFX_Spring15_25ns","4T_aMCatNLO_FXFX_Spring15_25ns","TZQ_LL_aMCatNLO_Spring15_25ns","WZZ_aMCatNLO_FXFX_Spring15_25ns","WWZ_aMCatNLO_FXFX_Spring15_25ns","ZZZ_aMCatNLO_FXFX_Spring15_25ns"]
 		label = "Other SM"
 		fillcolor = 630
 		linecolor = ROOT.kBlack
@@ -1165,7 +1117,6 @@ class Backgrounds:
 		additionalSelection = None			
 
 	class Diboson:
-		#~ subprocesses = ["ZZTo4L_Powheg_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns"]
 		subprocesses = ["WWTo2L2Nu_Powheg_Spring15_25ns","WWToLNuQQ_Powheg_Spring15_25ns","WZTo1L1Nu2Q_aMCatNLO_Spring15_25ns","WZTo1L3Nu_aMCatNLO_Spring15_25ns","WZTo3LNu_Powheg_Spring15_25ns","WZTo2L2Q_aMCatNLO_Spring15_25ns","ZZTo4Q_aMCatNLO_Spring15_25ns","ZZTo4L_Powheg_Spring15_25ns","ZZTo2Q2Nu_aMCatNLO_Spring15_25ns","ZZTo2L2Q_aMCatNLO_Spring15_25ns"]
 		label = "WW,WZ,ZZ"
 		fillcolor = 920

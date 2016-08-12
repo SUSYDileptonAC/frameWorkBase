@@ -106,7 +106,7 @@ def setTDRStyle():
 	# tdrStyle->SetStatY(Float_t y = 0);
 	
 	# Margins:
-	tdrStyle.SetPadTopMargin(0.05)
+	tdrStyle.SetPadTopMargin(0.07)
 	tdrStyle.SetPadBottomMargin(0.14)
 	tdrStyle.SetPadLeftMargin(0.15)
 	tdrStyle.SetPadRightMargin(0.05)

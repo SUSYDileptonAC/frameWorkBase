@@ -8,7 +8,7 @@
 #		 daniel.sprenger@cern.ch
 #=======================================================
 
-from tools import myColors
+from defs import myColors
 import ROOT
 
 from array import array

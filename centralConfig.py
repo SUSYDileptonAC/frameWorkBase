@@ -117,72 +117,6 @@ class zPredictions:
 			class forward:
 				val = 1
 				err = 1
-	class geTwoBTags:
-		class SF:
-			class central:
-				val = 2.3
-				err = 1.8
-			class forward:
-				val = 0.8
-				err = 0.8
-		class EE:
-			class central:
-				val = 1
-				err = 1
-			class forward:
-				val = 1
-				err = 1
-		class MM:
-			class central:
-				val = 1
-				err = 1
-			class forward:
-				val = 1
-				err = 1
-	class eleLeading:
-		class SF:
-			class central:
-				val = 1.7
-				err = 0.51
-			class forward:
-				val = 0.7
-				err = 0.31
-		class EE:
-			class central:
-				val = 1
-				err = 1
-			class forward:
-				val = 1
-				err = 1
-		class MM:
-			class central:
-				val = 1
-				err = 1
-			class forward:
-				val = 1
-				err = 1
-	class muLeading:
-		class SF:
-			class central:
-				val = 1.7
-				err = 0.51
-			class forward:
-				val = 0.7
-				err = 0.31
-		class EE:
-			class central:
-				val = 1
-				err = 1
-			class forward:
-				val = 1
-				err = 1
-		class MM:
-			class central:
-				val = 1
-				err = 1
-			class forward:
-				val = 1
-				err = 1
 
 
 class systematics:
@@ -264,31 +198,23 @@ class runRanges:
 	name = "Run2015_25ns"
 
 class backgroundLists:
-	#~ default = ["Rare","SingleTop","TTJets_SpinCorrelations","Diboson","DrellYanTauTau","DrellYan"]
-	default = ["TT_Powheg","DrellYan"]
+	default = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
+	#~ default = ["TT_Powheg","DrellYan"]
 	trigger = ["TT_Powheg"]
 	rSFOF = ["TT_Powheg","DrellYan"]
 	rareStudies = ["WW","WZ","ZZ","RareNonZ","RareZ"]
 	
 class plotLists:
 	default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot"]
-	#~ default = ["tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot"]
-	#~ default = ["leadingPtPlot"]
-	#~ trigger = ["nJetsPlotTrigger","leadingPtPlotTriggerTrailing10","leadingPtPlotTrigger","leadingPtPlotTrigger2515","leadingPtPlotTrigger2520","leadingPtPlotTrigger2525","trailigPtPlotTrigger","trailigPtPlotTrigger2515","trailigPtPlotTrigger2520","trailigPtPlotTrigger2525","trailigPtPlotTriggerLeading30","mllPlotTrigger","mllPlotTrigger2515","mllPlotTrigger2520","mllPlotTrigger2525","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
 	trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
-	#~ trigger = ["htPlotTrigger"]
-	iso = ["leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","nVtxPlotTrigger"]
-	rSFOF = ["mllPlot"]
+	rSFOF = ["mllPlot","nJetsPlot","metPlot"]
 	signal = ["mllPlot"]
-	#~ rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","trailingPtPlotRMuELeading30","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE"]
 	rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE"]
-	#~ rMuE = ["leadingPtPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","nVtxPlotRMuE"]
 	rOutIn =  ["metPlotROutIn","nJetsPlotROutIn"]
-	fake =  ["trailingPtPlot100","tralingEtaPlot","metPlot","htPlot",]
-
+	
 
 class cutNCountXChecks:
-	cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
+	cutList = {"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags"]}
 
 
 

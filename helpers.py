@@ -35,7 +35,6 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 
 	from ROOT import TChain
 	result = TChain()
-	#~ result.SetProof(True)
 	if modifier == "":
 		result.Add("%s/%sDileptonFinalTrees/%sDileptonTree"%(path,versions.cuts, dileptonCombination))
 	else:
@@ -96,7 +95,7 @@ def getFilePathsAndSampleNames(path):
 
 
 	
-def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,smearDY=False,binning=None):
+def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,binning=None):
 	"""
 	tree: tree to create histo from)
 	variable: variable to plot (must be a branch of the tree)
@@ -128,7 +127,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	gc.collect()
 	return result
 	
-def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, lastBin, nBins2=10, firstBin2=0, lastBin2=100, nEvents = -1,smearDY=False,binning=None,binning2=None):
+def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, lastBin, nBins2=10, firstBin2=0, lastBin2=100, nEvents = -1,binning=None,binning2=None):
 	"""
 	tree: tree to create histo from)
 	variable: variable to plot (must be a branch of the tree)
@@ -204,24 +203,14 @@ class Process:
 
 		
 	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,signal=False):
-		#~ doTopReweighting = False
 		if len(plot.binning) == 0:
 			self.histo = TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
 		else:
 			self.histo = TH1F("","",len(plot.binning)-1, array("f",plot.binning))
 		
 		nEvents = -1
-		smearDY = False
 		if self.additionalSelection != None:
-			if self.additionalSelection == "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)":
-				smearDY = False
-
-			if "weightDown" in plot.cuts:
-				cut = plot.cuts.replace("weightDown*(","weightDown*(%s &&"%self.additionalSelection)		
-			elif "weightUp" in plot.cuts:
-				cut = plot.cuts.replace("weightUp*(","weightUp*(%s &&"%self.additionalSelection)						
-			else:
-				cut = plot.cuts.replace("weight*(","weight*(%s &&"%self.additionalSelection)		
+			cut = plot.cuts.replace("weight*(","weight*(%s &&"%self.additionalSelection)		
 		else: 
 			cut = plot.cuts
 
@@ -231,7 +220,7 @@ class Process:
 		for index, sample in enumerate(self.samples):
 			for name, tree in tree1.iteritems(): 
 				if name == sample:
-					tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
+					tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
 						
 					if self.normalized:		
 						tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/(self.nEvents[index]*(1-2*self.negWeightFractions[index]))))
@@ -240,7 +229,7 @@ class Process:
 			if tree2 != "None":		
 				for name, tree in tree2.iteritems(): 
 					if name == sample:
-						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,smearDY,binning=plot.binning)
+						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
 						
 
 						if self.normalized:
@@ -259,41 +248,18 @@ class TheStack:
 	from ROOT import THStack
 	theStack = THStack()	
 	theHistogram = ROOT.TH1F()	
-	theHistogramXsecUp = ROOT.TH1F()
-	theHistogramXsecDown = ROOT.TH1F()
-	theHistogramTheoUp = ROOT.TH1F()
-	theHistogramTheoDown = ROOT.TH1F()
-	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None,JESUp=False,JESDown=False,PileUpUp=False,PileUpDown=False,theoUncert = 0.):
+	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None):
 		self.theStack = THStack()
 		self.theHistogram = ROOT.TH1F()
 		self.theHistogram.Sumw2()
-		self.theHistogramXsecDown = ROOT.TH1F()
-		self.theHistogramXsecUp = ROOT.TH1F()
-		self.theHistogramTheoDown = ROOT.TH1F()
-		self.theHistogramTheoUp = ROOT.TH1F()
 		if len(plot.binning) == 0:
 			self.theHistogram = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
-			self.theHistogramXsecDown = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
-			self.theHistogramXsecUp = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
-			self.theHistogramTheoDown = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
-			self.theHistogramTheoUp = ROOT.TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
 		else:
 			self.theHistogram = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
-			self.theHistogramXsecDown = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
-			self.theHistogramXsecUp = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
-			self.theHistogramTheoDown = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
-			self.theHistogramTheoUp = ROOT.TH1F("","",len(plot.binning)-1, array("f",plot.binning))
-
-
-			
 
 			
 			
 		for process in processes:
-			if not "t#bar{t}" in process.label:
-				localTheo = 0.
-			else:
-				localTheo = theoUncert
 			temphist = TH1F()
 			temphist.Sumw2()	
 			temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2)
@@ -304,40 +270,12 @@ class TheStack:
 				
 				val = float(intMC)
 				err = float(errIntMC)
-				if JESUp:
-					jesUp = abs(counts[process.label]["val"]-val)
-					counts[process.label]["jesUp"]=jesUp
-				elif PileUpUp:
-					pileUpUp = abs(counts[process.label]["val"]-val)
-					counts[process.label]["pileUpUp"]=pileUpUp
-				elif PileUpDown:
-					pileUpDown = abs(counts[process.label]["val"]-val)
-					counts[process.label]["pileUpDown"]=pileUpDown
-				elif JESDown:
-					jesDown = abs(counts[process.label]["val"]-val)
-					counts[process.label]["jesDown"]=jesDown
-				else:
-					xSecUncert = val*process.uncertainty
-					theoUncertVal = val*localTheo
-					counts[process.label] = {"val":val,"err":err,"xSec":xSecUncert,"theo":theoUncertVal}
-
-					#~ counts[process.label]["val"]=val
-					#~ counts[process.label]["err"]=err
-					#~ counts[process.label]["xSec"]=xSecUncert
+				
+				xSecUncert = val*process.uncertainty
+				counts[process.label] = {"val":val,"err":err,"xSec":xSecUncert}
+				
 			self.theStack.Add(temphist.Clone())
 			self.theHistogram.Add(temphist.Clone())
-			temphist2 = temphist.Clone()
-			temphist2.Scale(1-process.uncertainty)
-			self.theHistogramXsecDown.Add(temphist2.Clone())
-			temphist3 = temphist.Clone()
-			temphist3.Scale(1+process.uncertainty)
-			self.theHistogramXsecUp.Add(temphist3.Clone())
-			temphist4 = temphist.Clone()
-			temphist4.Scale(1-localTheo)
-			self.theHistogramTheoDown.Add(temphist4.Clone())
-			temphist5 = temphist.Clone()
-			temphist5.Scale(1+localTheo)
-			self.theHistogramTheoUp.Add(temphist5.Clone())
 
 def getDataHist(plot,tree1,tree2="None",dataname = ""):
 	histo = TH1F()
@@ -375,16 +313,5 @@ def getDataTrees(path):
 			result["EM"] = tree
 			
 	return result
-				
-def getVtxWeight(nVtx):
-	#~ # based on 225/pb, Golden JSON from 02/10/2015
-	#~ weights = [1, 1, 5.257347331038417, 3.6620287172043655, 3.2145438780779156, 2.9215830134107024, 2.7172733269793143, 2.499763816411226, 2.2358505010682275, 1.946608815936303, 1.66663585526661, 1.3917062061924035, 1.1239566743048217, 0.8838519279375375, 0.6762957802962626, 0.5277954493868846, 0.3953278839107886, 0.2916698725757984, 0.21232722799503542, 0.15516191067117857, 0.1187750029289671, 0.08675361880847646, 0.07089979610006057, 0.046231845546640206, 0.03480539409420972, 0.02463791911084164, 0.024537360650415386, 0.014415024309474854, 0.015096285304302518, 0.008316456648660545, 0.0, 0.010835052897837951, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0, 1, 0.0, 0.0, 1, 1, 1, 0.0, 1, 1, 1, 1, 1, 1, 1]
-	# based on ~600/pb, Golden JSON from 09/10/2015, produced by Vince
-	
-	weights = [0,0,3.06258,2.44413,2.36438,2.3998,2.37008,2.30127,2.14311,1.93811,1.70787,1.45249,1.19933,0.9531,0.740734,0.566524,0.425824,0.314512,0.229213,0.163893,0.123593,0.0896858,0.0608875,0.0481201,0.035267,0.0233243,0.01961,0.0132398,0.00812161,0.00758528,0.00949008,0.00438004,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-	
-	if nVtx >= 49:
-		return 0
-	else:
-		return weights[nVtx+1]
+
 	
