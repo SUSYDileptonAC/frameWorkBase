@@ -661,8 +661,7 @@ def makeOverviewPlot(countingShelves,region):
 
 	plotPad.RedrawAxis()
 	
-	hCanvas.Print("edgeOverviewRare.pdf")
-	hCanvas.Print("edgeOverviewRare.root")
+	hCanvas.Print("edgeOverview.pdf")
 	
 	
 def main():
