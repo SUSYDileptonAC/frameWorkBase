@@ -1021,11 +1021,20 @@ class thePlots:
 
 class Signals:
 	
-	class T6bbllslepton_550_175:
+	class T6bbllslepton_msbottom_550_mneutralino_175:
 		subprocesses = ["T6bbllslepton_msbottom_550_mneutralino_175"]
 		label 		 = "m_{#tilde{b}} = 550 GeV m_{#tilde{#chi_{0}^{2}}} = 175 GeV"
 		fillcolor    = ROOT.kWhite
 		linecolor    = ROOT.kRed-7
+		uncertainty	 = 0.
+		scaleFac     = 1.
+		additionalSelection = None 	
+	
+	class T6bbllslepton_msbottom_600_mneutralino_250:
+		subprocesses = ["T6bbllslepton_msbottom_600_mneutralino_250"]
+		label 		 = "m_{#tilde{b}} = 600 GeV m_{#tilde{#chi_{0}^{2}}} = 250 GeV"
+		fillcolor    = ROOT.kWhite
+		linecolor    = ROOT.kRed-5
 		uncertainty	 = 0.
 		scaleFac     = 1.
 		additionalSelection = None 	

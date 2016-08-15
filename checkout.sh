@@ -7,6 +7,7 @@ git clone -b CMSDAS https://github.com/SUSYDileptonAC/DataMC.git
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/countsAndCorrections.git
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/Triggerefficiencies.git
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/edgeFitRunII.git
+git clone -b CMSDAS https://github.com/SUSYDileptonAC/SignalScan.git
 
 ### make folders for figures, tables etc
 
@@ -46,5 +47,8 @@ mkdir figToys
 mkdir shelves
 mkdir shelves/dicts
 mkdir workspaces
+
+cd ../SignalScan
+bash setup.sh
 
 cd $TEMPVAR

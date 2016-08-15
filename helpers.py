@@ -112,7 +112,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	#but that would make this less readable
 
 	name = "%x"%(randint(0, maxint))
-	if binning == []:
+	if binning == None or binning == []:
 		result = TH1F(name, "", nBins, firstBin, lastBin)
 	else:
 		result = TH1F(name, "", len(binning)-1, array("f",binning))
