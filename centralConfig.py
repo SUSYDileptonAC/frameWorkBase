@@ -200,16 +200,16 @@ class runRanges:
 class backgroundLists:
 	default = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
 	#~ default = ["TT_Powheg","DrellYan"]
-	trigger = ["TT_Powheg"]
+	trigger = ["TT_Powheg","DrellYan"]
 	rSFOF = ["TT_Powheg","DrellYan"]
 	rareStudies = ["WW","WZ","ZZ","RareNonZ","RareZ"]
 	
 class plotLists:
-	default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot"]
-	trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
-	rSFOF = ["mllPlot","nJetsPlot","metPlot"]
+	default = ["mllPlot"]
+	trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","tralingEtaPlotTrigger","leadingEtaPlotTrigger"]
+	rSFOF = ["mllPlot"]
 	signal = ["mllPlot"]
-	rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE"]
+	rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","tralingEtaPlotRMuE"]
 	rOutIn =  ["metPlotROutIn","nJetsPlotROutIn"]
 	
 
@@ -219,6 +219,5 @@ class cutNCountXChecks:
 
 
 class versions:
-	cmssw = "sw7414"
 	cuts = "cutsV31"
 	masterListForMC = "../frameWorkBase/MasterList.ini"
