@@ -647,7 +647,6 @@ class Plot:
 class thePlots:
 
 	metPlot = Plot(theVariables.Met,[])
-	genMetPlot = Plot(theVariables.GenMet,[])
 	metPlotLowMass = Plot(theVariables.Met,[theCuts.massCuts.edgeMass])
 	metPlot100 = Plot(theVariables.Met,[],binning = [30,100,400,"Events / 10 Gev",[]],additionalName = "MET100")	
 	metPlotNoClean = Plot(theVariables.Met,[],binning = [15,0,150,"Events / 10 Gev",[]],additionalName = "NoClean",DoCleanCuts=False)
@@ -666,11 +665,7 @@ class thePlots:
 
 	nBJetsPlot = Plot(theVariables.nBJets,[])
 
-	deltaRPlot = Plot(theVariables.deltaR,[])
-
-	ptllPlot = Plot(theVariables.Ptll,[])
-
-	nVtxPlot = Plot(theVariables.nVtx,[],binning=[40,0,40,"Events",[]])				
+	ptllPlot = Plot(theVariables.Ptll,[])				
 
 			
 	### plots for trigger efficiency measurements
@@ -681,8 +676,7 @@ class thePlots:
 	trailingPtPlotTriggerMC= Plot(theVariables.TrailingPt,[],binning=[23,20,250,"Events / 10 GeV",[]])
 	mllPlotTriggerMC = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])							
 	htPlotTriggerMC = Plot(theVariables.HT,[],binning=[25,0,1000,"Events / 40 GeV",[]])				
-	metPlotTriggerMC = Plot(theVariables.Met,[],binning=[10,0,200,"Events / 20 GeV",[]])				
-	nVtxPlotTriggerMC = Plot(theVariables.nVtx,[],binning=[15,0,30,"Events / 2",[]])				
+	metPlotTriggerMC = Plot(theVariables.Met,[],binning=[10,0,200,"Events / 20 GeV",[]])					
 	tralingEtaPlotTriggerMC = Plot(theVariables.TrailingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])
 	leadingEtaPlotTriggerMC = Plot(theVariables.LeadingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])		
 
@@ -692,8 +686,7 @@ class thePlots:
 	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[7,20,300,"Events / 40 GeV",[]])
 	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[7,20,300,"Events / 40 GeV",[]])												
 	htPlotTrigger = Plot(theVariables.HT,[],binning=[10,200,1000,"Events / 80 GeV",[]])			
-	metPlotTrigger = Plot(theVariables.Met,[],binning=[5,0,200,"Events / 40 GeV",[]])					
-	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[8,0,32,"Events / 4",[]])				
+	metPlotTrigger = Plot(theVariables.Met,[],binning=[5,0,200,"Events / 40 GeV",[]])			
 	tralingEtaPlotTrigger = Plot(theVariables.TrailingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])
 	leadingEtaPlotTrigger = Plot(theVariables.LeadingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])					
 					
@@ -706,10 +699,8 @@ class thePlots:
 	mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)])													
 	htPlotRMuE = Plot(theVariables.HT,[],binning=[-1,0,400,"Events / 40 GeV",range(0,300,50)+range(300,800,100)])				
 	metPlotRMuE = Plot(theVariables.Met,[],binning=[-1,0,250,"Events / 20 GeV",range(0,100,10)+range(100,150,25)+range(150,250,50)])				
-	nVtxPlotRMuE = Plot(theVariables.nVtx,[],binning=[40,0,40,"Events / 1",[]])				
 	tralingEtaPlotRMuE = Plot(theVariables.AbsTrailingEta,[],binning=[-1,0,2.55,"Events / 0.3",[i*0.14 for i in range(0,10)]+[i*0.2+1.4 for i in range(0,6)]])				
-	leadingEtaPlotRMuE = Plot(theVariables.AbsLeadingEta,[],binning=[-1,0,2.55,"Events / 0.3",[i*0.14 for i in range(0,10)]+[i*0.2+1.4 for i in range(0,6)]])				
-	deltaRPlotRMuE = Plot(theVariables.deltaR,[],binning=[-1,0,5.5,"Events / 0.3",[0.2*i for i in range(10)]+[2+0.5*i for i in range(7)]])				
+	leadingEtaPlotRMuE = Plot(theVariables.AbsLeadingEta,[],binning=[-1,0,2.55,"Events / 0.3",[i*0.14 for i in range(0,10)]+[i*0.2+1.4 for i in range(0,6)]])	
 	
 	### plots for rOutIn measurements				
 	mllPlotROutIn = Plot(theVariables.Mll,[],binning=[1000,0,1000,"Events / 1 GeV",[]])				
