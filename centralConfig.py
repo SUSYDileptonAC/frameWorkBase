@@ -59,20 +59,6 @@ class zPredictions:
 			class forward:
 				val = 24.1
 				err = 3.1
-		class EE:
-			class central:
-				val = 5
-				err = 5
-			class forward:
-				val = 2
-				err = 2
-		class MM:
-			class central:
-				val = 5
-				err = 5
-			class forward:
-				val = 2
-				err = 2
 	class geOneBTags:
 		class SF:
 			class central:
@@ -81,20 +67,6 @@ class zPredictions:
 			class forward:
 				val = 6.0
 				err = 1.3
-		class EE:
-			class central:
-				val = 2
-				err = 2
-			class forward:
-				val = 1
-				err = 1
-		class MM:
-			class central:
-				val = 2
-				err = 2
-			class forward:
-				val = 1
-				err = 1
 	class noBTags:
 		class SF:
 			class central:
@@ -103,20 +75,6 @@ class zPredictions:
 			class forward:
 				val = 18.1
 				err = 2.8
-		class EE:
-			class central:
-				val = 2
-				err = 2
-			class forward:
-				val = 1
-				err = 1
-		class MM:
-			class central:
-				val = 2
-				err = 2
-			class forward:
-				val = 1
-				err = 1
 
 
 class systematics:
@@ -206,7 +164,8 @@ class backgroundLists:
 	
 class plotLists:
 	default = ["mllPlot"]
-	trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","tralingEtaPlotTrigger","leadingEtaPlotTrigger"]
+	#~ trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","tralingEtaPlotTrigger","leadingEtaPlotTrigger"]
+	trigger = ["leadingPtPlotTrigger","trailingPtPlotTrigger","ptllPlotTrigger"]
 	rSFOF = ["mllPlot"]
 	signal = ["mllPlot"]
 	rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","tralingEtaPlotRMuE"]
