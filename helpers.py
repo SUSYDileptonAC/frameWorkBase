@@ -16,6 +16,9 @@ config.read("%s/%s"%(config_path,versions.masterListForMC))
 
 
 def loadPickles(path):
+	"""
+	helper function to read .pkl files 
+	"""
 	from glob import glob
 	import pickle
 	result = {}
@@ -28,7 +31,9 @@ def readTreeFromFile(path, dileptonCombination, modifier = ""):
 	"""
 	helper functionfrom argparse import ArgumentParser
 	path: path to .root file containing simulated events
-	dileptonCombination: EMu, EMu, or EMu for electron-electron, electron-muon, or muon-muon events
+	dileptonCombination: EE, EMu, or MuMu for electron-electron, electron-muon, or muon-muon events
+	
+	takes different naming structure for trigger efficiency trees into account
 
 	returns: tree containing events for on sample and dileptonCombination
 	"""
@@ -46,7 +51,11 @@ def totalNumberOfGeneratedEvents(path):
 	path: path to directory containing all sample files
 
 	returns dict samples names -> number of simulated events in source sample
-	        (note these include events without EMu EMu EMu signature, too )
+	        (note these include events without dilepton signature, too )
+	
+	this does not work for Signal MC since several (~100) mass points are within the
+	same sample. A root file containing a histogram with the number of events for each 
+	sample is used instead
 	"""
 	from ROOT import TFile
 	result = {}
@@ -60,7 +69,7 @@ def totalNumberOfGeneratedEvents(path):
 def readTrees(path, dileptonCombination, modifier = ""):
 	"""
 	path: path to directory containing all sample files
-    dileptonCombination: "EMu", "EMu", or pyroot"EMu" for electron-electron, electron-muon, or muon-muon events
+    dileptonCombination: "EE", "EMu", or "MuMu" for electron-electron, electron-muon, or muon-muon events
 
 	returns: dict of sample names ->  trees containing events (for all samples for one dileptonCombination)
 	"""
@@ -74,6 +83,9 @@ def getFilePathsAndSampleNames(path):
 	"""
 	helper function
 	path: path to directory containing all sample files
+	
+	Get the names of all the samples in a certain folder and remove additional information on the
+	software version and the information whether it was cleaned of overlap between the dilepton trees (processed)
 
 	returns: dict of smaple names -> path of .root file (for all samples in path)
 	"""
@@ -97,9 +109,10 @@ def getFilePathsAndSampleNames(path):
 	
 def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,binning=None):
 	"""
-	tree: tree to create histo from)
+	take a tree and make a 1D histogram with given cuts binning etc.
+	tree: tree to create histo from
 	variable: variable to plot (must be a branch of the tree)
-	weight: weights to apply (e.g. "var1*(var2 > 15)" will use weights from var1 and cut on var2 > 15
+	weight: weights and cuts to apply (e.g. "var1*(var2 > 15)" will use weights from var1 and cut on var2 > 15
 	nBins, firstBin, lastBin: number of bins, first bin and last bin (same as in TH1F constructor)
 	nEvents: number of events to process (-1 = all)
 	"""
@@ -108,8 +121,6 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	from sys import maxint
 	if nEvents < 0:
 		nEvents = maxint
-	#make a random name you could give something meaningfull here,
-	#but that would make this less readable
 
 	name = "%x"%(randint(0, maxint))
 	if binning == None or binning == []:
@@ -118,6 +129,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 		result = TH1F(name, "", len(binning)-1, array("f",binning))
 		
 	result.Sumw2()
+	### print out the cut string to make sure what you are doing is what you want
 	print 
 	print tree.GetFile().GetName()
 	print "tree run: %s>>%s cut=%s" %(variable,name,weight)
@@ -130,11 +142,12 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	gc.collect()
 	return result
 	
-def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, lastBin, nBins2=10, firstBin2=0, lastBin2=100, nEvents = -1,binning=None,binning2=None):
+def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, lastBin, nBins2=10, firstBin2=0, lastBin2=100, nEvents = -1,binning=None,binning2=None): 
 	"""
-	tree: tree to create histo from)
+	take a tree and make a 2D histogram with given cuts binning etc.
+	tree: tree to create histo from
 	variable: variable to plot (must be a branch of the tree)
-	weight: weights to apply (e.g. "var1*(var2 > 15)" will use weights from var1 and cut on var2 > 15
+	weight: weights and cuts to apply (e.g. "var1*(var2 > 15)" will use weights from var1 and cut on var2 > 15
 	nBins, firstBin, lastBin: number of bins, first bin and last bin (same as in TH1F constructor)
 	nEvents: number of events to process (-1 = all)
 	"""
@@ -153,6 +166,7 @@ def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, la
 		result = TH2F(name, "", len(binning)-1, array("f",binning), len(binning2)-1, array("f",binning2))
 		
 	result.Sumw2()
+	### print out the cut string to make sure what you are doing is what you want
 	print 
 	print tree.GetFile().GetName()
 	print "tree run: %s>>%s cut=%s" %(variable,name,weight)
@@ -162,6 +176,7 @@ def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, la
 
 
 def createMyColors():
+	### routine to add some colors
     iIndex = 2000
 
     containerMyColors = []
@@ -176,6 +191,8 @@ def createMyColors():
     return containerMyColors
 	
 class Process:
+	### Main routine to use background MC
+	### Holds the sample names, according cross sections etc.
 	samples = []
 	xsecs = []
 	nEvents = []
@@ -208,20 +225,22 @@ class Process:
 
 		
 	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,signal=False):
+		### Make a histogram using all of the chosen MC samples
 		if len(plot.binning) == 0:
 			self.histo = TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
 		else:
 			self.histo = TH1F("","",len(plot.binning)-1, array("f",plot.binning))
 		
 		nEvents = -1
+		### Some samples (e.g. DY -> tau tau) might require an additional selection (here on the pdgId of the mother particle of the lepton)
 		if self.additionalSelection != None:
 			cut = plot.cuts.replace("weight*(","weight*(%s &&"%self.additionalSelection)		
 		else: 
 			cut = plot.cuts
-
-		weightNorm = 1./0.99
 			
 
+		### Loop over the samples and normalize them to the cross section
+		### aMCatNLO samples have events with negative event weights and the total cross section needs to be reweighted accordingly
 		for index, sample in enumerate(self.samples):
 			for name, tree in tree1.iteritems(): 
 				if name == sample:
@@ -250,6 +269,8 @@ class Process:
 
 	
 class TheStack:
+	### Stack to hold the stacked histograms of all MC background samples chosen
+	### Signal samples are also stacked on top of the background
 	from ROOT import THStack
 	theStack = THStack()	
 	theHistogram = ROOT.TH1F()	
@@ -283,6 +304,7 @@ class TheStack:
 			self.theHistogram.Add(temphist.Clone())
 
 def getDataHist(plot,tree1,tree2="None",dataname = ""):
+	### Fetch the histogram from one (or two) dilepton data trees
 	histo = TH1F()
 	histo2 = TH1F()
 	if dataname == "":
@@ -298,6 +320,7 @@ def getDataHist(plot,tree1,tree2="None",dataname = ""):
 	return histo	
 	
 def getDataTrees(path):
+	### Fetch data trees
 
 	result = {}
 	

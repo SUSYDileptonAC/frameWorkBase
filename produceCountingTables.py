@@ -1,3 +1,6 @@
+### script to produce the final result tables (SF, ee and mumu) and one 
+### containing the flavor symmetric prediction from OF events for each of the cases
+
 import pickle
 import os
 import sys
@@ -22,7 +25,7 @@ def readPickle(name,regionName,runName,MC=False):
 		if os.path.isfile("shelves/%s_%s_%s_MC.pkl"%(name,regionName,runName)):
 			result = pickle.load(open("shelves/%s_%s_%s_MC.pkl"%(name,regionName,runName),"rb"))
 		else:
-			print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName) 		
+			print "shelves/%s_%s_%s_MC.pkl not found, exiting"%(name,regionName,runName) 		
 			sys.exit()		
 	else:
 		if os.path.isfile("shelves/%s_%s_%s.pkl"%(name,regionName,runName)):
@@ -33,12 +36,12 @@ def readPickle(name,regionName,runName,MC=False):
 
 	return result	
 
-
-tableHeaders = {"default":"being inclusive in the number of b-tagged jets","geOneBTags":"requiring at least one b-tagged jet","geTwoBTags":"requiring at least two b-tagged jets"}
 tableColumnHeaders = {"default":"no b-tag requirement","noBTags":"veto on b-tagged jets","geOneBTags":"$\geq$ 1 b-tagged jets","geTwoBTags":"$\geq$ 2 b-tagged jets"}
 
 	
 def getResults(shelve,region,selection):
+	
+	### get the corrections from corrections.py, z predicition from centralConfig.py and the results from the .pkl files
 	
 	result = {}
 	
@@ -49,14 +52,19 @@ def getResults(shelve,region,selection):
 	result["rMMOF"] = getattr(rMMOF,region).val
 	result["rMMOFErr"] = getattr(rMMOF,region).err
 	
+	### low mass region
+	
+	### fetch event counts from pkls
 	result["lowMassEE"] = shelve[region][selection]["edgeMass"]["EE"]
 	result["lowMassMM"] = shelve[region][selection]["edgeMass"]["MM"]
 	result["lowMassSF"] = shelve[region][selection]["edgeMass"]["EE"] + shelve[region][selection]["edgeMass"]["MM"]
 	result["lowMassOF"] = shelve[region][selection]["edgeMass"]["EM"]
+	### take R_SF/OF into account
 	result["lowMassPredSF"] = result["lowMassOF"]*getattr(rSFOF,region).val
 	result["lowMassPredStatErrSF"] = result["lowMassOF"]**0.5*getattr(rSFOF,region).val
 	result["lowMassPredSystErrSF"] = result["lowMassOF"]*getattr(rSFOF,region).err
 	
+	### predictions for ee and mumu seperated
 	result["lowMassPredEE"] = result["lowMassOF"]*getattr(rEEOF,region).val
 	result["lowMassPredStatErrEE"] = result["lowMassOF"]**0.5*getattr(rEEOF,region).val
 	result["lowMassPredSystErrEE"] = result["lowMassOF"]*getattr(rEEOF,region).err
@@ -65,6 +73,7 @@ def getResults(shelve,region,selection):
 	result["lowMassPredStatErrMM"] = result["lowMassOF"]**0.5*getattr(rMMOF,region).val
 	result["lowMassPredSystErrMM"] = result["lowMassOF"]*getattr(rMMOF,region).err
 	
+	### Z predcition from centralConfig multiplied by R_Out/In for the region
 	result["lowMassZPredSF"] = getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.lowMass,region).val
 	result["lowMassZPredErrSF"] = ((getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.lowMass,region).err)**2 + (getattr(getattr(zPredictions,selection).SF,region).err*getattr(rOutIn.lowMass,region).val)**2 )**0.5
 	
@@ -83,7 +92,7 @@ def getResults(shelve,region,selection):
 	result["lowMassTotalPredMM"] = result["lowMassPredMM"] + result["lowMassZPredMM"]
 	result["lowMassTotalPredErrMM"] = ( result["lowMassPredStatErrMM"]**2 +  result["lowMassPredSystErrMM"]**2 + result["lowMassZPredErrMM"]**2 )**0.5
 
-	
+	### same for below Z region 
 	result["belowZEE"] = shelve[region][selection]["belowZ"]["EE"]
 	result["belowZMM"] = shelve[region][selection]["belowZ"]["MM"]
 	result["belowZSF"] = shelve[region][selection]["belowZ"]["EE"] + shelve[region][selection]["belowZ"]["MM"]
@@ -119,6 +128,7 @@ def getResults(shelve,region,selection):
 	result["belowZTotalPredMM"] = result["belowZPredMM"] + result["belowZZPredMM"]
 	result["belowZTotalPredErrMM"] = ( result["belowZPredStatErrMM"]**2 +  result["belowZPredSystErrMM"]**2 + result["belowZZPredErrMM"]**2 )**0.5
 	
+	### same for above Z region
 	result["aboveZEE"] = shelve[region][selection]["aboveZ"]["EE"]
 	result["aboveZMM"] = shelve[region][selection]["aboveZ"]["MM"]
 	result["aboveZSF"] = shelve[region][selection]["aboveZ"]["EE"] + shelve[region][selection]["aboveZ"]["MM"]
@@ -154,9 +164,7 @@ def getResults(shelve,region,selection):
 	result["aboveZTotalPredMM"] = result["aboveZPredMM"] + result["aboveZZPredMM"]
 	result["aboveZTotalPredErrMM"] = ( result["aboveZPredStatErrMM"]**2 +  result["aboveZPredSystErrMM"]**2 + result["aboveZZPredErrMM"]**2 )**0.5
 	
-	
-	
-	
+	### same for high mass region	
 	result["highMassEE"] = shelve[region][selection]["highMass"]["EE"]
 	result["highMassMM"] = shelve[region][selection]["highMass"]["MM"]
 	result["highMassSF"] = shelve[region][selection]["highMass"]["EE"] + shelve[region][selection]["highMass"]["MM"]
@@ -194,8 +202,7 @@ def getResults(shelve,region,selection):
 	result["highMassTotalPredErrMM"] = ( result["highMassPredStatErrMM"]**2 +  result["highMassPredSystErrMM"]**2 + result["highMassZPredErrMM"]**2 )**0.5	
 
 	
-	
-	
+	### on Z region: No R_Out/In required	
 	result["onZEE"] = shelve[region][selection]["zMass"]["EE"]
 	result["onZMM"] = shelve[region][selection]["zMass"]["MM"]
 	result["onZSF"] = shelve[region][selection]["zMass"]["EE"] + shelve[region][selection]["zMass"]["MM"]
@@ -238,9 +245,9 @@ def getResults(shelve,region,selection):
 
 def produceFinalTable(shelves,region):
 	
-	
-	
-	
+### template for the final result tables
+### region refers to the lepton flavors here
+### and can be SF, EE and MM	
 	tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
@@ -273,6 +280,7 @@ def produceFinalTable(shelves,region):
 
 """
 
+### sub template used for each b-tag region
 	subTemplate = """
     & \multicolumn{5}{c}{%s} \\\\ \n
     \hline    
@@ -320,7 +328,6 @@ def produceFinalTable(shelves,region):
 		observedCentral = observedTemplate%(resultsCentral["lowMass%s"%region],resultsCentral["belowZ%s"%region],resultsCentral["onZ%s"%region],resultsCentral["aboveZ%s"%region],resultsCentral["highMass%s"%region])
 		
 		flavSymCentral = flavSysmTemplate%(resultsCentral["lowMassPred%s"%region],resultsCentral["lowMassPredStatErr%s"%region],resultsCentral["lowMassPredSystErr%s"%region],resultsCentral["belowZPred%s"%region],resultsCentral["belowZPredStatErr%s"%region],resultsCentral["belowZPredSystErr%s"%region],resultsCentral["onZPred%s"%region],resultsCentral["onZPredStatErr%s"%region],resultsCentral["onZPredSystErr%s"%region],resultsCentral["aboveZPred%s"%region],resultsCentral["aboveZPredStatErr%s"%region],resultsCentral["aboveZPredSystErr%s"%region],resultsCentral["highMassPred%s"%region],resultsCentral["highMassPredStatErr%s"%region],resultsCentral["highMassPredSystErr%s"%region])
-		#~ flavSymCentral = flavSysmTemplate%(resultsCentral["lowMassPred%s"%region],resultsCentral["lowMassPredStatErr%s"%region]/resultsCentral["lowMassPred%s"%region],resultsCentral["lowMassPredSystErr%s"%region]/resultsCentral["lowMassPred%s"%region],resultsCentral["belowZPred%s"%region],resultsCentral["belowZPredStatErr%s"%region]/resultsCentral["belowZPred%s"%region],resultsCentral["belowZPredSystErr%s"%region]/resultsCentral["belowZPred%s"%region],resultsCentral["onZPred%s"%region],resultsCentral["onZPredStatErr%s"%region]/resultsCentral["onZPred%s"%region],resultsCentral["onZPredSystErr%s"%region]/resultsCentral["onZPred%s"%region],resultsCentral["aboveZPred%s"%region],resultsCentral["aboveZPredStatErr%s"%region]/resultsCentral["aboveZPred%s"%region],resultsCentral["aboveZPredSystErr%s"%region]/resultsCentral["aboveZPred%s"%region],resultsCentral["highMassPred%s"%region],resultsCentral["highMassPredStatErr%s"%region]/resultsCentral["highMassPred%s"%region],resultsCentral["highMassPredSystErr%s"%region]/resultsCentral["highMassPred%s"%region])
 		
 		dyCentral = dyTemplate%(resultsCentral["lowMassZPred%s"%region],resultsCentral["lowMassZPredErr%s"%region],resultsCentral["belowZZPred%s"%region],resultsCentral["belowZZPredErr%s"%region],resultsCentral["onZZPred%s"%region],resultsCentral["onZZPredErr%s"%region],resultsCentral["aboveZZPred%s"%region],resultsCentral["aboveZZPredErr%s"%region],resultsCentral["highMassZPred%s"%region],resultsCentral["highMassZPredErr%s"%region])
 		
@@ -329,7 +336,6 @@ def produceFinalTable(shelves,region):
 		observedForward = observedTemplate%(resultsForward["lowMass%s"%region],resultsForward["belowZ%s"%region],resultsForward["onZ%s"%region],resultsForward["aboveZ%s"%region],resultsForward["highMass%s"%region])
 		
 		flavSymForward = flavSysmTemplate%(resultsForward["lowMassPred%s"%region],resultsForward["lowMassPredStatErr%s"%region],resultsForward["lowMassPredSystErr%s"%region],resultsForward["belowZPred%s"%region],resultsForward["belowZPredStatErr%s"%region],resultsForward["belowZPredSystErr%s"%region],resultsForward["onZPred%s"%region],resultsForward["onZPredStatErr%s"%region],resultsForward["onZPredSystErr%s"%region],resultsForward["aboveZPred%s"%region],resultsForward["aboveZPredStatErr%s"%region],resultsForward["aboveZPredSystErr%s"%region],resultsForward["highMassPred%s"%region],resultsForward["highMassPredStatErr%s"%region],resultsForward["highMassPredSystErr%s"%region])
-		#~ flavSymForward = flavSysmTemplate%(resultsForward["lowMassPred%s"%region],resultsForward["lowMassPredStatErr%s"%region]/resultsForward["lowMassPred%s"%region],resultsForward["lowMassPredSystErr%s"%region]/resultsForward["lowMassPred%s"%region],resultsForward["belowZPred%s"%region],resultsForward["belowZPredStatErr%s"%region]/resultsForward["belowZPred%s"%region],resultsForward["belowZPredSystErr%s"%region]/resultsForward["belowZPred%s"%region],resultsForward["onZPred%s"%region],resultsForward["onZPredStatErr%s"%region]/resultsForward["onZPred%s"%region],resultsForward["onZPredSystErr%s"%region]/resultsForward["onZPred%s"%region],resultsForward["aboveZPred%s"%region],resultsForward["aboveZPredStatErr%s"%region]/resultsForward["aboveZPred%s"%region],resultsForward["aboveZPredSystErr%s"%region]/resultsForward["aboveZPred%s"%region],resultsForward["highMassPred%s"%region],resultsForward["highMassPredStatErr%s"%region]/resultsForward["highMassPred%s"%region],resultsForward["highMassPredSystErr%s"%region]/resultsForward["highMassPred%s"%region])
 		
 		dyForward = dyTemplate%(resultsForward["lowMassZPred%s"%region],resultsForward["lowMassZPredErr%s"%region],resultsForward["belowZZPred%s"%region],resultsForward["belowZZPredErr%s"%region],resultsForward["onZZPred%s"%region],resultsForward["onZZPredErr%s"%region],resultsForward["aboveZZPred%s"%region],resultsForward["aboveZZPredErr%s"%region],resultsForward["highMassZPred%s"%region],resultsForward["highMassZPredErr%s"%region])
 		
@@ -344,6 +350,8 @@ def produceFinalTable(shelves,region):
 
 
 def produceFlavSymTable(shelves):
+
+### table containing the flavor symmetric background prediciton estimated from OF events
 	
 	tableTemplate = """
 \\begin{table}[hbtp]
@@ -371,6 +379,7 @@ def produceFlavSymTable(shelves):
 
 """
 
+### sub template for each b-tag region
 	subTemplate = """
      & \multicolumn{5}{c}{%s} \\\\ \n
     \hline
@@ -433,8 +442,6 @@ def main():
 	
 	name = "cutAndCount"
 	countingShelves = {"central": readPickle(name,regionsToUse.signal.central.name,runRanges.name), "forward":readPickle(name,regionsToUse.signal.forward.name,runRanges.name)}	
-	
-
 	
 	produceFinalTable(countingShelves,"SF")
 	produceFinalTable(countingShelves,"EE")

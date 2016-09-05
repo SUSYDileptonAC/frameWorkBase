@@ -20,13 +20,15 @@ def readPickle(name,regionName,runName,MC=False):
 		if os.path.isfile("shelves/%s_%s_%s_MC.pkl"%(name,regionName,runName)):
 			result = pickle.load(open("shelves/%s_%s_%s_MC.pkl"%(name,regionName,runName),"rb"))
 		else:
-			print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName) 		
+			print "shelves/%s_%s_%s_MC.pkl not found, exiting"%(name,regionName,runName) 	
+			print "Have you run the corresponding background estimation tool with option -w?"		
 			sys.exit()		
 	else:
 		if os.path.isfile("shelves/%s_%s_%s.pkl"%(name,regionName,runName)):
 			result = pickle.load(open("shelves/%s_%s_%s.pkl"%(name,regionName,runName),"rb"))
 		else:
-			print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName) 		
+			print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName) 	
+			print "Have you run the corresponding background estimation tool with option -w?"		
 			sys.exit()
 
 	return result		
@@ -203,7 +205,7 @@ def produceRMuETable():
 def produceROutInTable():
 
 
-
+### Table for R_Out/In
 
 	shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name)}
 	shelvesROutInMC = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name,MC=True),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name,MC=True), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name,MC=True)}
@@ -297,6 +299,7 @@ def produceROutInTable():
 
 	saveTable(tableTemplate%(tableCentralLowMass,tableCentralBelowZ,tableCentralAboveZ,tableCentralHighMass,tableForwardLowMass,tableForwardBelowZ,tableForwardAboveZ,tableForwardHighMass), "ROutIn")
 
+### same table with values for ee and mumu sperated
 	tableTemplate =r"""
 \begin{table}[hbtp]
  \renewcommand{\arraystretch}{1.3}
@@ -494,7 +497,7 @@ def produceROutInTable():
 	saveTable(tableTemplate%(tableCentralLowMass,tableCentralBelowZ,tableCentralAboveZ,tableCentralHighMass,tableForwardLowMass,tableForwardBelowZ,tableForwardAboveZ,tableForwardHighMass,tableCentralEELowMass,tableCentralEEBelowZ,tableCentralEEAboveZ,tableCentralEEHighMass,tableForwardEELowMass,tableForwardEEBelowZ,tableForwardEEAboveZ,tableForwardEEHighMass,tableCentralMMLowMass,tableCentralMMBelowZ,tableCentralMMAboveZ,tableCentralMMHighMass,tableForwardMMLowMass,tableForwardMMBelowZ,tableForwardMMAboveZ,tableForwardMMHighMass), "ROutIn_full")
 
 def produceFactorizationTable():
-
+### table for the factorization method
 	tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
@@ -540,7 +543,7 @@ def produceFactorizationTable():
 	saveTable(table,"factorization_result")
 
 def produceCombinedRSFOFTable():
-
+### table for both methods and the combination
 	tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
@@ -619,7 +622,7 @@ def produceTriggerEffTables():
 	shelvesTrigger = {"inclusive":readPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name),"central": readPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name), "forward":readPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name)}
 	shelvesTriggerMC = {"inclusive":readPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name,MC=True),"central": readPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, MC=True), "forward":readPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name,MC=True)}	
 
-
+### Trigger efficiencies without splitting into central and forward
 
 	
 	tableTemplate =r"""

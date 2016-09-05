@@ -406,7 +406,7 @@ class Regions:
 
 
 	
-
+### Routine to fetch a signal/control region, has to be defined in Regions
 def getRegion(name):
 	if not name in dir(Regions) and not name == "Region":
 		print "unknown region '%s, exiting'"%name
@@ -415,21 +415,24 @@ def getRegion(name):
 		return Region
 	else:
 		return copy.copy(getattr(Regions, name))
-		
+
+### Routine to fetch a dilepton mass selection, has to be defined in theCuts.massCuts	
 def getMassSelection(name):
 	if not name in dir(theCuts.massCuts):
 		print "unknown selection '%s, using existing selection'"%name
 		return None
 	else:
 		return copy.copy(getattr(theCuts.massCuts, name))
-		
+
+### Routine to fetch a certain plot, has to be defined in thePlots	
 def getPlot(name):
 	if not name in dir(thePlots):
 		print "unknown plot '%s, exiting'"%name
 		sys.exit()
 	else:
 		return copy.copy(getattr(thePlots, name))
-		
+
+### Routine to fetch a certain runRange, has to be defined in runRanges	
 def getRunRange(name):
 	if not name in dir(runRanges):
 		print "unknown run range '%s, exiting'"%name
@@ -729,7 +732,8 @@ class Signals:
 		scaleFac     = 1.
 		additionalSelection = None 	
 	
-		
+### Background processes that can be used. Less important backgrounds are usually clustered
+### and referred to as Diboson, Rare etc.
 class Backgrounds:
 	
 	class TTJets_Madgraph:
@@ -855,6 +859,10 @@ myColors = {
             'W11Rare':  630,
             }
 
+
+### Sbottom cross-sections
+### The routines in SignalScan use these instead of the MasterList
+### since it was a seperate tool
 class sbottom_masses:
 	class m_b_400:
 		cross_section13TeV = 1.83537

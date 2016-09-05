@@ -1,3 +1,5 @@
+### script to make a single overview plot off all 30 signal regions
+
 import pickle
 import os
 import sys
@@ -37,6 +39,8 @@ def readPickle(name,regionName,runName,MC=False):
 
 def getResults(shelve,region,selection):
 	
+	### get the corrections from corrections.py, z predicition from centralConfig.py and the results from the .pkl files
+	
 	result = {}
 	
 	result["rSFOF"] = getattr(rSFOF,region).val
@@ -46,14 +50,19 @@ def getResults(shelve,region,selection):
 	result["rMMOF"] = getattr(rMMOF,region).val
 	result["rMMOFErr"] = getattr(rMMOF,region).err
 	
+	### low mass region
+	
+	### fetch event counts from pkls	
 	result["lowMassEE"] = shelve[region][selection]["edgeMass"]["EE"]
 	result["lowMassMM"] = shelve[region][selection]["edgeMass"]["MM"]
 	result["lowMassSF"] = shelve[region][selection]["edgeMass"]["EE"] + shelve[region][selection]["edgeMass"]["MM"]
 	result["lowMassOF"] = shelve[region][selection]["edgeMass"]["EM"]
+	### take R_SF/OF into account
 	result["lowMassPredSF"] = result["lowMassOF"]*getattr(rSFOF,region).val
 	result["lowMassPredStatErrSF"] = result["lowMassOF"]**0.5*getattr(rSFOF,region).val
 	result["lowMassPredSystErrSF"] = result["lowMassOF"]*getattr(rSFOF,region).err
 	
+	### predictions for ee and mumu seperated
 	result["lowMassPredEE"] = result["lowMassOF"]*getattr(rEEOF,region).val
 	result["lowMassPredStatErrEE"] = result["lowMassOF"]**0.5*getattr(rEEOF,region).val
 	result["lowMassPredSystErrEE"] = result["lowMassOF"]*getattr(rEEOF,region).err
@@ -62,6 +71,7 @@ def getResults(shelve,region,selection):
 	result["lowMassPredStatErrMM"] = result["lowMassOF"]**0.5*getattr(rMMOF,region).val
 	result["lowMassPredSystErrMM"] = result["lowMassOF"]*getattr(rMMOF,region).err
 	
+	### Z predcition from centralConfig multiplied by R_Out/In for the region
 	result["lowMassZPredSF"] = getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.lowMass,region).val
 	result["lowMassZPredErrSF"] = ((getattr(getattr(zPredictions,selection).SF,region).val*getattr(rOutIn.lowMass,region).err)**2 + (getattr(getattr(zPredictions,selection).SF,region).err*getattr(rOutIn.lowMass,region).val)**2 )**0.5
 	
@@ -84,7 +94,7 @@ def getResults(shelve,region,selection):
 	result["lowMassTotalPredMM"] = result["lowMassPredMM"] + result["lowMassZPredMM"]
 	result["lowMassTotalPredErrMM"] = ( result["lowMassPredStatErrMM"]**2 +  result["lowMassPredSystErrMM"]**2 + result["lowMassZPredErrMM"]**2 )**0.5
 
-	
+	### same for below Z region
 	result["belowZEE"] = shelve[region][selection]["belowZ"]["EE"]
 	result["belowZMM"] = shelve[region][selection]["belowZ"]["MM"]
 	result["belowZSF"] = shelve[region][selection]["belowZ"]["EE"] + shelve[region][selection]["belowZ"]["MM"]
@@ -124,6 +134,7 @@ def getResults(shelve,region,selection):
 	result["belowZTotalPredMM"] = result["belowZPredMM"] + result["belowZZPredMM"]
 	result["belowZTotalPredErrMM"] = ( result["belowZPredStatErrMM"]**2 +  result["belowZPredSystErrMM"]**2 + result["belowZZPredErrMM"]**2 )**0.5
 	
+	### same for above Z region
 	result["aboveZEE"] = shelve[region][selection]["aboveZ"]["EE"]
 	result["aboveZMM"] = shelve[region][selection]["aboveZ"]["MM"]
 	result["aboveZSF"] = shelve[region][selection]["aboveZ"]["EE"] + shelve[region][selection]["aboveZ"]["MM"]
@@ -163,9 +174,7 @@ def getResults(shelve,region,selection):
 	result["aboveZTotalPredMM"] = result["aboveZPredMM"] + result["aboveZZPredMM"]
 	result["aboveZTotalPredErrMM"] = ( result["aboveZPredStatErrMM"]**2 +  result["aboveZPredSystErrMM"]**2 + result["aboveZZPredErrMM"]**2 )**0.5
 	
-	
-	
-	
+	### same for high mass region	
 	result["highMassEE"] = shelve[region][selection]["highMass"]["EE"]
 	result["highMassMM"] = shelve[region][selection]["highMass"]["MM"]
 	result["highMassSF"] = shelve[region][selection]["highMass"]["EE"] + shelve[region][selection]["highMass"]["MM"]
@@ -206,9 +215,7 @@ def getResults(shelve,region,selection):
 	result["highMassTotalPredMM"] = result["highMassPredMM"] + result["highMassZPredMM"]
 	result["highMassTotalPredErrMM"] = ( result["highMassPredStatErrMM"]**2 +  result["highMassPredSystErrMM"]**2 + result["highMassZPredErrMM"]**2 )**0.5	
 
-	
-	
-	
+	### on Z region: No R_Out/In required
 	result["onZEE"] = shelve[region][selection]["zMass"]["EE"]
 	result["onZMM"] = shelve[region][selection]["zMass"]["MM"]
 	result["onZSF"] = shelve[region][selection]["zMass"]["EE"] + shelve[region][selection]["zMass"]["MM"]
@@ -254,12 +261,14 @@ def getResults(shelve,region,selection):
 
 	
 def makeOverviewPlot(countingShelves,region):
+	
+	### make an overview plot that contains all 30 signal regions as bar charts
 
 	from helpers import createMyColors
 	from defs import myColors
 	colors = createMyColors()	
 
-	
+	### fetch results for central/forward and the 3 b-tag regions
 	resultsCentral = getResults(countingShelves,"central","default")
 	resultsForward = getResults(countingShelves,"forward","default")
 	resultsCentralNoBTags = getResults(countingShelves,"central","noBTags")
@@ -267,6 +276,7 @@ def makeOverviewPlot(countingShelves,region):
 	resultsCentralGeOneBTags = getResults(countingShelves,"central","geOneBTags")
 	resultsForwardGeOneBTags = getResults(countingShelves,"forward","geOneBTags")
 	
+	### histograms for data, the different and the total background
 	histTotal = ROOT.TH1F("histTotal","histTotal",30,0,30)
 	
 	histObs = ROOT.TH1F("histObs","histObs",30,0,30)
@@ -280,6 +290,7 @@ def makeOverviewPlot(countingShelves,region):
 	histOnlyDY = ROOT.TH1F("histDY","histDY",30,0,30)
 	histOther = ROOT.TH1F("histOther","histOther",30,0,30)
 	
+	### get canvas and style
 	hCanvas = TCanvas("hCanvas", "Distribution", 1000,800)
 	
 	plotPad = ROOT.TPad("plotPad","plotPad",0,0,1,1)
@@ -289,7 +300,7 @@ def makeOverviewPlot(countingShelves,region):
 	plotPad.Draw()	
 	plotPad.cd()	
 	
-	
+	### fill the histogram for observed data for each region
 	histObs.SetBinContent(1,resultsCentral["lowMassSF"])
 	histObs.SetBinContent(2,resultsCentralNoBTags["lowMassSF"])
 	histObs.SetBinContent(3,resultsCentralGeOneBTags["lowMassSF"])
@@ -325,7 +336,7 @@ def makeOverviewPlot(countingShelves,region):
 	histObs.SetBinContent(29,resultsForwardNoBTags["highMassSF"])	
 	histObs.SetBinContent(30,resultsForwardGeOneBTags["highMassSF"])
 
-	
+	### put labels below each bar
 	names = ["inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)"]
 	
 	for index, name in enumerate(names):
@@ -333,6 +344,7 @@ def makeOverviewPlot(countingShelves,region):
 		histObs.GetXaxis().SetBinLabel(index+1,name)
 	
 
+	### fill histogram for FS background
 	histFlavSym.SetBinContent(1,resultsCentral["lowMassPredSF"])
 	histFlavSym.SetBinContent(2,resultsCentralNoBTags["lowMassPredSF"])
 	histFlavSym.SetBinContent(3,resultsCentralGeOneBTags["lowMassPredSF"])
@@ -369,6 +381,7 @@ def makeOverviewPlot(countingShelves,region):
 	histFlavSym.SetBinContent(30,resultsForwardGeOneBTags["highMassPredSF"])
 
 
+	### fill histogram for background from Z+jets, estimated using gamma+jets data
 	histOnlyDY.SetBinContent(1,resultsCentral["lowMassOnlyZPredSF"])
 	histOnlyDY.SetBinContent(2,resultsCentralNoBTags["lowMassOnlyZPredSF"])
 	histOnlyDY.SetBinContent(3,resultsCentralGeOneBTags["lowMassOnlyZPredSF"])
@@ -406,6 +419,7 @@ def makeOverviewPlot(countingShelves,region):
 	
 	
 
+	### fill histogram for non-flavor-symmetric background containing real MET from neutrinos (WZ, ZZ, ttZ ...) taken from MC
 	histOther.SetBinContent(1,resultsCentral["lowMassOtherPredSF"])
 	histOther.SetBinContent(2,resultsCentralNoBTags["lowMassOtherPredSF"])
 	histOther.SetBinContent(3,resultsCentralGeOneBTags["lowMassOtherPredSF"])
@@ -443,7 +457,7 @@ def makeOverviewPlot(countingShelves,region):
 
 	
 	
-	
+	### fill a histogram for the total background and an error graph for the uncertainty
 	errGraph = ROOT.TGraphAsymmErrors()
 	
 	for i in range(1,histFlavSym.GetNbinsX()+1):
@@ -504,12 +518,13 @@ def makeOverviewPlot(countingShelves,region):
 	
 	from ROOT import THStack
 	
+	### put Z background into one stack
 	stack = THStack()
 	stack.Add(histOther)	
 	stack.Add(histOnlyDY)	
 
 	
-	
+	### Set y-range and title
 	histObs.GetYaxis().SetRangeUser(0,800)
 	histObs.GetYaxis().SetTitle("Events")
 	histObs.LabelsOption("v")
@@ -518,10 +533,9 @@ def makeOverviewPlot(countingShelves,region):
 	histObs.SetMarkerSize(2)
 	histObs.SetLineWidth(2)
 	histObs.Draw("pe")
-
 	
 	
-	
+	### Set size and style for diffent labels
 	latex = ROOT.TLatex()
 	latex.SetTextFont(42)
 	latex.SetTextAlign(31)
@@ -536,8 +550,6 @@ def makeOverviewPlot(countingShelves,region):
 	latexCMSExtra.SetTextSize(0.045)
 	latexCMSExtra.SetNDC(True)		
 	
-
-
 	intlumi = ROOT.TLatex()
 	intlumi.SetTextAlign(12)
 	intlumi.SetTextSize(0.03)
@@ -552,6 +564,9 @@ def makeOverviewPlot(countingShelves,region):
 	else:
 		yLabelPos = 0.84	
 
+	
+	### Somehow putting 5 contributions into one legend never looked very good
+	### Thus we are using 3 legends now
 	leg1 = ROOT.TLegend(0.42, 0.84, 0.57, 0.93,"","brNDC")
 	leg1.SetNColumns(2)
 	leg1.SetFillColor(10)
@@ -594,7 +609,7 @@ def makeOverviewPlot(countingShelves,region):
 	leg2.Draw("same")
 	leg3.Draw("same")
 
-	
+	### Draw lines to seperate the mass regions
 	
 	line1 = ROOT.TLine(6,0,6,400)
 	line2 = ROOT.TLine(12,0,12,400)
@@ -615,6 +630,8 @@ def makeOverviewPlot(countingShelves,region):
 	line2.Draw("same")
 	line3.Draw("same")
 	line4.Draw("same")
+	
+	### Draw lines to seperate central and forward
 	
 	line5 = ROOT.TLine(3,0,3,350)
 	line6 = ROOT.TLine(9,0,9,350)
@@ -646,6 +663,7 @@ def makeOverviewPlot(countingShelves,region):
 	line9.Draw("same")
 
 
+	### Put additional labels into the plot
 	label = ROOT.TLatex()
 	label.SetTextAlign(12)
 	label.SetTextSize(0.04)

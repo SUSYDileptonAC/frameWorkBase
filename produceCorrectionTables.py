@@ -1,3 +1,5 @@
+### Make tables for all the corrections used in the background prediction
+
 import pickle
 import os
 import sys
@@ -14,19 +16,22 @@ def saveTable(table, name):
 	tabFile.write(table)
 	tabFile.close()
 
+### read in .pkl files from shelves.
 def readPickle(name,regionName,runName,MC=False):
 	
 	if MC:
 		if os.path.isfile("shelves/%s_%s_%s_MC.pkl"%(name,regionName,runName)):
 			result = pickle.load(open("shelves/%s_%s_%s_MC.pkl"%(name,regionName,runName),"rb"))
 		else:
-			print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName) 		
+			print "shelves/%s_%s_%s_MC.pkl not found, exiting"%(name,regionName,runName) 		
+			print "Have you run the corresponding background estimation tool with option -w?"		
 			sys.exit()		
 	else:
 		if os.path.isfile("shelves/%s_%s_%s.pkl"%(name,regionName,runName)):
 			result = pickle.load(open("shelves/%s_%s_%s.pkl"%(name,regionName,runName),"rb"))
 		else:
 			print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName) 		
+			print "Have you run the corresponding background estimation tool with option -w?"		
 			sys.exit()
 
 	return result		
@@ -34,14 +39,12 @@ def readPickle(name,regionName,runName,MC=False):
 
 def produceRSFOFTable():
 	
-
+### Table for the results of the direct measurement of R_SF/OF
+### Results are split into central and forward
+### MC and data values will be given
 
 	shelvesRSFOF = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name)}
 	shelvesRSFOFMC = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name,MC=True),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name,MC=True), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name,MC=True)}	
-
-
-
-
 
 	tableTemplate =r"""
 \begin{table}[hbtp]
@@ -68,6 +71,10 @@ def produceRSFOFTable():
 \end{table}
 """
 
+	### line template has to be consistent with the table template (number of columns etc)
+	### transfer factor is R_SF/OF in the signal region / R_SF/OF in the control region and
+	### thus only estimated on MC. The uncertainty on the transfer factor is used as the 
+	### systematic uncertainty of the method 
 	lineTemplate = r" %s & %.1f & %.1f & %.3f$\pm$%.3f & %.3f$\pm$%.3f\\"+"\n"
 	lineTemplateData = r" %s & %d & %d & %.3f$\pm$%.3f & -- \\"+"\n"
 
@@ -76,6 +83,7 @@ def produceRSFOFTable():
 	tableForward =""
 
 
+	### numbers from the shelves are put into the table via the line templates
 	tableCentral += lineTemplateData%("Data",shelvesRSFOF["central"]["SF"],shelvesRSFOF["central"]["OF"],shelvesRSFOF["central"]["rSFOF"],shelvesRSFOF["central"]["rSFOFErr"])	
 	tableCentral+= lineTemplate%("MC",shelvesRSFOFMC["central"]["SF"],shelvesRSFOFMC["central"]["OF"],shelvesRSFOFMC["central"]["rSFOF"],shelvesRSFOFMC["central"]["rSFOFErr"],shelvesRSFOFMC["central"]["transfer"],shelvesRSFOFMC["central"]["transferErr"])	
 	
@@ -86,6 +94,7 @@ def produceRSFOFTable():
 	
 	saveTable(tableTemplate%("\Rsfof",tableCentral,tableForward), "Rsfof")
 
+### Second table with results split into ee and mumu
 	tableTemplate =r"""
 \begin{table}[hbtp]
  \renewcommand{\arraystretch}{1.3}
@@ -155,6 +164,8 @@ def produceRSFOFTable():
 
 def produceRMuETable():
 
+### table for the measured r_Mu/E values
+
 	tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
@@ -200,7 +211,9 @@ def produceRMuETable():
 def produceROutInTable():
 
 
+### Table for R_Out/In
 
+### ADD ADDITIONAL MASS REGIONS HERE AFTER ADDING THEM TO countsAndCorrections/rOutIn/rOutIn.py 
 
 	shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name)}
 	shelvesROutInMC = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name,MC=True),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name,MC=True), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name,MC=True)}
@@ -247,6 +260,7 @@ def produceROutInTable():
 
 	saveTable(tableTemplate%(tableCentralLowMass,tableForwardLowMass), "ROutIn")
 
+### same table with values for ee and mumu sperated
 	tableTemplate =r"""
 \begin{table}[hbtp]
  \renewcommand{\arraystretch}{1.3}
@@ -330,7 +344,7 @@ def produceROutInTable():
 	saveTable(tableTemplate%(tableCentralLowMass,tableForwardLowMass,tableCentralEELowMass,tableForwardEELowMass,tableCentralMMLowMass,tableForwardMMLowMass), "ROutIn_full")
 
 def produceFactorizationTable():
-
+### table for the factorization method
 	tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
@@ -376,7 +390,7 @@ def produceFactorizationTable():
 	saveTable(table,"factorization_result")
 
 def produceCombinedRSFOFTable():
-
+### table for both methods and the combination
 	tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
@@ -455,7 +469,7 @@ def produceTriggerEffTables():
 	shelvesTriggerMC = {"inclusive":readPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name,MC=True),"central": readPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, MC=True), "forward":readPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name,MC=True)}	
 
 
-
+### Trigger efficiencies without splitting into central and forward
 	
 	tableTemplate =r"""
 \begin{table}[hbp] \caption{Triggerefficiency-values for data and MC with OS, $p_T>20(20)\,\GeV$ and $H_T>200\,\GeV$ for the inclusive region.} 

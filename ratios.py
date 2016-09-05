@@ -8,6 +8,8 @@
 #		 daniel.sprenger@cern.ch
 #=======================================================
 
+### Tool used to plot ratio graphs
+
 from defs import myColors
 import ROOT
 
@@ -85,8 +87,6 @@ class Ratio:
 		return value
 
 	def isFullEnough(self, rebinErrorBoundary):
-		#if (self.sumNumerator > 0):
-		#	log.logDebug("Rel Eror: %f" % (math.sqrt(self.sumNumeratorSquaredErrors) / self.sumNumerator))
 		return (self.sumNumerator > 0 and math.sqrt(self.sumNumeratorSquaredErrors) / self.sumNumerator <= rebinErrorBoundary)
 
 	def addRatio(self, ratio):
@@ -99,7 +99,8 @@ class Ratio:
 
 
 class RatioGraph:
-	def __init__(self, numerator, denominator, xMin, xMax,title, yMin, yMax,ndivisions,color,adaptiveBinning,labelSize=None):
+	### takes 2 histograms, an x and y range, an adaptive binning can be used
+	def __init__(self, numerator, denominator, xMin, xMax,title, yMin, yMax,color,adaptiveBinning,labelSize=None):
 		self.denominator = denominator
 		self.numerator = numerator
 		self.xMin = xMin
@@ -108,7 +109,6 @@ class RatioGraph:
 		self.title = title
 		self.yMin = yMin
 		self.yMax = yMax
-		self.ndivisions = ndivisions
 		self.color=color
 		self.adaptiveBinning = adaptiveBinning
 		self.labelSize=labelSize
@@ -150,9 +150,6 @@ class RatioGraph:
 			if (self.xMin < x and x < self.xMax
 					and not (len(ratios) == 0 and tempRatio == None and den == 0)):
 
-				#log.logDebug("num: %f +- %f" % (num, numError))
-				#log.logDebug("den: %f +- %f" % (den, denError))
-
 				if (tempRatio != None):
 					ratio = Ratio(num, den, math.pow(numError, 2.0), math.pow(denError, 2.0), x, width)
 					tempRatio.addRatio(ratio)
@@ -189,7 +186,6 @@ class RatioGraph:
 		graph.SetMarkerColor(self.color)
 		self.chi2 =  sum((y-1)**2 * (1./yErr if yErr != 0. else 0.)**2 for y, yErr in zip(ys, yErrors))
 		self.nDF = len(ys)-1
-		#graph = ROOT.TGraphAsymmErrors(self.numerator,self.denominator)
 		
 		return graph
 
@@ -286,6 +282,8 @@ class RatioGraph:
 		for errorGraph in self.errorGraphs:
 			errorGraph.Draw("SAME02")
 
+		### Draw horizontal lines, per default at 0.5, 1 and 1.5
+		### Should be adapted if one plots a different range than 0-2
 		self.oneLine = ROOT.TLine(self.xMin, 1.0, self.xMax, 1.0)
 		self.oneLine.SetLineStyle(2)
 		self.oneLine.Draw()
