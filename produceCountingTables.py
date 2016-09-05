@@ -344,6 +344,7 @@ def produceFinalTable(shelves,region):
 		tables.append(subTemplate%(tableColumnHeaders[selection],observedCentral,flavSymCentral,dyCentral,totalCentral,observedForward,flavSymForward,dyForward,totalForward))
 	table = tableTemplate%(tables[0],tables[1],tables[2])
 	saveTable(table,"cutNCount_Result_%s"%(region))
+	print "table tab/cutNCount_Result_%s.tex produced"%(region)
 	
 	
 	
@@ -434,7 +435,8 @@ def produceFlavSymTable(shelves):
 
 	table = tableTemplate%(tables[0],tables[1],tables[2])
 	
-	saveTable(table,"cutNCount_FlavSymBkgs")	
+	saveTable(table,"cutNCount_FlavSymBkgs")
+	print "table tab/cutNCount_FlavSymBkgs.tex produced"
 	
 	
 def main():

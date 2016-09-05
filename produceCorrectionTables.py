@@ -93,6 +93,7 @@ def produceRSFOFTable():
 
 	
 	saveTable(tableTemplate%("\Rsfof",tableCentral,tableForward), "Rsfof")
+	print "table tab/Rsfof.tex produced" 
 
 ### Second table with results split into ee and mumu
 	tableTemplate =r"""
@@ -160,6 +161,7 @@ def produceRSFOFTable():
 
 	
 	saveTable(tableTemplate%(tableCentral,tableForward,tableCentralEE,tableForwardEE,tableCentralMM,tableForwardMM), "Rsfof_full")
+	print "table tab/Rsfof_full.tex produced" 
 
 
 def produceRMuETable():
@@ -205,6 +207,7 @@ def produceRMuETable():
 	table = tableTemplate%(dataCentral,mcCentral,dataForward,mcForward)
 	
 	saveTable(table,"rMuE_result")
+	print "table tab/rMuE_result.tex produced" 
 
 
 
@@ -259,6 +262,7 @@ def produceROutInTable():
 
 
 	saveTable(tableTemplate%(tableCentralLowMass,tableForwardLowMass), "ROutIn")
+	print "table tab/ROutIn.tex produced" 
 
 ### same table with values for ee and mumu sperated
 	tableTemplate =r"""
@@ -342,6 +346,7 @@ def produceROutInTable():
 
 	
 	saveTable(tableTemplate%(tableCentralLowMass,tableForwardLowMass,tableCentralEELowMass,tableForwardEELowMass,tableCentralMMLowMass,tableForwardMMLowMass), "ROutIn_full")
+	print "table tab/ROutIn_full.tex produced" 
 
 def produceFactorizationTable():
 ### table for the factorization method
@@ -388,6 +393,7 @@ def produceFactorizationTable():
 	table = tableTemplate%(tableIngredients,tableResult)
 	
 	saveTable(table,"factorization_result")
+	print "table tab/factorization_result.tex produced" 
 
 def produceCombinedRSFOFTable():
 ### table for both methods and the combination
@@ -460,6 +466,7 @@ def produceCombinedRSFOFTable():
 	table = tableTemplate%(tableResultSF,tableResultEE,tableResultMM)
 	
 	saveTable(table,"rSFOF_combination_result")
+	print "table tab/rSFOF_combination_result.tex produced" 
 
 
 def produceTriggerEffTables():
@@ -514,6 +521,7 @@ def produceTriggerEffTables():
 
 		
 	saveTable(tableTemplate%(tableData,tableMC), "TriggerEffsExclusive_Inclusive")
+	print "table tab/TriggerEffsExclusive_Inclusive.tex produced" 
 
 
 # Table with Barrel and Endcap seperated
@@ -561,7 +569,8 @@ def produceTriggerEffTables():
 	tableMC += lineTemplateMC%("e$\mu$",shelvesTriggerMC["central"][runRanges.name]["EMu"]["Nominator"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["Denominator"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTriggerMC["central"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["UncertaintyDown"]),shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Nominator"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Denominator"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTriggerMC["forward"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["UncertaintyDown"]))	
 
 
-	saveTable(tableTemplate%(tableData,tableMC), "TriggerEffsExclusive_Seperated")	
+	saveTable(tableTemplate%(tableData,tableMC), "TriggerEffsExclusive_Seperated")
+	print "table tab/TriggerEffsExclusive_Seperated.tex produced" 	
 
 	
 def main():
