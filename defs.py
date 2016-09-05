@@ -663,6 +663,8 @@ class thePlots:
 	leadingPtPlot = Plot(theVariables.LeadingPt,[])
 
 	mllPlot = Plot(theVariables.Mll,[])
+	mllPlotGeOneBTags = Plot(theVariables.Mll,[theCuts.bTags.geOneBTags])
+	mllPlotNoBTags = Plot(theVariables.Mll,[theCuts.bTags.noBTags])
 
 	nJetsPlot = Plot(theVariables.nJets,[])
 
