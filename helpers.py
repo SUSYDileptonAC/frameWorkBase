@@ -118,6 +118,9 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 		result = TH1F(name, "", len(binning)-1, array("f",binning))
 		
 	result.Sumw2()
+	print 
+	print tree.GetFile().GetName()
+	print "tree run: %s>>%s cut=%s" %(variable,name,weight)
 	tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
 	result.SetBinContent(nBins,result.GetBinContent(nBins)+result.GetBinContent(nBins+1))
 	if result.GetBinContent(nBins) >= 0.:
@@ -150,7 +153,9 @@ def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, la
 		result = TH2F(name, "", len(binning)-1, array("f",binning), len(binning2)-1, array("f",binning2))
 		
 	result.Sumw2()
-
+	print 
+	print tree.GetFile().GetName()
+	print "tree run: %s>>%s cut=%s" %(variable,name,weight)
 	tree.Draw("%s:%s>>%s"%(variable2,variable, name), weight, "goff", nEvents)
 	
 	return result
