@@ -107,7 +107,7 @@ def getFilePathsAndSampleNames(path):
 
 
 	
-def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,binning=None):
+def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvents = -1,binning=None, verbose=True):
 	"""
 	take a tree and make a 1D histogram with given cuts binning etc.
 	tree: tree to create histo from
@@ -130,10 +130,12 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 		
 	result.Sumw2()
 	### print out the cut string to make sure what you are doing is what you want
-	print 
-	print tree.GetFile().GetName()
-	print "variable: %s" %(variable)
-	print "cut=%s" %(weight)
+	### Can be switched of to reduce the output (e.g. for signal scan)
+	if verbose:
+		print 
+		print tree.GetFile().GetName()
+		print "variable: %s" %(variable)
+		print "cut=%s" %(weight)
 	tree.Draw("%s>>%s"%(variable, name), weight, "goff", nEvents)
 	result.SetBinContent(nBins,result.GetBinContent(nBins)+result.GetBinContent(nBins+1))
 	if result.GetBinContent(nBins) >= 0.:
@@ -143,7 +145,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
 	gc.collect()
 	return result
 	
-def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, lastBin, nBins2=10, firstBin2=0, lastBin2=100, nEvents = -1,binning=None,binning2=None): 
+def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, lastBin, nBins2=10, firstBin2=0, lastBin2=100, nEvents = -1,binning=None,binning2=None, verbose=True): 
 	"""
 	take a tree and make a 2D histogram with given cuts binning etc.
 	tree: tree to create histo from
@@ -168,10 +170,12 @@ def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, la
 		
 	result.Sumw2()
 	### print out the cut string to make sure what you are doing is what you want
-	print 
-	print tree.GetFile().GetName()
-	print "variable1: %s; variable2: %s" %(variable,variable2)
-	print "cut=%s" %(weight)
+	### Can be switched of to reduce the output (e.g. for signal scan)
+	if verbose:
+		print 
+		print tree.GetFile().GetName()
+		print "variable1: %s; variable2: %s" %(variable,variable2)
+		print "cut=%s" %(weight)
 	tree.Draw("%s:%s>>%s"%(variable2,variable, name), weight, "goff", nEvents)
 	
 	return result
