@@ -5,7 +5,6 @@ mkdir shelves
 cd ../
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/DataMC.git
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/countsAndCorrections.git
-git clone -b CMSDAS https://github.com/SUSYDileptonAC/Triggerefficiencies.git
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/edgeFitRunII.git
 git clone -b CMSDAS https://github.com/SUSYDileptonAC/SignalScan.git
 
@@ -19,10 +18,6 @@ cd ../DataMC
 mkdir fig
 mkdir shelves
 
-cd ../Triggerefficiencies
-mkdir fig
-mkdir shelves
-mkdir tab
 
 cd ../countsAndCorrections
 mkdir fig
@@ -40,6 +35,11 @@ cd ../rSFOF
 mkdir fig
 mkdir tab
 mkdir shelves
+
+cd ../Triggerefficiencies
+mkdir fig
+mkdir shelves
+mkdir tab
 
 cd ../../edgeFitRunII
 mkdir fig
