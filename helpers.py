@@ -230,7 +230,7 @@ class Process:
 			self.nEvents.append(Counts[sample])
 
 		
-	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,signal=False):
+	def createCombinedHistogram(self,lumi,plot,tree1,tree2 = "None",shift = 1.,scalefacTree1=1.,scalefacTree2=1.,verbose=True,):
 		### Make a histogram using all of the chosen MC samples
 		if len(plot.binning) == 0:
 			self.histo = TH1F("","",plot.nBins,plot.firstBin,plot.lastBin)
@@ -250,7 +250,7 @@ class Process:
 		for index, sample in enumerate(self.samples):
 			for name, tree in tree1.iteritems(): 
 				if name == sample:
-					tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
+					tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,verbose=verbose)
 						
 					if self.normalized:		
 						tempHist.Scale((lumi*scalefacTree1*self.xsecs[index]/(self.nEvents[index]*(1-2*self.negWeightFractions[index]))))
@@ -259,7 +259,7 @@ class Process:
 			if tree2 != "None":		
 				for name, tree in tree2.iteritems(): 
 					if name == sample:
-						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning)
+						tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,verbose=verbose)
 						
 
 						if self.normalized:
@@ -280,7 +280,7 @@ class TheStack:
 	from ROOT import THStack
 	theStack = THStack()	
 	theHistogram = ROOT.TH1F()	
-	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None):
+	def  __init__(self,processes,lumi,plot,tree1,tree2,shift = 1.0,scalefacTree1=1.0,scalefacTree2=1.0,saveIntegrals=False,counts=None,verbose=True):
 		self.theStack = THStack()
 		self.theHistogram = ROOT.TH1F()
 		self.theHistogram.Sumw2()
@@ -294,7 +294,7 @@ class TheStack:
 		for process in processes:
 			temphist = TH1F()
 			temphist.Sumw2()	
-			temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2)
+			temphist = process.createCombinedHistogram(lumi,plot,tree1,tree2,shift,scalefacTree1,scalefacTree2,verbose=verbose)
 			if saveIntegrals:
 				
 				errIntMC = ROOT.Double()
@@ -309,7 +309,7 @@ class TheStack:
 			self.theStack.Add(temphist.Clone())
 			self.theHistogram.Add(temphist.Clone())
 
-def getDataHist(plot,tree1,tree2="None",dataname = ""):
+def getDataHist(plot,tree1,tree2="None",dataname = "",verbose=True):
 	### Fetch the histogram from one (or two) dilepton data trees
 	histo = TH1F()
 	histo2 = TH1F()
@@ -317,11 +317,11 @@ def getDataHist(plot,tree1,tree2="None",dataname = ""):
 		dataname = "MergedData"		
 	for name, tree in tree1.iteritems():
 		if name == dataname:
-			histo = createHistoFromTree(tree, plot.variable , plot.cuts , plot.nBins, plot.firstBin, plot.lastBin,binning=plot.binning)
+			histo = createHistoFromTree(tree, plot.variable , plot.cuts , plot.nBins, plot.firstBin, plot.lastBin,binning=plot.binning,verbose=verbose)
 	if tree2 != "None":		
 		for name, tree in tree2.iteritems():
 			if name == dataname:
-				histo2 = createHistoFromTree(tree, plot.variable , plot.cuts , plot.nBins, plot.firstBin, plot.lastBin,binning=plot.binning)
+				histo2 = createHistoFromTree(tree, plot.variable , plot.cuts , plot.nBins, plot.firstBin, plot.lastBin,binning=plot.binning,verbose=verbose)
 				histo.Add(histo2.Clone())
 	return histo	
 	
