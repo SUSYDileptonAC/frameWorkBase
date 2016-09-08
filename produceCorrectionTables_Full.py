@@ -54,7 +54,7 @@ def produceRSFOFTable():
      }
   \label{tab:rSFOF}
 \begin{tabular}{l|c|c|c|c}     
- & $N_{SF}$ & $N_{OF}$ & $ %s \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
+ & $N_{SF}$ & $N_{OF}$ & $ R_{SF/OF} \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
 \hline
  & \multicolumn{4}{c}{Central} \\
 \hline
@@ -86,7 +86,7 @@ def produceRSFOFTable():
 
 
 	
-	saveTable(tableTemplate%("\Rsfof",tableCentral,tableForward), "Rsfof")	
+	saveTable(tableTemplate%(tableCentral,tableForward), "Rsfof")	
 	print "table tab/Rsfof.tex produced" 
 
 	tableTemplate =r"""
@@ -94,10 +94,10 @@ def produceRSFOFTable():
  \renewcommand{\arraystretch}{1.3}
  \setlength{\belowcaptionskip}{6pt}
  \centering
- \caption{Observed event yields in the control region and the resulting values of \Rsfof, \Reeof, and \Rmmof. The results are shown separately for the central and forward lepton selection and the same quantities derived on simulation are shown for comaprison.}
+ \caption{Observed event yields in the control region and the resulting values of $R_{SF/OF}$, $R_{ee/OF}$, and $R_{\mu\mu/OF}$. The results are shown separately for the central and forward lepton selection and the same quantities derived on simulation are shown for comaprison.}
   \label{tab:rSFOF}
 \begin{tabular}{l|c|c|c|c}     
- & $N_{SF}$ & $N_{OF}$ & $ \Rsfof \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
+ & $N_{SF}$ & $N_{OF}$ & $ R_{SF/OF} \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
 \hline
 &  \multicolumn{4}{c}{Central} \\
 \hline
@@ -108,7 +108,7 @@ def produceRSFOFTable():
 \hline
 %s
 \hline\hline
- & $N_{ee}$ & $N_{OF}$ & $ \Reeof \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
+ & $N_{ee}$ & $N_{OF}$ & $ R_{ee/OF} \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
 \hline
 &  \multicolumn{4}{c}{Central} \\
 \hline
@@ -119,7 +119,7 @@ def produceRSFOFTable():
 \hline
 %s
 \hline\hline
- & $N_{\mu\mu}$ & $N_{OF}$ & $ \Rmmof \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
+ & $N_{\mu\mu}$ & $N_{OF}$ & $ R_{\mu\mu/OF} \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
 \hline
 & \multicolumn{4}{c}{Central} \\
 \hline
@@ -164,11 +164,11 @@ def produceRMuETable():
  \\renewcommand{\\arraystretch}{1.3}
  \setlength{\\belowcaptionskip}{6pt}
  \centering
- \caption{Result of the calculation of \\rmue. Shown are the observed event yields in the Drell--Yan control region for the central and forward lepton selection in the \EE and \MM channels and the resulting values of \rmue. The same quantaties derived from simulation are shown for comparison.}
+ \caption{Result of the calculation of $r_{\mu e}$. Shown are the observed event yields in the Drell--Yan control region for the central and forward lepton selection in the ee and $\mu\mu$ channels and the resulting values of $r_{\mu e}$. The same quantaties derived from simulation are shown for comparison.}
   \label{tab:rMuE}
   \\begin{tabular}{l| ccc }
 
-    							& $N_{\mu\mu}$ &  $N_{ee}$ & $\\rmue \\pm \sigma_{\\text{stat.}} \\pm \sigma_{\\text{syst.}}$ \\\\ \n    
+    							& $N_{\mu\mu}$ &  $N_{ee}$ & $r_{\mu e} \pm \sigma_{\text{stat.}} \pm \sigma_{\text{syst.}}$ \\\\ \n    
     \hline
     							& \multicolumn{3}{c}{Central}  \\\\ \n
     \hline
@@ -223,7 +223,7 @@ def produceROutInTable():
      }
   \label{tab:rOutIn}
 \begin{tabular}{l|c|c|c}     
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ \Routin (SF) \pm \sigma_{stat}$  \\    
+ & $N_{\text{out}}$ & $N_{\text{in}}$ & $ R_{Out/In} (SF) \pm \sigma_{stat}$  \\    
 \hline
  & \multicolumn{3}{c}{Central} \\
 \hline 
@@ -313,7 +313,7 @@ def produceROutInTable():
      }
   \label{tab:rOutIn}
 \begin{tabular}{l|c|c|c}     
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ \Routin (SF) \pm \sigma_{stat}$  \\    
+ & $N_{\text{out}}$ & $N_{\text{in}}$ & $ R_{Out/In} (SF) \pm \sigma_{stat}$  \\    
 \hline
  & \multicolumn{3}{c}{Central} \\
 \hline 
@@ -346,7 +346,7 @@ def produceROutInTable():
 \hline
 %s
 \hline
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ \Routin (\EE) \pm \sigma_{stat}$  \\    
+ & $N_{\text{out}}$ & $N_{\text{in}}$ & $ R_{Out/In} (ee) \pm \sigma_{stat}$  \\    
 \hline
  & \multicolumn{3}{c}{Central} \\
 \hline 
@@ -379,7 +379,7 @@ def produceROutInTable():
 \hline
 %s
 \hline
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ \Routin (\MM)) \pm \sigma_{stat}$  \\    
+ & $N_{\text{out}}$ & $N_{\text{in}}$ & $ R_{Out/In} (\mu\mu)) \pm \sigma_{stat}$  \\    
 \hline
  & \multicolumn{3}{c}{Central} \\
 \hline 
@@ -533,13 +533,13 @@ def produceFactorizationTable():
 	tableIngredients =""
 	tableResult =""
 
-	tableIngredients += template%("\\rmue",rMuE.central.val,rMuE.central.err,rMuE.central.valMC,rMuE.central.errMC,rMuE.forward.val,rMuE.forward.err,rMuE.forward.valMC,rMuE.forward.errMC)	
+	tableIngredients += template%("$r_{\mu e}",rMuE.central.val,rMuE.central.err,rMuE.central.valMC,rMuE.central.errMC,rMuE.forward.val,rMuE.forward.err,rMuE.forward.valMC,rMuE.forward.errMC)	
 	tableIngredients += template%("$R_{T}$",rSFOFTrig.central.val,rSFOFTrig.central.err,rSFOFTrig.central.valMC,rSFOFTrig.central.errMC,rSFOFTrig.forward.val,rSFOFTrig.forward.err,rSFOFTrig.forward.valMC,rSFOFTrig.forward.errMC)	
 
 	
-	tableResult += template%("\Rsfof",rSFOFFact.central.SF.val,rSFOFFact.central.SF.err,rSFOFFact.central.SF.valMC,rSFOFFact.central.SF.errMC,rSFOFFact.forward.SF.val,rSFOFFact.forward.SF.err,rSFOFFact.forward.SF.valMC,rSFOFFact.forward.SF.errMC)	
-	tableResult += template%("\Reeof",rSFOFFact.central.EE.val,rSFOFFact.central.EE.err,rSFOFFact.central.EE.valMC,rSFOFFact.central.EE.errMC,rSFOFFact.forward.EE.val,rSFOFFact.forward.EE.err,rSFOFFact.forward.EE.valMC,rSFOFFact.forward.EE.errMC)	
-	tableResult += template%("\Rmmof",rSFOFFact.central.MM.val,rSFOFFact.central.MM.err,rSFOFFact.central.MM.valMC,rSFOFFact.central.MM.errMC,rSFOFFact.forward.MM.val,rSFOFFact.forward.MM.err,rSFOFFact.forward.MM.valMC,rSFOFFact.forward.MM.errMC)	
+	tableResult += template%("$R_{SF/OF}$",rSFOFFact.central.SF.val,rSFOFFact.central.SF.err,rSFOFFact.central.SF.valMC,rSFOFFact.central.SF.errMC,rSFOFFact.forward.SF.val,rSFOFFact.forward.SF.err,rSFOFFact.forward.SF.valMC,rSFOFFact.forward.SF.errMC)	
+	tableResult += template%("$R_{ee/OF}$",rSFOFFact.central.EE.val,rSFOFFact.central.EE.err,rSFOFFact.central.EE.valMC,rSFOFFact.central.EE.errMC,rSFOFFact.forward.EE.val,rSFOFFact.forward.EE.err,rSFOFFact.forward.EE.valMC,rSFOFFact.forward.EE.errMC)	
+	tableResult += template%("$R_{\mu\mu/OF}$",rSFOFFact.central.MM.val,rSFOFFact.central.MM.err,rSFOFFact.central.MM.valMC,rSFOFFact.central.MM.errMC,rSFOFFact.forward.MM.val,rSFOFFact.forward.MM.err,rSFOFFact.forward.MM.valMC,rSFOFFact.forward.MM.errMC)	
 
 
 
@@ -559,21 +559,21 @@ def produceCombinedRSFOFTable():
      }
   \label{tab:combinedRSFOF}
   \\begin{tabular}{l| c c| c c }
-    & \multicolumn{4}{c}{\Rsfof}  \\\\ \n
+    & \multicolumn{4}{c}{$R_{SF/OF}$}  \\\\ \n
     & \multicolumn{2}{c}{Central} & \multicolumn{2}{c}{Forward} \\\\ \n    								
     \hline
     & Data & MC & Data & MC \\\\ \n
     \hline
 %s
 \hline
-    & \multicolumn{4}{c}{\Reeof}  \\\\ \n
+    & \multicolumn{4}{c}{$R_{ee/OF}$}  \\\\ \n
     & \multicolumn{2}{c}{Central} & \multicolumn{2}{c}{Forward} \\\\ \n    								
     \hline
     & Data & MC & Data & MC \\\\ \n
     \hline
 %s
 \hline
-    & \multicolumn{4}{c}{\Rmmof}  \\\\ \n
+    & \multicolumn{4}{c}{$R_{\mu\mu/OF}$}  \\\\ \n
     & \multicolumn{2}{c}{Central} & \multicolumn{2}{c}{Forward} \\\\ \n    								
     \hline
     & Data & MC & Data & MC \\\\ \n
