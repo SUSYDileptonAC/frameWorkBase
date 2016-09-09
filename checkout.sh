@@ -18,7 +18,6 @@ cd ../DataMC
 mkdir fig
 mkdir shelves
 
-
 cd ../countsAndCorrections
 mkdir fig
 mkdir shelves
@@ -36,7 +35,7 @@ mkdir fig
 mkdir tab
 mkdir shelves
 
-cd ../Triggerefficiencies
+cd ../TriggerEfficiencies
 mkdir fig
 mkdir shelves
 mkdir tab
