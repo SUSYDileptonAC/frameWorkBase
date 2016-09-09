@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 ### Script to produce corrections.py that holds all the relevant information
 ### for the background prediction
 ### For each component of the background prediction there is a certain template
@@ -38,8 +40,7 @@ def getROutInClass(classTemplate,shelve,shelveMC,massRange,combination,label):
 	valMC = shelveMC[label]["rOutIn%s%s"%(massRange,combination)]
 	errMC = ( shelveMC[label]["rOutIn%sSyst%s"%(massRange,combination)]**2 + shelveMC[label]["rOutIn%sErr%s"%(massRange,combination)]**2 )**0.5
 
-	return classTemplate%(label,val, err , valMC, errMC)	
-
+	return classTemplate%(label,val, err , valMC, errMC)
 
 def getTriggerClass(classTemplate,shelve,shelveMC,combination,label):
 	### trigger efficiencies
@@ -62,7 +63,6 @@ def getTriggerClass(classTemplate,shelve,shelveMC,combination,label):
 	
 	return classTemplate%(otherLabel, val, err , valMC, errMC)
 
-
 def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False):
 	### R_T from trigger efficiencies to use in the factorization method
 	
@@ -75,7 +75,7 @@ def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False):
 	errEE = (systematics.trigger.central.val**2 + max(shelve[label][runRanges.name]["EE"]["UncertaintyUp"] , shelve[label][runRanges.name]["EE"]["UncertaintyDown"]  )**2)**0.5
 	errMM = (systematics.trigger.central.val**2 + max(shelve[label][runRanges.name]["MuMu"]["UncertaintyUp"] , shelve[label][runRanges.name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
 	errEM = (systematics.trigger.central.val**2 + max(shelve[label][runRanges.name]["EMu"]["UncertaintyUp"] , shelve[label][runRanges.name]["EMu"]["UncertaintyDown"]  )**2)**0.5
-
+	
 	### make the combinations that go into the calculation of R_SF/OF
 	err = (errEE**2/(2*effEE*effMM)**2+ errMM**2/(2*effEE*effMM)**2 + errEM**2/(effEM)**2)**0.5
 	val = (effEE*effMM)**0.5/effEM
@@ -94,7 +94,7 @@ def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False):
 		return val,err,valMC,errMC
 	else:
 		return classTemplate%(label, val, err, valMC, errMC )
-		
+			
 def getRSFOFFactClass(classTemplate,shelve,shelveMC,shelvesRMuE,shelvesRMuEMC,label,combination,returnNumbers=False):
 	### Full factorization method for R_SF/OF
 	
@@ -243,12 +243,22 @@ def main():
 """
 
 ### R_Out/In template
-
-### ADD OTHER REGIONS HERE AFTER ADDING THEM TO countsAndCorrections/rOutIn/rOutIn.py!!!
 	rOutInPart = """
 
 class rOutIn:
 	class lowMass:
+	%s
+	%s
+	%s
+	class highMass:
+	%s
+	%s
+	%s
+	class aboveZ:
+	%s
+	%s
+	%s
+	class belowZ:
 	%s
 	%s
 	%s
@@ -257,31 +267,55 @@ class rOutInEE:
 	%s
 	%s
 	%s
+	class highMass:
+	%s
+	%s
+	%s
+	class aboveZ:
+	%s
+	%s
+	%s
+	class belowZ:
+	%s
+	%s
+	%s
 class rOutInMM:
 	class lowMass:
 	%s
 	%s
 	%s
+	class highMass:
+	%s
+	%s
+	%s	
+	class aboveZ:
+	%s
+	%s
+	%s	
+	class belowZ:
+	%s
+	%s
+	%s	
 	
 
 """	
 
 
-	### read in .pkl files 
+	### read in .pkl files
 	shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name)}
 	shelvesROutInMC = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name,MC=True),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name,MC=True), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name,MC=True)}
 
+	### this will fail if you have not added the regions to countsAndCorrections/rOutIn/rOutIn.py
 	### get all the values from the pkls
 	rOutInTuple = []
 	for combination in ["SF","EE","MM"]:
-		### ADD OTHER REGIONS HERE !!!!
-		for massRange in ["LowMass"]:
+		for massRange in ["LowMass","HighMass","BelowZ","AboveZ"]:
 			for label in ["inclusive","central","forward"]:
 				rOutInTuple.append(getROutInClass(classTemplate,shelvesROutIn,shelvesROutInMC,massRange,combination,label))
 
 	rOutInPartFinal = rOutInPart%tuple(rOutInTuple)
 
-### r_Mu/E 
+### r_Mu/E	
 	rMuEPart = """
 class rMuE:
 %s	
@@ -376,7 +410,7 @@ class rSFOFFact:
 	rSFOFFactPartFinal = rSFOFFactPart%tuple(rSFOFFactList)		
 	
 
-	### Input from direct measurement	
+	### Input from direct measurement
 	shelvesRSFOF = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name)}
 	shelvesRSFOFMC = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name,MC=True),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name,MC=True), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name,MC=True)}
 	
@@ -384,7 +418,7 @@ class rSFOFFact:
 	for label in ["central","forward","inclusive"]:
 			rSFOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,"SF"))
 
-### Combination of both methods for R_SF/OF	
+### Combination of both methods for R_SF/OF		
 	rSFOFPart  = """
 class rSFOF:
 %s	
@@ -423,6 +457,7 @@ class rMMOF:
 
 	corrFile = open("corrections.py", "w")
 	corrFile.write(finalFile)
-	corrFile.close()	
+	corrFile.close()
+	print "corrections.py created"
 	
 main()
