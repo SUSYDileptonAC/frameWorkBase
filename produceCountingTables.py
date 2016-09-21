@@ -152,7 +152,7 @@ def produceFinalTable(shelves,region):
  \centering
  \caption{Results of the edge-search counting experiment for event yields in the signal regions.
      The statistical and systematic uncertainties are added in quadrature, except for the flavor-symmetric backgrounds.
-     Low-mass refers to 20 $<$ \mll $<$ 70\GeV, below-\Z to 71 $<$ \mll $<$ 81\GeV, on-\Z to  81 $<$ \mll $<$ 101\GeV, above-\Z to 81 $<$ \mll $<$ 120\GeV and high-mass to \mll $>$ 120\GeV.
+     Low-mass refers to 20 $<$ m$_{\ell\ell}<$ 70 GeV, below-Z to 71 $<$ m$_{\ell\ell}<$ 81 GeV, on-Z to  81 $<$ m$_{\ell\ell}<$ 101 GeV, above-\Z to 81 $<$ m$_{\ell\ell}<$ 120 GeV and high-mass to m$_{\ell\ell}<$ 120 GeV.
      }
   \label{tab:edgeResults}
   \\begin{tabular}{l| c | c | c | c | c}
@@ -254,8 +254,8 @@ def produceFlavSymTable(shelves):
  \setlength{\\belowcaptionskip}{6pt}
  \\small
  \centering
- \caption{Resulting estimates for flavour-symmetric backgrounds. Given is the observed event yield in \EM events and the resulting estimate after applying the correction, seperately for the SF, \EE, and \MM channels. Statistical and systematic uncertainties are given separately.
-     Low-mass refers to 20 $<$ \mll $<$ 70\GeV, below-\Z to 71 $<$ \mll $<$ 81\GeV, on-\Z to  81 $<$ \mll $<$ 101\GeV, above-\Z to 81 $<$ \mll $<$ 120\GeV and high-mass to \mll $>$ 120\GeV.
+ \caption{Resulting estimates for flavour-symmetric backgrounds. Given is the observed event yield in \EM events and the resulting estimate after applying the correction, seperately for the SF, ee, and $\mu\mu$ channels. Statistical and systematic uncertainties are given separately.
+     Low-mass refers to 20 $<$ m$_{\ell\ell}<$ 70 GeV, below-Z to 71 $<$ m$_{\ell\ell}<$ 81 GeV, on-Z to  81 $<$ m$_{\ell\ell}<$ 101 GeV, above-Z to 81 $<$ m$_{\ell\ell}<$ 120 GeV and high-mass to m$_{\ell\ell}<$ 120 GeV.
      }
   \label{tab:FlavSymBackgrounds}
   \\begin{tabular}{l| c | c | c | c | c}

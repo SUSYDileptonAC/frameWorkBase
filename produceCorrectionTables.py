@@ -650,10 +650,6 @@ def produceTriggerEffTables():
 &\multicolumn{3}{c}{Data, Inclusive} \\
 \hline
 %s 
- 
-\end{tabular}  
-\label{tab:EffValues_Inclusive}
-\end{table}
 
 \hline
 & \multicolumn{3}{c}{MC, Inclusive } \\
@@ -661,6 +657,9 @@ def produceTriggerEffTables():
 
 %s    
     \hline 
+\end{tabular}  
+\label{tab:EffValues_Inclusive}
+\end{table}
 """
 	lineTemplate = r"%s & %d & %d & %.3f$\pm$%.3f \\"+"\n"
 
