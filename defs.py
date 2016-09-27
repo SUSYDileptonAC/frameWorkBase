@@ -1715,9 +1715,9 @@ class thePlots:
 	nVtxPlotWeights = Plot(theVariables.nVtx,[],binning=[60,0,60,"Events / 1",[]])				
 
 	
-class Signals:
-	
-	class T6bbllslepton:
+class Signals:	
+		
+	class T6bbllslepton_msbottom_550_mneutralino_175:
 		subprocesses = ["T6bbllslepton_msbottom_550_mneutralino_175"]
 		label 		 = "m_{#tilde{b}} = 550 GeV m_{#tilde{#chi_{0}^{2}}} = 175 GeV"
 		fillcolor    = ROOT.kWhite
@@ -1725,85 +1725,12 @@ class Signals:
 		uncertainty	 = 0.
 		scaleFac     = 1.
 		additionalSelection = None 	
-		
-	class SimplifiedModel_mB_225_mn2_150_mn1_80:
-		subprocesses = ["SUSY_Simplified_Model_Madgraph_FastSim_T6bblledge_225_150_80_8TeV"]
-		label 		 = "m_{#tilde{b}} = 225 GeV m_{#tilde{#chi_{0}^{2}}} = 150 GeV"
+	
+	class T6bbllslepton_msbottom_600_mneutralino_250:
+		subprocesses = ["T6bbllslepton_msbottom_600_mneutralino_250"]
+		label 		 = "m_{#tilde{b}} = 600 GeV m_{#tilde{#chi_{0}^{2}}} = 250 GeV"
 		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed-7
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None 	
-	class SimplifiedModel_mB_350_mn2_275_mn1_205:
-		subprocesses = ["SUSY_Simplified_Model_Madgraph_FastSim_T6bblledge_350_275_205_8TeV"]
-		label 		 = "m_{#tilde{b}} = 350 GeV m_{#tilde{#chi_{0}^{2}}} = 275 GeV"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None 
-	class SimplifiedModel_mB_400_mn2_150_mn1_80:
-		subprocesses = ["SUSY_Simplified_Model_Madgraph_FastSim_T6bblledge_400_150_80_8TeV"]
-		label 		 = "m_{#tilde{b}} = 400 GeV m_{#tilde{#chi_{0}^{2}}} = 150 GeV"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed+2
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None 			
-			
-	class SimplifiedModel_mB_350_mn2_250_mn1_200:
-		subprocesses = ["SUSY_SimplifiedModel_BR10_mb_350_mn2_250_mn1_200_Summer12_FullSim"]
-		label 		 = "Signal"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None 
-	class SimplifiedModel_mB_500_mn2_400_mn1_200:
-		subprocesses = ["SUSY_SimplifiedModel_BR10_mb_500_mn2_400_mn1_200_Summer12_FullSim"]
-		label 		 = "Signal"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None
-	class SimplifiedModel_mB_400_mn2_400_mn1_160:
-		subprocesses = ["SUSY_SimplifiedModel_BR50_mb_400_mn2_160_mn1_90_Summer12_FastSim"]
-		label 		 = "Signal"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None				
-	class SUSY2:
-		subprocesses = ["SUSY_CMSSM_4500_188_Summer12"]
-		label 		 = "CMSSM 4500/188"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed+1
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None
-	class SUSY3:
-		subprocesses = ["SUSY_CMSSM_4580_202_Summer12"]
-		label 		 = "CMSSM 4580/202"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed+2
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None
-	class SUSY4:
-		subprocesses = ["SUSY_CMSSM_4640_202_Summer12"]
-		label 		 = "CMSSM 4640/202"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed+3
-		uncertainty	 = 0.
-		scaleFac     = 1.
-		additionalSelection = None
-	class SUSY5:
-		subprocesses = ["SUSY_CMSSM_4700_216_Summer12"]
-		label 		 = "CMSSM 4700/216"
-		fillcolor    = ROOT.kWhite
-		linecolor    = ROOT.kRed+4
+		linecolor    = ROOT.kRed-5
 		uncertainty	 = 0.
 		scaleFac     = 1.
 		additionalSelection = None
