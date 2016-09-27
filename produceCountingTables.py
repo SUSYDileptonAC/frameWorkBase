@@ -5,7 +5,7 @@ import sys
 
 from setTDRStyle import setTDRStyle
 
-from corrections import rSFOF, rEEOF, rMMOF, rOutIn, rOutInEE, rOutInMM
+from corrections import rSFOF, rEEOF, rMMOF, rOutIn, rOutInEE, rOutInMM, rSFOFDirect,rSFOFTrig
 from centralConfig import zPredictions, regionsToUse, runRanges
 
 import ROOT
@@ -65,6 +65,13 @@ EmuStat gmN %(nEMRaw).d      -       %(rSFOF).4f    -
 uncDY  lnN       -           -       %(uncertDY).2f      
 """ %anaDict
     return txt
+    
+def getWeightedAverage(val1,err1,val2,err2):
+	
+	weightedAverage = (val1/(err1**2) +val2/(err2**2))/(1./err1**2+1./err2**2)
+	weightedAverageErr = 1./(1./err1**2+1./err2**2)**0.5
+	
+	return weightedAverage, weightedAverageErr
 
 
 def getDataCards(shelves,combination,selection):
@@ -89,72 +96,79 @@ def getDataCards(shelves,combination,selection):
 			outFile = open("dataCards/dataCard_%s_%s_%s_%s.txt"%(selection,region, etaRegion, combination), "w")
 			outFile.write(result)
 			outFile.close()		
+			
 def getResultsNLL(shelve,signalRegion):
 	
 	selections = ["lowNLL","highNLL"]
+	massRegions = ["lowMass","highMass"]
 	result = {}
 	
 	region = "inclusive"
 	
 	result["rSFOF"] = getattr(rSFOF,region).val
 	result["rSFOFErr"] = getattr(rSFOF,region).err
+	result["rSFOFDirect"] = getattr(rSFOFDirect,region).val
+	result["rSFOFDirectErr"] = getattr(rSFOFDirect,region).err
+	result["rSFOFTrig"] = getattr(rSFOFTrig,region).val
+	result["rSFOFTrigErr"] = getattr(rSFOFTrig,region).err
 	result["rEEOF"] = getattr(rEEOF,region).val
 	result["rEEOFErr"] = getattr(rEEOF,region).err
 	result["rMMOF"] = getattr(rMMOF,region).val
 	result["rMMOFErr"] = getattr(rMMOF,region).err
 	
-	for selection in selections:
-		
-		result[selection] = {}
-		
-		result[selection]["lowMassEE"] = shelve[signalRegion][selection]["lowMass"]["EE"]
-		result[selection]["lowMassMM"] = shelve[signalRegion][selection]["lowMass"]["MM"]
-		result[selection]["lowMassSF"] = shelve[signalRegion][selection]["lowMass"]["EE"] + shelve[signalRegion][selection]["lowMass"]["MM"]
-		result[selection]["lowMassOF"] = shelve[signalRegion][selection]["lowMass"]["EM"]
-		result[selection]["lowMassPredSF"] = result[selection]["lowMassOF"]*getattr(rSFOF,region).val
-		result[selection]["lowMassPredStatErrSF"] = result[selection]["lowMassOF"]**0.5*getattr(rSFOF,region).val
-		result[selection]["lowMassPredSystErrSF"] = result[selection]["lowMassOF"]*getattr(rSFOF,region).err
-		
-		result[selection]["lowMassPredEE"] = result[selection]["lowMassOF"]*getattr(rEEOF,region).val
-		result[selection]["lowMassPredStatErrEE"] = result[selection]["lowMassOF"]**0.5*getattr(rEEOF,region).val
-		result[selection]["lowMassPredSystErrEE"] = result[selection]["lowMassOF"]*getattr(rEEOF,region).err
-		
-		result[selection]["lowMassPredMM"] = result[selection]["lowMassOF"]*getattr(rMMOF,region).val
-		result[selection]["lowMassPredStatErrMM"] = result[selection]["lowMassOF"]**0.5*getattr(rMMOF,region).val
-		result[selection]["lowMassPredSystErrMM"] = result[selection]["lowMassOF"]*getattr(rMMOF,region).err
-		
-		result[selection]["lowMassZPredSF"] = getattr(zPredictions.NLL.SF,selection).val*getattr(rOutIn.lowMass,region).val
-		result[selection]["lowMassZPredErrSF"] = ((getattr(zPredictions.NLL.SF,selection).val*getattr(rOutIn.lowMass,region).err)**2 + (getattr(zPredictions.NLL.SF,selection).err*getattr(rOutIn.lowMass,region).val)**2 )**0.5
-		
-		result[selection]["lowMassTotalPredSF"] = result[selection]["lowMassPredSF"] + result[selection]["lowMassZPredSF"]
-		result[selection]["lowMassTotalPredErrSF"] = ( result[selection]["lowMassPredStatErrSF"]**2 +  result[selection]["lowMassPredSystErrSF"]**2 + result[selection]["lowMassZPredErrSF"]**2 )**0.5
 	
+	for selection in selections:
+		result[selection] = {}
+		for massRegion in massRegions:
 		
-		result[selection]["highMassEE"] = shelve[signalRegion][selection]["highMass"]["EE"]
-		result[selection]["highMassMM"] = shelve[signalRegion][selection]["highMass"]["MM"]
-		result[selection]["highMassSF"] = shelve[signalRegion][selection]["highMass"]["EE"] + shelve[signalRegion][selection]["highMass"]["MM"]
-		result[selection]["highMassOF"] = shelve[signalRegion][selection]["highMass"]["EM"]
 		
-		result[selection]["highMassPredSF"] = result[selection]["highMassOF"]*getattr(rSFOF,region).val
-		result[selection]["highMassPredStatErrSF"] = result[selection]["highMassOF"]**0.5*getattr(rSFOF,region).val
-		result[selection]["highMassPredSystErrSF"] = result[selection]["highMassOF"]*getattr(rSFOF,region).err
+			
+			result[selection]["%sEE"%massRegion] = shelve[signalRegion][selection][massRegion]["EE"]
+			result[selection]["%sMM"%massRegion] = shelve[signalRegion][selection][massRegion]["MM"]
+			result[selection]["%sSF"%massRegion] = shelve[signalRegion][selection][massRegion]["EE"] + shelve[signalRegion][selection][massRegion]["MM"]
+			result[selection]["%sOF"%massRegion] = shelve[signalRegion][selection][massRegion]["EM"]
+			result[selection]["%sOFRMuEScaled"%massRegion] = shelve[signalRegion][selection][massRegion]["EMRMuEScaled"]
+			result[selection]["%sOFRMuEScaledUp"%massRegion] = shelve[signalRegion][selection][massRegion]["EMRMuEScaledUp"]
+			result[selection]["%sOFRMuEScaledDown"%massRegion] = shelve[signalRegion][selection][massRegion]["EMRMuEScaledDown"]
+			
+			
+			result[selection]["%sPredDirectSF"%massRegion] = result[selection]["%sOF"%massRegion]*getattr(rSFOFDirect,region).val
+			result[selection]["%sPredDirectStatErrSF"%massRegion] = result[selection]["%sOF"%massRegion]**0.5*getattr(rSFOFDirect,region).val
+			result[selection]["%sPredDirectSystErrSF"%massRegion] = result[selection]["%sOF"%massRegion]*getattr(rSFOFDirect,region).err
+			
+			result[selection]["%sPredFactSF"%massRegion] = result[selection]["%sOFRMuEScaled"%massRegion]*getattr(rSFOFTrig,region).val
+			result[selection]["%sPredFactStatErrSF"%massRegion] = result[selection]["%sOF"%massRegion]**0.5*result[selection]["%sOFRMuEScaled"%massRegion]/result[selection]["%sOF"%massRegion]*getattr(rSFOFTrig,region).val
+			result[selection]["%sPredFactSystErrSF"%massRegion] = result[selection]["%sOFRMuEScaled"%massRegion]*(getattr(rSFOFTrig,region).err**2 + max(abs(result[selection]["%sOFRMuEScaled"%massRegion] - result[selection]["%sOFRMuEScaledUp"%massRegion])/result[selection]["%sOFRMuEScaled"%massRegion],abs(result[selection]["%sOFRMuEScaled"%massRegion] - result[selection]["%sOFRMuEScaledDown"%massRegion])/result[selection]["%sOFRMuEScaled"%massRegion])**2)**0.5		
+			
+			result[selection]["%sPredSF"%massRegion],result[selection]["%sPredSystErrSF"%massRegion] = getWeightedAverage(result[selection]["%sPredDirectSF"%massRegion],result[selection]["%sPredDirectSystErrSF"%massRegion],result[selection]["%sPredFactSF"%massRegion],result[selection]["%sPredFactSystErrSF"%massRegion])
+			result[selection]["%sPredStatErrSF"%massRegion] = result[selection]["%sOF"%massRegion]**0.5*result[selection]["%sPredSF"%massRegion]/result[selection]["%sOF"%massRegion]
+			
+			
+			result[selection]["%sPredSFOld"%massRegion] = result[selection]["%sOF"%massRegion]*getattr(rSFOF,region).val
+			result[selection]["%sPredStatErrSFOld"%massRegion] = result[selection]["%sOF"%massRegion]**0.5*getattr(rSFOF,region).val
+			result[selection]["%sPredSystErrSFOld"%massRegion] = result[selection]["%sOF"%massRegion]*getattr(rSFOF,region).err
+			
+			result[selection]["%sPredEEOld"%massRegion] = result[selection]["%sOF"%massRegion]*getattr(rEEOF,region).val
+			result[selection]["%sPredStatErrEEOld"%massRegion] = result[selection]["%sOF"%massRegion]**0.5*getattr(rEEOF,region).val
+			result[selection]["%sPredSystErrEEOld"%massRegion] = result[selection]["%sOF"%massRegion]*getattr(rEEOF,region).err
+			
+			result[selection]["%sPredMMOld"%massRegion] = result[selection]["%sOF"%massRegion]*getattr(rMMOF,region).val
+			result[selection]["%sPredStatErrMMOld"%massRegion] = result[selection]["%sOF"%massRegion]**0.5*getattr(rMMOF,region).val
+			result[selection]["%sPredSystErrMMOld"%massRegion] = result[selection]["%sOF"%massRegion]*getattr(rMMOF,region).err
+			
+			result[selection]["%sZPredSF"%massRegion] = getattr(zPredictions.NLL.SF,selection).val*getattr(getattr(rOutIn,massRegion),region).val
+			result[selection]["%sZPredErrSF"%massRegion] = ((getattr(zPredictions.NLL.SF,selection).val*getattr(getattr(rOutIn,massRegion),region).err)**2 + (getattr(zPredictions.NLL.SF,selection).err*getattr(getattr(rOutIn,massRegion),region).val)**2 )**0.5
+			
+			result[selection]["%sTotalPredSF"%massRegion] = result[selection]["%sPredSF"%massRegion] + result[selection]["%sZPredSF"%massRegion]
+			result[selection]["%sTotalPredErrSF"%massRegion] = ( result[selection]["%sPredStatErrSF"%massRegion]**2 +  result[selection]["%sPredSystErrSF"%massRegion]**2 + result[selection]["%sZPredErrSF"%massRegion]**2 )**0.5
+			
+			result[selection]["%sTotalPredSFOld"%massRegion] = result[selection]["%sPredSFOld"%massRegion] + result[selection]["%sZPredSF"%massRegion]
+			result[selection]["%sTotalPredErrSFOld"%massRegion] = ( result[selection]["%sPredStatErrSFOld"%massRegion]**2 +  result[selection]["%sPredSystErrSFOld"%massRegion]**2 + result[selection]["%sZPredErrSF"%massRegion]**2 )**0.5
 		
-		result[selection]["highMassPredEE"] = result[selection]["highMassOF"]*getattr(rEEOF,region).val
-		result[selection]["highMassPredStatErrEE"] = result[selection]["highMassOF"]**0.5*getattr(rEEOF,region).val
-		result[selection]["highMassPredSystErrEE"] = result[selection]["highMassOF"]*getattr(rEEOF,region).err
-		
-		result[selection]["highMassPredMM"] = result[selection]["highMassOF"]*getattr(rMMOF,region).val
-		result[selection]["highMassPredStatErrMM"] = result[selection]["highMassOF"]**0.5*getattr(rMMOF,region).val
-		result[selection]["highMassPredSystErrMM"] = result[selection]["highMassOF"]*getattr(rMMOF,region).err
-		
-		result[selection]["highMassZPredSF"] = getattr(zPredictions.NLL.SF,selection).val*getattr(rOutIn.highMass,region).val
-		result[selection]["highMassZPredErrSF"] = ((getattr(zPredictions.NLL.SF,selection).val*getattr(rOutIn.highMass,region).err)**2 + (getattr(zPredictions.NLL.SF,selection).err*getattr(rOutIn.highMass,region).val)**2 )**0.5
-		
-		result[selection]["highMassTotalPredSF"] = result[selection]["highMassPredSF"] + result[selection]["highMassZPredSF"]
-		result[selection]["highMassTotalPredErrSF"] = ( result[selection]["highMassPredStatErrSF"]**2 +  result[selection]["highMassPredSystErrSF"]**2 + result[selection]["highMassZPredErrSF"]**2 )**0.5
-	#~ 
+			
 	
 	return result
+	
 def getResultsLegacy(shelve,signalRegion):
 	
 	region = "central"
@@ -172,29 +186,51 @@ def getResultsLegacy(shelve,signalRegion):
 	result["edgeMassMM"] = shelve[signalRegion]["default"]["edgeMass"]["MM"]
 	result["edgeMassSF"] = shelve[signalRegion]["default"]["edgeMass"]["EE"] + shelve[signalRegion]["default"]["edgeMass"]["MM"]
 	result["edgeMassOF"] = shelve[signalRegion]["default"]["edgeMass"]["EM"]
-	result["edgeMassPredSF"] = result["edgeMassOF"]*getattr(rSFOF,region).val
-	result["edgeMassPredStatErrSF"] = result["edgeMassOF"]**0.5*getattr(rSFOF,region).val
-	result["edgeMassPredSystErrSF"] = result["edgeMassOF"]*getattr(rSFOF,region).err
 	
-	result["edgeMassPredEE"] = result["edgeMassOF"]*getattr(rEEOF,region).val
-	result["edgeMassPredStatErrEE"] = result["edgeMassOF"]**0.5*getattr(rEEOF,region).val
-	result["edgeMassPredSystErrEE"] = result["edgeMassOF"]*getattr(rEEOF,region).err
+	result["edgeMassOFRMuEScaled"] = shelve[signalRegion]["default"]["edgeMass"]["EMRMuEScaled"]
+	result["edgeMassOFRMuEScaledUp"] = shelve[signalRegion]["default"]["edgeMass"]["EMRMuEScaledUp"]
+	result["edgeMassOFRMuEScaledDown"] = shelve[signalRegion]["default"]["edgeMass"]["EMRMuEScaledDown"]
 	
-	result["edgeMassPredMM"] = result["edgeMassOF"]*getattr(rMMOF,region).val
-	result["edgeMassPredStatErrMM"] = result["edgeMassOF"]**0.5*getattr(rMMOF,region).val
-	result["edgeMassPredSystErrMM"] = result["edgeMassOF"]*getattr(rMMOF,region).err
+	
+	
+	result["edgeMassPredDirectSF"] = result["edgeMassOF"]*getattr(rSFOFDirect,region).val
+	result["edgeMassPredDirectStatErrSF"] = result["edgeMassOF"]**0.5*getattr(rSFOFDirect,region).val
+	result["edgeMassPredDirectSystErrSF"] = result["edgeMassOF"]*getattr(rSFOFDirect,region).err
+	
+	result["edgeMassPredFactSF"] = result["edgeMassOFRMuEScaled"]*getattr(rSFOFTrig,region).val
+	result["edgeMassPredFactStatErrSF"] = result["edgeMassOF"]**0.5*result["edgeMassOFRMuEScaled"]/result["edgeMassOF"]*getattr(rSFOFTrig,region).val
+	result["edgeMassPredFactSystErrSF"] = result["edgeMassOFRMuEScaled"]*(getattr(rSFOFTrig,region).err**2 + max(abs(result["edgeMassOFRMuEScaled"] - result["edgeMassOFRMuEScaledUp"])/result["edgeMassOFRMuEScaled"],abs(result["edgeMassOFRMuEScaled"] - result["edgeMassOFRMuEScaledUp"])/result["edgeMassOFRMuEScaled"])**2)**0.5		
+	
+	result["edgeMassPredSF"],result["edgeMassPredSystErrSF"] = getWeightedAverage(result["edgeMassPredDirectSF"],result["edgeMassPredDirectSystErrSF"],result["edgeMassPredFactSF"],result["edgeMassPredFactSystErrSF"])
+	result["edgeMassPredStatErrSF"] = result["edgeMassOF"]**0.5*result["edgeMassPredSF"]/result["edgeMassOF"]
+			
+			
+	result["edgeMassPredSFOld"] = result["edgeMassOF"]*getattr(rSFOF,region).val
+	result["edgeMassPredStatErrSFOld"] = result["edgeMassOF"]**0.5*getattr(rSFOF,region).val
+	result["edgeMassPredSystErrSFOld"] = result["edgeMassOF"]*getattr(rSFOF,region).err
+	
+	result["edgeMassPredEEOld"] = result["edgeMassOF"]*getattr(rEEOF,region).val
+	result["edgeMassPredStatErrEEOld"] = result["edgeMassOF"]**0.5*getattr(rEEOF,region).val
+	result["edgeMassPredSystErrEEOld"] = result["edgeMassOF"]*getattr(rEEOF,region).err
+	
+	result["edgeMassPredMMOld"] = result["edgeMassOF"]*getattr(rMMOF,region).val
+	result["edgeMassPredStatErrMMOld"] = result["edgeMassOF"]**0.5*getattr(rMMOF,region).val
+	result["edgeMassPredSystErrMMOld"] = result["edgeMassOF"]*getattr(rMMOF,region).err
 	
 	result["edgeMassZPredSF"] = getattr(zPredictions.legacy.SF,region).val*getattr(rOutIn.edgeMass,region).val
 	result["edgeMassZPredErrSF"] = ((getattr(zPredictions.legacy.SF,region).val*getattr(rOutIn.edgeMass,region).err)**2 + (getattr(zPredictions.legacy.SF,region).err*getattr(rOutIn.edgeMass,region).val)**2 )**0.5
 	
 	result["edgeMassTotalPredSF"] = result["edgeMassPredSF"] + result["edgeMassZPredSF"]
 	result["edgeMassTotalPredErrSF"] = ( result["edgeMassPredStatErrSF"]**2 +  result["edgeMassPredSystErrSF"]**2 + result["edgeMassZPredErrSF"]**2 )**0.5
+	
+	result["edgeMassTotalPredSFOld"] = result["edgeMassPredSFOld"] + result["edgeMassZPredSF"]
+	result["edgeMassTotalPredErrSFOld"] = ( result["edgeMassPredStatErrSFOld"]**2 +  result["edgeMassPredSystErrSFOld"]**2 + result["edgeMassZPredErrSF"]**2 )**0.5
 
 	
 	return result
 
 
-def produceFinalTable(shelves,region):
+def produceFinalTable(shelves):
 	
 	
 	
@@ -252,18 +288,19 @@ def produceFinalTable(shelves,region):
 	resultsLegacy = getResultsLegacy(shelves,"legacy")
 		
 
-	observed = observedTemplate%(resultsNLL["lowNLL"]["lowMass%s"%region],resultsNLL["highNLL"]["lowMass%s"%region],resultsNLL["lowNLL"]["highMass%s"%region],resultsNLL["highNLL"]["highMass%s"%region],resultsLegacy["edgeMass%s"%region])
+	observed = observedTemplate%(resultsNLL["lowNLL"]["lowMassSF"],resultsNLL["highNLL"]["lowMassSF"],resultsNLL["lowNLL"]["highMassSF"],resultsNLL["highNLL"]["highMassSF"],resultsLegacy["edgeMassSF"])
 		
-	flavSym = flavSysmTemplate%(resultsNLL["lowNLL"]["lowMassPred%s"%region],resultsNLL["lowNLL"]["lowMassPredStatErr%s"%region],resultsNLL["lowNLL"]["lowMassPredSystErr%s"%region],resultsNLL["highNLL"]["lowMassPred%s"%region],resultsNLL["highNLL"]["lowMassPredStatErr%s"%region],resultsNLL["highNLL"]["lowMassPredSystErr%s"%region],resultsNLL["lowNLL"]["highMassPred%s"%region],resultsNLL["lowNLL"]["highMassPredStatErr%s"%region],resultsNLL["lowNLL"]["highMassPredSystErr%s"%region],resultsNLL["highNLL"]["highMassPred%s"%region],resultsNLL["highNLL"]["highMassPredStatErr%s"%region],resultsNLL["highNLL"]["highMassPredSystErr%s"%region],resultsLegacy["edgeMassPred%s"%region],resultsLegacy["edgeMassPredStatErr%s"%region],resultsLegacy["edgeMassPredSystErr%s"%region])
+	#~ flavSym = flavSysmTemplate%(resultsNLL["lowNLL"]["lowMassPredSF"],resultsNLL["lowNLL"]["lowMassPredStatErrSF"],resultsNLL["lowNLL"]["lowMassPredSystErrSF"],resultsNLL["highNLL"]["lowMassPredSF"],resultsNLL["highNLL"]["lowMassPredStatErrSF"],resultsNLL["highNLL"]["lowMassPredSystErrSF"],resultsNLL["lowNLL"]["highMassPredSF"],resultsNLL["lowNLL"]["highMassPredStatErrSF"],resultsNLL["lowNLL"]["highMassPredSystErrSF"],resultsNLL["highNLL"]["highMassPredSF"],resultsNLL["highNLL"]["highMassPredStatErrSF"],resultsNLL["highNLL"]["highMassPredSystErrSF"],resultsLegacy["edgeMassPredSF"],resultsLegacy["edgeMassPredStatErrSF"],resultsLegacy["edgeMassPredSystErrSF"])
+	flavSym = flavSysmTemplate%(resultsNLL["lowNLL"]["lowMassPredSF"],resultsNLL["lowNLL"]["lowMassPredStatErrSF"],resultsNLL["lowNLL"]["lowMassPredSystErrSF"],resultsNLL["highNLL"]["lowMassPredSF"],resultsNLL["highNLL"]["lowMassPredStatErrSF"],resultsNLL["highNLL"]["lowMassPredSystErrSF"],resultsNLL["lowNLL"]["highMassPredSF"],resultsNLL["lowNLL"]["highMassPredStatErrSF"],resultsNLL["lowNLL"]["highMassPredSystErrSF"],resultsNLL["highNLL"]["highMassPredSF"],resultsNLL["highNLL"]["highMassPredStatErrSF"],resultsNLL["highNLL"]["highMassPredSystErrSF"],resultsLegacy["edgeMassPredSF"],resultsLegacy["edgeMassPredStatErrSF"],resultsLegacy["edgeMassPredSystErrSF"])
 	
-	dy = dyTemplate%(resultsNLL["lowNLL"]["lowMassZPred%s"%region],resultsNLL["lowNLL"]["lowMassZPredErr%s"%region],resultsNLL["highNLL"]["lowMassZPred%s"%region],resultsNLL["highNLL"]["lowMassZPredErr%s"%region],resultsNLL["lowNLL"]["highMassZPred%s"%region],resultsNLL["lowNLL"]["highMassZPredErr%s"%region],resultsNLL["highNLL"]["highMassZPred%s"%region],resultsNLL["highNLL"]["highMassZPredErr%s"%region],resultsLegacy["edgeMassZPred%s"%region],resultsLegacy["edgeMassZPredErr%s"%region])
+	dy = dyTemplate%(resultsNLL["lowNLL"]["lowMassZPredSF"],resultsNLL["lowNLL"]["lowMassZPredErrSF"],resultsNLL["highNLL"]["lowMassZPredSF"],resultsNLL["highNLL"]["lowMassZPredErrSF"],resultsNLL["lowNLL"]["highMassZPredSF"],resultsNLL["lowNLL"]["highMassZPredErrSF"],resultsNLL["highNLL"]["highMassZPredSF"],resultsNLL["highNLL"]["highMassZPredErrSF"],resultsLegacy["edgeMassZPredSF"],resultsLegacy["edgeMassZPredErrSF"])
 		
-	totalPrediction = totalTemplate%(resultsNLL["lowNLL"]["lowMassTotalPred%s"%region],resultsNLL["lowNLL"]["lowMassTotalPredErr%s"%region],resultsNLL["highNLL"]["lowMassTotalPred%s"%region],resultsNLL["highNLL"]["lowMassTotalPredErr%s"%region],resultsNLL["lowNLL"]["highMassTotalPred%s"%region],resultsNLL["lowNLL"]["highMassTotalPredErr%s"%region],resultsNLL["highNLL"]["highMassTotalPred%s"%region],resultsNLL["highNLL"]["highMassTotalPredErr%s"%region],resultsLegacy["edgeMassTotalPred%s"%region],resultsLegacy["edgeMassTotalPredErr%s"%region])
+	totalPrediction = totalTemplate%(resultsNLL["lowNLL"]["lowMassTotalPredSF"],resultsNLL["lowNLL"]["lowMassTotalPredErrSF"],resultsNLL["highNLL"]["lowMassTotalPredSF"],resultsNLL["highNLL"]["lowMassTotalPredErrSF"],resultsNLL["lowNLL"]["highMassTotalPredSF"],resultsNLL["lowNLL"]["highMassTotalPredErrSF"],resultsNLL["highNLL"]["highMassTotalPredSF"],resultsNLL["highNLL"]["highMassTotalPredErrSF"],resultsLegacy["edgeMassTotalPredSF"],resultsLegacy["edgeMassTotalPredErrSF"])
 
 
 		
 	table = tableTemplate%(observed,flavSym,dy,totalPrediction)
-	saveTable(table,"cutNCount_Result_%s"%(region))
+	saveTable(table,"cutNCount_Result_SF")
 	
 	
 	
@@ -295,7 +332,7 @@ def produceFlavSymTable(shelves):
 %s
 %s
 %s
-\hline 
+%s
 \hline
 
   \end{tabular}
@@ -307,7 +344,7 @@ def produceFlavSymTable(shelves):
 
 	observedTemplate = r"        Observed OF events       &  %d                   & %d              &  %d            &  %d       &   %d     \\" +"\n"
 
-	flavSysmTemplate = r"        Estimate in %s channel    & $%d\pm%d\pm%d$        & $%d\pm%d\pm%d$  &  $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ \\"+"\n"
+	flavSysmTemplate = r"        Estimate %s method    & $%d\pm%d\pm%d$        & $%d\pm%d\pm%d$  &  $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ & $%d\pm%d\pm%d$ \\"+"\n"
 
 		
 	resultsNLL = getResultsNLL(shelves,"NLL")
@@ -316,12 +353,15 @@ def produceFlavSymTable(shelves):
 	observed = observedTemplate%(resultsNLL["lowNLL"]["lowMassOF"],resultsNLL["highNLL"]["lowMassOF"],resultsNLL["lowNLL"]["highMassOF"],resultsNLL["highNLL"]["highMassOF"],resultsLegacy["edgeMassOF"])
 
 		
-	SFPrediciton = flavSysmTemplate%("SF",resultsNLL["lowNLL"]["lowMassPredSF"],resultsNLL["lowNLL"]["lowMassPredStatErrSF"],resultsNLL["lowNLL"]["lowMassPredSystErrSF"],resultsNLL["highNLL"]["lowMassPredSF"],resultsNLL["highNLL"]["lowMassPredStatErrSF"],resultsNLL["highNLL"]["lowMassPredSystErrSF"],resultsNLL["lowNLL"]["highMassPredSF"],resultsNLL["lowNLL"]["highMassPredStatErrSF"],resultsNLL["lowNLL"]["highMassPredSystErrSF"],resultsNLL["highNLL"]["highMassPredSF"],resultsNLL["highNLL"]["highMassPredStatErrSF"],resultsNLL["highNLL"]["highMassPredSystErrSF"],resultsLegacy["edgeMassPredSF"],resultsLegacy["edgeMassPredStatErrSF"],resultsLegacy["edgeMassPredSystErrSF"],)
-	EEPrediciton = flavSysmTemplate%("EE",resultsNLL["lowNLL"]["lowMassPredEE"],resultsNLL["lowNLL"]["lowMassPredStatErrEE"],resultsNLL["lowNLL"]["lowMassPredSystErrEE"],resultsNLL["highNLL"]["lowMassPredEE"],resultsNLL["highNLL"]["lowMassPredStatErrEE"],resultsNLL["highNLL"]["lowMassPredSystErrEE"],resultsNLL["lowNLL"]["highMassPredEE"],resultsNLL["lowNLL"]["highMassPredStatErrEE"],resultsNLL["lowNLL"]["highMassPredSystErrEE"],resultsNLL["highNLL"]["highMassPredEE"],resultsNLL["highNLL"]["highMassPredStatErrEE"],resultsNLL["highNLL"]["highMassPredSystErrEE"],resultsLegacy["edgeMassPredEE"],resultsLegacy["edgeMassPredStatErrEE"],resultsLegacy["edgeMassPredSystErrEE"],)
-	MMPrediciton= flavSysmTemplate%("MM",resultsNLL["lowNLL"]["lowMassPredMM"],resultsNLL["lowNLL"]["lowMassPredStatErrMM"],resultsNLL["lowNLL"]["lowMassPredSystErrMM"],resultsNLL["highNLL"]["lowMassPredMM"],resultsNLL["highNLL"]["lowMassPredStatErrMM"],resultsNLL["highNLL"]["lowMassPredSystErrMM"],resultsNLL["lowNLL"]["highMassPredMM"],resultsNLL["lowNLL"]["highMassPredStatErrMM"],resultsNLL["lowNLL"]["highMassPredSystErrMM"],resultsNLL["highNLL"]["highMassPredMM"],resultsNLL["highNLL"]["highMassPredStatErrMM"],resultsNLL["highNLL"]["highMassPredSystErrMM"],resultsLegacy["edgeMassPredMM"],resultsLegacy["edgeMassPredStatErrMM"],resultsLegacy["edgeMassPredSystErrMM"],)
+	SFPredicitonOld = flavSysmTemplate%("SF, old",resultsNLL["lowNLL"]["lowMassPredSFOld"],resultsNLL["lowNLL"]["lowMassPredStatErrSFOld"],resultsNLL["lowNLL"]["lowMassPredSystErrSFOld"],resultsNLL["highNLL"]["lowMassPredSFOld"],resultsNLL["highNLL"]["lowMassPredStatErrSFOld"],resultsNLL["highNLL"]["lowMassPredSystErrSFOld"],resultsNLL["lowNLL"]["highMassPredSFOld"],resultsNLL["lowNLL"]["highMassPredStatErrSFOld"],resultsNLL["lowNLL"]["highMassPredSystErrSFOld"],resultsNLL["highNLL"]["highMassPredSFOld"],resultsNLL["highNLL"]["highMassPredStatErrSFOld"],resultsNLL["highNLL"]["highMassPredSystErrSFOld"],resultsLegacy["edgeMassPredSFOld"],resultsLegacy["edgeMassPredStatErrSFOld"],resultsLegacy["edgeMassPredSystErrSFOld"])
+	SFPredicitonDirect = flavSysmTemplate%("SF, direct",resultsNLL["lowNLL"]["lowMassPredDirectSF"],resultsNLL["lowNLL"]["lowMassPredDirectStatErrSF"],resultsNLL["lowNLL"]["lowMassPredDirectSystErrSF"],resultsNLL["highNLL"]["lowMassPredDirectSF"],resultsNLL["highNLL"]["lowMassPredDirectStatErrSF"],resultsNLL["highNLL"]["lowMassPredDirectSystErrSF"],resultsNLL["lowNLL"]["highMassPredDirectSF"],resultsNLL["lowNLL"]["highMassPredDirectStatErrSF"],resultsNLL["lowNLL"]["highMassPredDirectSystErrSF"],resultsNLL["highNLL"]["highMassPredDirectSF"],resultsNLL["highNLL"]["highMassPredDirectStatErrSF"],resultsNLL["highNLL"]["highMassPredDirectSystErrSF"],resultsLegacy["edgeMassPredDirectSF"],resultsLegacy["edgeMassPredDirectStatErrSF"],resultsLegacy["edgeMassPredDirectSystErrSF"])
+	SFPredicitonFact = flavSysmTemplate%("SF, Fact",resultsNLL["lowNLL"]["lowMassPredFactSF"],resultsNLL["lowNLL"]["lowMassPredFactStatErrSF"],resultsNLL["lowNLL"]["lowMassPredFactSystErrSF"],resultsNLL["highNLL"]["lowMassPredFactSF"],resultsNLL["highNLL"]["lowMassPredFactStatErrSF"],resultsNLL["highNLL"]["lowMassPredFactSystErrSF"],resultsNLL["lowNLL"]["highMassPredFactSF"],resultsNLL["lowNLL"]["highMassPredFactStatErrSF"],resultsNLL["lowNLL"]["highMassPredFactSystErrSF"],resultsNLL["highNLL"]["highMassPredFactSF"],resultsNLL["highNLL"]["highMassPredFactStatErrSF"],resultsNLL["highNLL"]["highMassPredFactSystErrSF"],resultsLegacy["edgeMassPredFactSF"],resultsLegacy["edgeMassPredFactStatErrSF"],resultsLegacy["edgeMassPredFactSystErrSF"])
+	#~ EEPrediciton = flavSysmTemplate%("EE",resultsNLL["lowNLL"]["lowMassPredEE"],resultsNLL["lowNLL"]["lowMassPredStatErrEE"],resultsNLL["lowNLL"]["lowMassPredSystErrEE"],resultsNLL["highNLL"]["lowMassPredEE"],resultsNLL["highNLL"]["lowMassPredStatErrEE"],resultsNLL["highNLL"]["lowMassPredSystErrEE"],resultsNLL["lowNLL"]["highMassPredEE"],resultsNLL["lowNLL"]["highMassPredStatErrEE"],resultsNLL["lowNLL"]["highMassPredSystErrEE"],resultsNLL["highNLL"]["highMassPredEE"],resultsNLL["highNLL"]["highMassPredStatErrEE"],resultsNLL["highNLL"]["highMassPredSystErrEE"],resultsLegacy["edgeMassPredEE"],resultsLegacy["edgeMassPredStatErrEE"],resultsLegacy["edgeMassPredSystErrEE"])
+	#~ MMPrediciton= flavSysmTemplate%("MM",resultsNLL["lowNLL"]["lowMassPredMM"],resultsNLL["lowNLL"]["lowMassPredStatErrMM"],resultsNLL["lowNLL"]["lowMassPredSystErrMM"],resultsNLL["highNLL"]["lowMassPredMM"],resultsNLL["highNLL"]["lowMassPredStatErrMM"],resultsNLL["highNLL"]["lowMassPredSystErrMM"],resultsNLL["lowNLL"]["highMassPredMM"],resultsNLL["lowNLL"]["highMassPredStatErrMM"],resultsNLL["lowNLL"]["highMassPredSystErrMM"],resultsNLL["highNLL"]["highMassPredMM"],resultsNLL["highNLL"]["highMassPredStatErrMM"],resultsNLL["highNLL"]["highMassPredSystErrMM"],resultsLegacy["edgeMassPredMM"],resultsLegacy["edgeMassPredStatErrMM"],resultsLegacy["edgeMassPredSystErrMM"])
+	SFPrediciton = flavSysmTemplate%("SF, new",resultsNLL["lowNLL"]["lowMassPredSF"],resultsNLL["lowNLL"]["lowMassPredStatErrSF"],resultsNLL["lowNLL"]["lowMassPredSystErrSF"],resultsNLL["highNLL"]["lowMassPredSF"],resultsNLL["highNLL"]["lowMassPredStatErrSF"],resultsNLL["highNLL"]["lowMassPredSystErrSF"],resultsNLL["lowNLL"]["highMassPredSF"],resultsNLL["lowNLL"]["highMassPredStatErrSF"],resultsNLL["lowNLL"]["highMassPredSystErrSF"],resultsNLL["highNLL"]["highMassPredSF"],resultsNLL["highNLL"]["highMassPredStatErrSF"],resultsNLL["highNLL"]["highMassPredSystErrSF"],resultsLegacy["edgeMassPredSF"],resultsLegacy["edgeMassPredStatErrSF"],resultsLegacy["edgeMassPredSystErrSF"])
 		
 		
-	saveTable(tableTemplate%(observed,SFPrediciton,EEPrediciton,MMPrediciton),"cutNCount_FlavSymBkgs")	
+	saveTable(tableTemplate%(observed,SFPredicitonOld,SFPredicitonDirect,SFPredicitonFact,SFPrediciton),"cutNCount_FlavSymBkgs")	
 	
 	
 def produceZTable(shelves,selection):
@@ -416,7 +456,7 @@ def main():
 	
 
 	
-	produceFinalTable(countingShelves,"SF")
+	produceFinalTable(countingShelves)
 	#~ produceFinalTable(countingShelves,"EE")
 	#~ produceFinalTable(countingShelves,"MM")
 	

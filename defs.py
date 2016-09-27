@@ -243,6 +243,13 @@ class runRanges:
 		lumiErr = 0.045*1390.
 		runCut = "&& ( (runNr > 275783 && runNr <= 276097) || runNr ==1)"
 		label = "Run2016_last_1_4fb"
+		
+	class Run2016_22fb:
+		lumi = 22000.
+		printval = "22.0"
+		lumiErr = 0.045*22000.
+		runCut = "&& ( (runNr >= 271036 && runNr <= 279588) || runNr ==1)"
+		label = "Run2016_22fb"
 
 		
 class Region:
@@ -572,6 +579,16 @@ class theCuts:
 			label = "NLL #geq 21"
 			name = "HighNLL"
 
+	class mt2Cuts:
+		class lowMT2:
+			cut = "MT2 < 90"
+			label = "MT2 < 90"
+			name = "LowMT2"
+		class highMT2:
+			cut = "MT2 > 90"
+			label = "MT2 > 90"
+			name = "HighMT2"
+
 
 class theVariables:
 	class Eta1:
@@ -650,7 +667,7 @@ class theVariables:
 		variable = "(pt1>pt2)*pt1+(pt2>pt1)*pt2"
 		name = "LeadingPt"
 		xMin = 0
-		xMax = 400
+		xMax = 200
 		nBins = 40
 		labelX = "p_{T}^{leading} [GeV]"
 		labelY = "Events / 10 GeV"	
@@ -658,8 +675,8 @@ class theVariables:
 		variable = "(pt1>pt2)*pt2+(pt2>pt1)*pt1"
 		name = "TrailingPt"
 		xMin = 0
-		xMax = 400
-		nBins = 40
+		xMax = 150
+		nBins = 30
 		labelX = "p_{T}^{trailing} [GeV]"
 		labelY = "Events / 10 GeV"	
 	class Met:
@@ -732,18 +749,18 @@ class theVariables:
 		##~ variable = "mll"
 		name = "Mll"
 		xMin = 20
-		xMax = 300
-		nBins = 28
+		xMax = 400
+		nBins = 38
 		labelX = "m_{ll} [GeV]"
 		labelY = "Events / 10 GeV"	
 	class nLL:
 		variable = "nLL"
-		name = "NLL"
+		name = "ttbar likelihood"
 		xMin = 10
-		xMax = 40
-		nBins = 30
-		labelX = "NLL"
-		labelY = "Events"	
+		xMax = 35
+		nBins = 50
+		labelX = "ttbar likelihood"
+		labelY = "Fraction"	
 	class Ptll:
 		variable = "p4.Pt()"
 		name = "Ptll"
@@ -764,8 +781,8 @@ class theVariables:
 		variable = "nJets"
 		name = "NJets"
 		xMin = -0.5
-		xMax = 10.5
-		nBins = 11
+		xMax = 8.5
+		nBins = 9
 		labelX = "n_{jets}"
 		labelY = "Events"	
 	class nBJets:
@@ -824,6 +841,14 @@ class theVariables:
 		nBins = 40
 		labelX = "subleading p_{T}^{jet} [GeV]"
 		labelY = "Events / 10 GeV"	
+	class MT2:
+		variable = "MT2"
+		name = "MT2"
+		xMin = 0
+		xMax = 300
+		nBins = 30
+		labelX = "MT2 [GeV]"
+		labelY = "Events / 10 GeV"	
 
 		
 
@@ -843,8 +868,8 @@ class Regions:
 		cut = "(nJets >= 2 && met > 150) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Inclusive Signal Region"
-		titel = "Inclusive SR"
-		latex = "Inclusive Signal Region"
+		titel = "SR"
+		latex = "Signal Region"
 		name = "SignalInclusive"
 		logY = False
 		
@@ -911,7 +936,7 @@ class Regions:
 
 		
 	class Control(Region):
-		cut = "nJets == 2  && 100 <  met && met < 150 && (%s)"%Region.cut
+		cut = "nJets == 2  && 100 < met && met < 150 && (%s)"%Region.cut
 		#~ cut = "nJets >= 2  && 100 < met && met < 150 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Control Region"		
@@ -920,7 +945,7 @@ class Regions:
 		name = "Control"
 		logY = True
 	class ControlForward(Region):
-		cut = "nJets == 2  && 100 <  met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		cut = "nJets == 2  && 100 < met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		#~ cut = "nJets >= 2  && 100 < met && met < 150 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Control Region Forward"		
@@ -930,7 +955,7 @@ class Regions:
 		logY = True
 		trigEffs = triggerEffs.forward
 	class ControlCentral(Region):
-		cut = "nJets == 2  && 100 <  met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		cut = "nJets == 2  && 100 < met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		#~ cut = "nJets >= 2  && 100 < met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
 		labelSubRegion = "Control Region Central"		
@@ -1004,7 +1029,7 @@ class Regions:
 		#~ cut = "nJets >= 2   && (%s)"%Region.cut
 		cut = "nJets >= 2   && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "N_{jets} >= 2 "			
+		labelSubRegion = "N_{jets} #geq 2 "			
 		titel = "Inclusive Jets"
 		latex = "Inclusive Jets"
 		name = "InclusiveJets"
@@ -1013,7 +1038,7 @@ class Regions:
 		#~ cut = "nJets >= 2   && (%s)"%Region.cut
 		cut = "!((nJets >= 2 && met > 150) || (nJets >= 3 && met > 100)) && nJets >= 2   && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "N_{jets} >= 2 blinded "			
+		labelSubRegion = "N_{jets} #geq 2 blinded "			
 		titel = "Inclusive Jets Blinded"
 		latex = "Inclusive Jets Blinded"
 		name = "InclusiveJetsBlinded"
@@ -1058,20 +1083,40 @@ class Regions:
 		logY = True
 
 				
-	class Zpeak(Region):
+	class ZPeak(Region):
 		cut = "p4.M() > 60 && p4.M() < 120 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "60 GeV < m_{ll} < 120 GeV"			
+		labelSubRegion = "60 < m_{ll} < 120 GeV"			
 		titel = "Drell-Yan Enhanced"
 		latex = "Drell-Yan Enhanced"
 		name = "ZPeak"
+		logY = True
+	
+	class ZPeakHighMetControl(Region):
+		#~ cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && (%s)"%Region.cut
+		cut = "p4.M() > 60 && p4.M() < 120 && met < 150 && met > 100 && nJets >= 2 && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "#splitline{60 < m_{ll} < 120 GeV}{N_{jets} #geq 2, 100 < E_{T}^{miss} < 150 GeV}"			
+		titel = "Drell-Yan Enhanced"
+		latex = "Drell-Yan Enhanced"
+		name = "ZPeakHighMetControl"
+		logY = True
+	
+	class ZPeakMediumMetControl(Region):
+		#~ cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && (%s)"%Region.cut
+		cut = "p4.M() > 60 && p4.M() < 120 && met < 100 && met > 50 && nJets >= 2 && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "#splitline{60 < m_{ll} < 120 GeV}{N_{jets} #geq 2, 50 < E_{T}^{miss} < 100 GeV}"			
+		titel = "Drell-Yan Enhanced"
+		latex = "Drell-Yan Enhanced"
+		name = "ZPeakMediumMetControl"
 		logY = True
 	
 	class ZPeakControl(Region):
 		#~ cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && (%s)"%Region.cut
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
+		labelSubRegion = "#splitline{60 < m_{ll} < 120 GeV}{N_{jets} #geq 2, E_{T}^{miss} < 50 GeV}"			
 		titel = "Drell-Yan Enhanced"
 		latex = "Drell-Yan Enhanced"
 		name = "ZPeakControl"
@@ -1080,7 +1125,7 @@ class Regions:
 		#~ cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
+		labelSubRegion = "#splitline{60 < m_{ll} < 120 GeV}{N_{jets} #geq 2, E_{T}^{miss} < 50 GeV}"			
 		titel = "Drell-Yan Enhanced Central"
 		latex = "Drell-Yan Enhanced Central"
 		name = "ZPeakControlCentral"
@@ -1089,7 +1134,7 @@ class Regions:
 		#~ cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		cut = "p4.M() > 60 && p4.M() < 120 && met < 50 && nJets >= 2 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
 		labelRegion = Region.labelRegion
-		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} >= 2 E_T^{miss} < 50 GeV}"			
+		labelSubRegion = "#splitline{60 GeV < m_{ll} < 120 GeV}{N_{jets} #geq 2 E_T^{miss} < 50 GeV}"			
 		titel = "Drell-Yan Enhanced Forward"
 		latex = "Drell-Yan Enhanced Forward"
 		name = "ZPeakControlForward"
@@ -1159,6 +1204,31 @@ class Regions:
 		titel = "High HT region exclusive central"
 		latex = "High H_{T} region exclusive central"
 		name = "HighHTExclusiveCentral"
+		logY = False
+		
+	class HighMETExclusive(Region):
+		cut = "met > 200 && !(nJets >= 2 && met > 100) && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "E_{T}^{miss} > 200 GeV"
+		titel = "High MET region exclusive"
+		latex = "High E_{T}^{miss} region exclusive"
+		name = "HighMETExclusive"
+		logY = False
+	class HighMETExclusiveForward(Region):
+		cut = "met > 200 && !(nJets >= 2 && met > 100) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "E_{T}^{miss} > 200 GeV"
+		titel = "High MET region exclusive forward"
+		latex = "High E_{T}^{miss} region exclusive forward"
+		name = "HighHTExclusiveForward"
+		logY = False
+	class HighMETExclusiveCentral(Region):
+		cut = "met > 200 && !(nJets >= 2 && met > 100) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
+		labelRegion = Region.labelRegion
+		labelSubRegion = "E_{T}^{miss} > 200 GeV central"
+		titel = "High MET region exclusive central"
+		latex = "High E_{T}^{miss} region exclusive central"
+		name = "HighMETExclusiveCentral"
 		logY = False
 
 
@@ -1475,6 +1545,9 @@ class thePlots:
 	htPlotUntertaintyLowMET = Plot(theVariables.HT,[theCuts.metCuts.met100])
 
 	mhtPlot = Plot(theVariables.MHT,[])
+	
+	mt2Plot = Plot(theVariables.MT2,[])
+	mt2PlotHighMass = Plot(theVariables.MT2,[theCuts.massCuts.highMass])
 
 	eta1Plot = Plot(theVariables.Eta1,[])		
 	tralingEtaPlot = Plot(theVariables.TrailingEta,[])		
@@ -1514,6 +1587,9 @@ class thePlots:
 	mllPlotZpeak = Plot(theVariables.Mll,[],binning = [30,60,120,"Events / 2 Gev",[]],additionalName = "ZPeak")
 	mllPlotLowNLL = Plot(theVariables.Mll,[theCuts.nLLCuts.lowNLL])
 	mllPlotHighNLL = Plot(theVariables.Mll,[theCuts.nLLCuts.highNLL])
+	
+	mllPlotHighMT2 = Plot(theVariables.Mll,[theCuts.mt2Cuts.highMT2])
+	mllPlotHighMllHighMT2 = Plot(theVariables.Mll,[theCuts.massCuts.highMass,theCuts.mt2Cuts.highMT2])
 
 	nJetsPlot = Plot(theVariables.nJets,[])
 	leadingJetPtPlot = Plot(theVariables.leadingJetPt,[])
@@ -1550,37 +1626,51 @@ class thePlots:
 	nJetsPlotTriggerMC = Plot(theVariables.nJets,[],binning=[11,-0.5,10.5,"Events",[]])
 	nBJetsPlotTriggerMC = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
 	leadingPtPlotTriggerTrailing10MC= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
-	leadingPtPlotTriggerMC= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
-	trailingPtPlotTriggerMC= Plot(theVariables.TrailingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	#~ leadingPtPlotTriggerMC= Plot(theVariables.LeadingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	#~ trailingPtPlotTriggerMC= Plot(theVariables.TrailingPt,[],binning=[24,0,120,"Events / 5 GeV",[]])
+	leadingPtPlotTriggerMC= Plot(theVariables.LeadingPt,[],binning=[56,20,300,"Events / 5 GeV",[]])
+	trailingPtPlotTriggerMC= Plot(theVariables.TrailingPt,[],binning=[46,20,250,"Events / 5 GeV",[]])
 	trailingPtPlotTriggerLeading30MC = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "leadingPt30")
 	trailingPtPlotTriggerLeading30SingleMC = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[10,10,110,"Events / 10 GeV",[]],additionalName = "leadingPt30Single")
 	mllPlotTriggerMC = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])							
-	htPlotTriggerMC = Plot(theVariables.HT,[],binning=[20,200,1000,"Events / 40 GeV",[]])				
+	#~ htPlotTriggerMC = Plot(theVariables.HT,[],binning=[20,200,1000,"Events / 40 GeV",[]])				
+	htPlotTriggerMC = Plot(theVariables.HT,[],binning=[20,00,1000,"Events / 50 GeV",[]])				
 	metPlotTriggerMC = Plot(theVariables.Met,[],binning=[10,0,200,"Events / 20 GeV",[]])				
 	nVtxPlotTriggerMC = Plot(theVariables.nVtx,[],binning=[15,0,30,"Events / 2",[]])				
-	tralingEtaPlotTriggerMC = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])				
+	tralingEtaPlotTriggerMC = Plot(theVariables.AbsTrailingEta,[],binning=[8,0,2.4,"Events / 0.3",[]])
+					
+	ptllPlotTriggerMC = Plot(theVariables.Ptll,[],binning=[40,0,1000,"Events / 25 GeV",[]])					
 
-	nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[6,-0.5,11.5,"Events",[]])
-	nBJetsPlotTrigger = Plot(theVariables.nBJets,[],binning=[6,-0.5,5.5,"Events",[]])
-	leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
-	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[7,20,300,"Events / 40 GeV",[]])
-	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[7,20,300,"Events / 40 GeV",[]])
+	#~ nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[6,-0.5,11.5,"Events",[]])
+	nJetsPlotTrigger = Plot(theVariables.nJets,[],binning=[9,-0.5,8.5,"Events",[]])
+	nBJetsPlotTrigger = Plot(theVariables.nBJets,[],binning=[5,-0.5,4.5,"Events",[]])
+	#~ leadingPtPlotTriggerTrailing10= Plot(theVariables.LeadingPt,[],binning=[9,20,90,"Events / 10 GeV",[]],additionalName = "trailingPt10")
+	#~ leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[7,20,300,"Events / 40 GeV",[]])
+	leadingPtPlotTrigger= Plot(theVariables.LeadingPt,[],binning=[26,20,150,"Events / 5 GeV",[]])
+	#~ trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[9,20,200,"Events / 20 GeV",[]])
+	trailingPtPlotTrigger= Plot(theVariables.TrailingPt,[],binning=[16,20,100,"Events / 5 GeV",[]])
 	trailingPtPlotTriggerLeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30")
 	trailingPtPlotTriggerLeading30Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30Single")
 	trailingPtPlotTriggerLeading30SingleOnZ = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30,theCuts.massCuts.looseZ],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt30SingleOnZ")
 	trailingPtPlotTriggerLeading40Single = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt40],binning=[40,0,100,"Events / 2.5 GeV",[]],additionalName = "leadingPt40Single")
-	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[4,20,300,"Events / 40 GeV",[]])							
+	#~ mllPlotTrigger = Plot(theVariables.Mll,[],binning=[4,20,300,"Events / 40 GeV",[]])							
+	mllPlotTrigger = Plot(theVariables.Mll,[],binning=[15,20,320,"Events / 20 GeV",[]])							
 	mllPlotTriggerLeading30Single = Plot(theVariables.Mll,[theCuts.ptCuts.leadingPt30],binning=[7,20,300,"Events / 40 GeV",[]],additionalName = "leadingPt30Single")							
 	htPlotTrigger = Plot(theVariables.HT,[],binning=[10,200,1000,"Events / 40 GeV",[]])				
-	metPlotTrigger = Plot(theVariables.Met,[],binning=[4,0,200,"Events / 20 GeV",[]])				
-	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[8,0,32,"Events / 2",[]])				
-	#~ tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[6,0,2.4,"Events / 0.3",[]])
-	#~ leadingEtaPlotTrigger = Plot(theVariables.AbsLeadingEta,[],binning=[6,0,2.4,"Events / 0.3",[]])
-	tralingEtaPlotTrigger = Plot(theVariables.TrailingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])
-	leadingEtaPlotTrigger = Plot(theVariables.LeadingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])
+	#~ htPlotTrigger = Plot(theVariables.HT,[],binning=[20,0,1000,"Events / 50 GeV",[]])				
+	metPlotTrigger = Plot(theVariables.Met,[],binning=[5,0,200,"Events / 40 GeV",[]])			
+	#~ metPlotTrigger = Plot(theVariables.Met,[],binning=[30,0,300,"Events / 10 GeV",[]])				
+	nVtxPlotTrigger = Plot(theVariables.nVtx,[],binning=[8,0,32,"Events / 4",[]])				
+	tralingEtaPlotTrigger = Plot(theVariables.AbsTrailingEta,[],binning=[12,0,2.4,"Events / 0.3",[]])
+	leadingEtaPlotTrigger = Plot(theVariables.AbsLeadingEta,[],binning=[12,0,2.4,"Events / 0.3",[]])
+	#~ tralingEtaPlotTrigger = Plot(theVariables.TrailingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])
+	#~ leadingEtaPlotTrigger = Plot(theVariables.LeadingEta,[],binning=[12,-2.4,2.4,"Events / 0.3",[]])
 	
-	deltaPhiPlotTrigger = Plot(theVariables.deltaPhi,[],binning=[8,0,3.2,"Events / 0.4",[]])				
-	ptllPlotTrigger = Plot(theVariables.Ptll,[],binning=[8,0,320,"Events / 40 GeV",[]])			
+	deltaRPlotTrigger = Plot(theVariables.deltaR,[],binning=[35,0,3.5,"Events / 0.1",[]])
+	
+	#~ deltaPhiPlotTrigger = Plot(theVariables.deltaPhi,[],binning=[8,0,3.2,"Events / 0.4",[]])				
+	deltaPhiPlotTrigger = Plot(theVariables.deltaPhi,[],binning=[32,0,3.2,"Events / 0.1",[]])				
+	ptllPlotTrigger = Plot(theVariables.Ptll,[],binning=[10,0,400,"Events / 40 GeV",[]])			
 	sumMlbPlotTrigger = Plot(theVariables.sumMlb,[],binning=[10,0,500,"Events / 50 GeV",[]])	
 
 			
@@ -1593,15 +1683,15 @@ class thePlots:
 	### plots for rmue measurements
 	nJetsPlotRMuE = Plot(theVariables.nJets,[],binning=[9,-0.5,8.5,"Events",[]])
 	nBJetsPlotRMuE = Plot(theVariables.nBJets,[],binning=[7,-0.5,6.5,"Events",[]])
-	leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[16,20,100,"Events / 5 GeV",[]])
-	trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[18,10,100,"Events / 5 GeV",[]])
+	leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[26,20,150,"Events / 5 GeV",[]])
+	trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[22,10,120,"Events / 5 GeV",[]])
 	#~ leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "PU4BX50")
 	#~ trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[18,10,100,"Events / 5 GeV",[]],additionalName = "PU4BX50")
 	trailingPtPlotRMuELeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "leadingPt30")
 	mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)])							
 	#~ mllPlotRMuE = Plot(theVariables.Mll,[],binning=[-1,20,200,"Events / 10 GeV",range(20,60,10)+range(60,120,10)+range(120,250,25)],additionalName = "PU4BX50")							
 	htPlotRMuE = Plot(theVariables.HT,[],binning=[-1,0,400,"Events / 40 GeV",range(0,300,50)+range(300,800,100)])				
-	metPlotRMuE = Plot(theVariables.Met,[],binning=[-1,0,250,"Events / 20 GeV",range(0,100,10)+range(100,150,25)+range(150,250,50)])				
+	metPlotRMuE = Plot(theVariables.Met,[],binning=[-1,0,250,"Events / 20 GeV",range(0,100,10)+range(100,150,25)+range(150,300,50)])				
 	nVtxPlotRMuE = Plot(theVariables.nVtx,[],binning=[40,0,40,"Events / 1",[]])				
 	tralingEtaPlotRMuE = Plot(theVariables.AbsTrailingEta,[],binning=[-1,0,2.55,"Events / 0.3",[i*0.14 for i in range(0,10)]+[i*0.2+1.4 for i in range(0,6)]])				
 	leadingEtaPlotRMuE = Plot(theVariables.AbsLeadingEta,[],binning=[-1,0,2.55,"Events / 0.3",[i*0.14 for i in range(0,10)]+[i*0.2+1.4 for i in range(0,6)]])				
@@ -1610,8 +1700,8 @@ class thePlots:
 	deltaRPlotRMuE = Plot(theVariables.deltaR,[],binning=[-1,0,5.5,"Events / 0.3",[0.2*i for i in range(10)]+[2+0.5*i for i in range(7)]])				
 	#~ deltaPhiPlotRMuE = Plot(theVariables.deltaPhi,[],binning=[-1,0,3.2,"Events / 0.2",[0.2*i for i in range(10)]+[2+0.3*i for i in range(4)]])				
 	deltaPhiPlotRMuE = Plot(theVariables.deltaPhi,[],binning=[16,0,3.2,"Events / 0.2",[]])				
-	ptllPlotRMuE = Plot(theVariables.Ptll,[],binning=[-1,0,250,"Events / 20 GeV",range(0,100,10)+range(100,150,25)+range(150,250,50)])			
-	sumMlbPlotRMuE = Plot(theVariables.sumMlb,[],binning=[-1,0,500,"Events / 20 GeV",range(0,300,25)+range(300,500,50)])			
+	ptllPlotRMuE = Plot(theVariables.Ptll,[],binning=[-1,0,300,"Events / 20 GeV",range(0,100,10)+range(100,200,25)+range(200,350,50)])			
+	sumMlbPlotRMuE = Plot(theVariables.sumMlb,[],binning=[-1,0,500,"Events / 20 GeV",range(0,300,25)+range(300,550,50)])			
 			
 								
 	mllPlotRMuESignal = Plot(theVariables.Mll,[],binning=[28,20,300,"Events / 10 GeV",[]])

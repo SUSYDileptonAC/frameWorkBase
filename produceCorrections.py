@@ -217,6 +217,18 @@ def main():
 			valMC = %f
 			errMC = %f
 """
+	classTemplateRMuELeptonPt = """
+		class %s:
+			offset = %f
+			offsetErr = %f
+			falling = %f
+			fallingErr = %f
+			
+			offsetMC = %f
+			offsetErrMC = %f
+			fallingMC = %f
+			fallingErrMC = %f
+"""
 	classTemplateTrigger = """
 		class %s:
 			val = %f
@@ -235,10 +247,14 @@ def main():
 %s
 	
 %s
+	
+%s
 
 %s
 					
 %s	
+
+%s		
 
 %s		
 
@@ -361,6 +377,49 @@ class rOutInMM:
 				#~ rOutInTuple.append(getROutInClassB(classTemplate,shelvesROutIn,shelvesROutInMC,bLabel,combination,label))
 
 	rOutInPartFinal = rOutInPart%tuple(rOutInTuple)
+	
+	
+		
+	rSFOFDirectPart = """
+	
+class rSFOFDirect:
+%s	
+%s
+%s
+	
+	
+"""	
+	shelvesRSFOF = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name)}
+	shelvesRSFOFMC = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name,MC=True),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name,MC=True), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name,MC=True)}
+	
+
+	classRSFOFDirectInclusive = classTemplate%("inclusive",shelvesRSFOF["inclusive"]["rSFOF"] , (shelvesRSFOF["inclusive"]["rSFOFErr"]**2 + (shelvesRSFOF["inclusive"]["rSFOF"]*shelvesRSFOFMC["inclusive"]["transferErr"])**2)**0.5 ,shelvesRSFOFMC["inclusive"]["rSFOF"] ,shelvesRSFOFMC["inclusive"]["rSFOFErr"])
+	classRSFOFDirectCentral = classTemplate%("central",shelvesRSFOF["central"]["rSFOF"] , (shelvesRSFOF["central"]["rSFOFErr"]**2 + (shelvesRSFOF["central"]["rSFOF"]*shelvesRSFOFMC["central"]["transferErr"])**2)**0.5 ,shelvesRSFOFMC["central"]["rSFOF"] ,shelvesRSFOFMC["central"]["rSFOFErr"])
+	classRSFOFDirectForward = classTemplate%("forward",shelvesRSFOF["forward"]["rSFOF"] , (shelvesRSFOF["forward"]["rSFOFErr"]**2 + (shelvesRSFOF["forward"]["rSFOF"]*shelvesRSFOFMC["forward"]["transferErr"])**2)**0.5 ,shelvesRSFOFMC["forward"]["rSFOF"] ,shelvesRSFOFMC["forward"]["rSFOFErr"])
+	
+	
+	rSFOFDirectPartFinal = rSFOFDirectPart%(classRSFOFDirectInclusive , classRSFOFDirectCentral, classRSFOFDirectForward)	
+	
+	
+	
+	rMuELeptonPtPart = """
+class rMuELeptonPt:
+%s	
+%s
+%s	
+
+
+"""	
+	shelvesRMuELeptonPt = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRanges.name),"central": readPickle("rMuE_correctionParameters",regionsToUse.rMuE.central.name,runRanges.name), "forward":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.forward.name,runRanges.name)}
+	shelvesRMuELeptonPtMC = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRanges.name,MC=True),"central": readPickle("rMuE_correctionParameters",regionsToUse.rMuE.central.name,runRanges.name,MC=True), "forward":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.forward.name,runRanges.name,MC=True)}
+		
+	classRMuELeptonPtInclusive = classTemplateRMuELeptonPt%("inclusive",shelvesRMuELeptonPt["inclusive"]["offset"], shelvesRMuELeptonPt["inclusive"]["offsetErr"], shelvesRMuELeptonPt["inclusive"]["falling"], shelvesRMuELeptonPt["inclusive"]["fallingErr"], shelvesRMuELeptonPtMC["inclusive"]["offset"], shelvesRMuELeptonPtMC["inclusive"]["offsetErr"], shelvesRMuELeptonPtMC["inclusive"]["falling"], shelvesRMuELeptonPtMC["inclusive"]["fallingErr"])
+	classRMuELeptonPtCentral = classTemplateRMuELeptonPt%("central",shelvesRMuELeptonPt["central"]["offset"], shelvesRMuELeptonPt["central"]["offsetErr"], shelvesRMuELeptonPt["central"]["falling"], shelvesRMuELeptonPt["central"]["fallingErr"], shelvesRMuELeptonPtMC["central"]["offset"], shelvesRMuELeptonPtMC["central"]["offsetErr"], shelvesRMuELeptonPtMC["central"]["falling"], shelvesRMuELeptonPtMC["central"]["fallingErr"])
+	classRMuELeptonPtForward = classTemplateRMuELeptonPt%("forward",shelvesRMuELeptonPt["forward"]["offset"], shelvesRMuELeptonPt["forward"]["offsetErr"], shelvesRMuELeptonPt["forward"]["falling"], shelvesRMuELeptonPt["forward"]["fallingErr"], shelvesRMuELeptonPtMC["forward"]["offset"], shelvesRMuELeptonPtMC["forward"]["offsetErr"], shelvesRMuELeptonPtMC["forward"]["falling"], shelvesRMuELeptonPtMC["forward"]["fallingErr"])
+	
+	
+	rMuELeptonPtPartFinal = rMuELeptonPtPart%(classRMuELeptonPtInclusive , classRMuELeptonPtCentral, classRMuELeptonPtForward)
+	
 	
 	rMuEPart = """
 class rMuE:
@@ -501,7 +560,7 @@ class rMMOF:
 
 
 
-	finalFile = r%(rOutInPartFinal,rMuEPartFinal,rSFOFTrigPartFinal,rSFOFFactPartFinal,rSFOFPartFinal,rEEOFPartFinal,rMMOFPartFinal,triggerPartFinal)
+	finalFile = r%(rOutInPartFinal,rSFOFDirectPartFinal,rMuELeptonPtPartFinal,rMuEPartFinal,rSFOFTrigPartFinal,rSFOFFactPartFinal,rSFOFPartFinal,rEEOFPartFinal,rMMOFPartFinal,triggerPartFinal)
 
 	corrFile = open("corrections.py", "w")
 	corrFile.write(finalFile)

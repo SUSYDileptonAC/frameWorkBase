@@ -293,10 +293,12 @@ class systematics:
 		class forward:
 			val = 0.2	
 	class trigger:
+		class inclusive:
+			val = 0.02
 		class central:
-			val = 0.05
+			val = 0.02
 		class forward:
-			val = 0.05
+			val = 0.02
 	class rOutIn:
 		class central:
 			val = 0.25
@@ -395,13 +397,14 @@ class regionsToUse:
 
 class runRanges:
 	#~ name = "Run2015_25ns"
-	name = "Run2016_12_9fb"
+	#~ name = "Run2016_12_9fb"
+	name = "Run2016_22fb"
 
 class backgroundLists:
 	default = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
 	#~ default = ["TT_Powheg","DrellYan"]
 	#~ trigger = ["TTJets_SpinCorrelations"]
-	trigger = ["TT_Powheg"]
+	trigger = ["TT_Powheg","DrellYan"]
 	iso = ["TT_Powheg","DrellYan"]
 	rSFOF = ["TT_Powheg","DrellYan"]
 	nonPrompt = ["TT_Powheg","DrellYan"]
@@ -410,24 +413,30 @@ class backgroundLists:
 	rareStudies = ["WW","WZ","ZZ","RareNonZ","RareZ"]
 	
 class plotLists:
-	default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot","nVtxPlot","deltaPhiPlot","ptllPlot","sumMlbPlot","leadingPtPlot"]
-	#~ default = ["leadingPtPlot"]
+	#~ default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot","nVtxPlot","deltaPhiPlot","ptllPlot","sumMlbPlot","leadingPtPlot"]
+	default = ["mllPlot"]
 	#~ default = ["nVtxPlot"]
 	#~ default = ["tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot"]
 	#~ default = ["leadingPtPlot"]
 	#~ trigger = ["nJetsPlotTrigger","leadingPtPlotTriggerTrailing10","leadingPtPlotTrigger","leadingPtPlotTrigger2515","leadingPtPlotTrigger2520","leadingPtPlotTrigger2525","trailigPtPlotTrigger","trailigPtPlotTrigger2515","trailigPtPlotTrigger2520","trailigPtPlotTrigger2525","trailigPtPlotTriggerLeading30","mllPlotTrigger","mllPlotTrigger2515","mllPlotTrigger2520","mllPlotTrigger2525","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
-	trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","leadingEtaPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
-	#~ trigger = ["ptllPlotTrigger"]
+	#~ trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","leadingEtaPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger","ptllPlotTrigger","deltaPhiPlotTrigger","sumMlbPlotTrigger"]
+	#~ trigger = ["trailingPtPlotTrigger","leadingPtPlotTrigger","ptllPlotTrigger","deltaRPlotTrigger","deltaPhiPlotTrigger"]
+	#~ trigger = ["htPlotTrigger"]
 	#~ trigger = ["ptllPlotTrigger","deltaPhiPlotTrigger","sumMlbPlotTrigger"]
-	#~ trigger = ["leadingPtPlot","trailingPtPlot"]
+	#~ trigger = ["leadingPtPlotTrigger","trailingPtPlotTrigger"]
+	trigger = ["mllPlotTrigger"]
 	iso = ["leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","nVtxPlotTrigger"]
-	rSFOF = ["mllPlot","metPlot","nJetsPlot"]
+	#~ rSFOF = ["mllPlot","metPlot","nJetsPlot","trailingPtPlot","leadingPtPlot"]
+	rSFOF = ["mllPlot","metPlot","nJetsPlot","trailingPtPlot","leadingPtPlot"]
 	#~ rSFOF = ["metPlot"]
 	signal = ["mllPlot"]
 	#~ signal = ["mllPlot","nLLPlot"]
 	#~ rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","trailingPtPlotRMuELeading30","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE"]
-	#~ rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","leadingEtaPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
-	rMuE = ["leadingEtaPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
+	#~ rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","leadingEtaPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","trailingPtPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
+	#~ rMuE = ["trailingPtPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
+	#~ rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE"]
+	#~ rMuE = ["leadingEtaPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
+	rMuE = ["trailingPtPlotRMuE"]
 	#~ rMuE = ["sumMlbPlotRMuE"]
 	#~ rMuE = ["ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
 	#~ rMuE = ["leadingEtaPlotRMuE","tralingEtaPlotRMuE"]
@@ -439,7 +448,8 @@ class baselineTrigger:
 	name = "PFHT"
 
 class cutNCountXChecks:
-	cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"isoCuts":["TightIso"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
+	#~ cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"isoCuts":["TightIso"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
+	cutList = {"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"]}
 
 
 
