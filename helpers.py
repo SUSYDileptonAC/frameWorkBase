@@ -52,9 +52,8 @@ def totalNumberOfGeneratedEvents(path,source="",modifier=""):
         """
         from ROOT import TFile
         result = {}
-        #~ print path
-                         
-		for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems(): 
+        
+        for sampleName, filePath in getFilePathsAndSampleNames(path,source,modifier).iteritems(): 
 			rootFile = TFile(filePath, "read")
 			result[sampleName] = rootFile.FindObjectAny("analysis paths").GetBinContent(1)                          
         return result
