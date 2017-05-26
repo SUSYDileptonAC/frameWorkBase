@@ -1,144 +1,80 @@
 class OtherPredictions:
-	class default:
+	class MT2:
 		class SF:
-			class central:
-				val = 16.7
-				err = 8.0
-			class forward:
-				val = 5.8
-				err = 8.0
-		#~ class EE:
-			#~ class central:
-				#~ val = 16.7
-                                #~ err = 8.0
-			#~ class forward:
-                                #~ val = 5.8
-				#~ err = 8.0
-		#~ class MM:
-			#~ class central:
-				#~ val = 16.7
-                                #~ err = 8.0
-			#~ class forward:
-                                #~ val = 5.8
-				#~ err = 8.0
-	class geOneBTags:
+			class inclusive:
+				val = 84.0
+				err = 84.0*0.25
+			class lowNLL:
+				val = 31.5
+				err = 31.5*0.25
+			class highNLL:
+				val = 52.5
+				err = 52.5*0.25
+				
+	class ICHEP:
 		class SF:
-			class central:
-				val = 3.0
+			class inclusive:
+				val = 45.3
 				err = 8.0
-			class forward:
-				val = 0.9
-				err = 8.2
-		#~ class EE:
-			#~ class central:
-				#~ val = 3.0
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 0.9
-				#~ err = 8.2
-		#~ class MM:
-			#~ class central:
-				#~ val = 3.0
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 0.9
-				#~ err = 8.0
-	class noBTags:
-		class SF:
-			class central:
-				val = 13.7
+			class lowNLL:
+				val = 45.3
 				err = 8.0
-			class forward:
-				val = 4.9
+			class highNLL:
+				val = 45.3
 				err = 8.0
-		#~ class EE:
-			#~ class central:
-				#~ val = 13.7
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 4.9
-				#~ err = 8.0
-		#~ class MM:
-			#~ class central:
-				#~ val = 13.7
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 4.9
-				#~ err = 8.0
-
-class OnlyZPredictions:
-	class default:
+		
+	class legacy:
 		class SF:
 			class central:
 				val = 45.3
 				err = 8.0
-			class forward:
-				val = 18.3
-				err = 8.0
+		
+
+class OnlyZPredictions:
+	class MT2:
+		class SF:
 			class inclusive:
-				val = 63.6
-				err = 11.0
-		#~ class EE:
-			#~ class central:
-				#~ val = 45.3
-                                #~ err = 8.0
-			#~ class forward:
-                                #~ val = 18.3
-				#~ err = 8.0
-		#~ class MM:
-			#~ class central:
-				#~ val = 45.3
-                                #~ err = 8.0
-			#~ class forward:
-                                #~ val = 18.3
-				#~ err = 8.0
-	class geOneBTags:
+				val = 19.4
+				err = 11.7
+			class lowNLL:
+				val = 19.4 * 0.36
+				err = 11.7 * 0.36
+			class highNLL:
+				val = 19.4 * 0.64
+				err = 11.7 * 0.64
+				
+	class ICHEP:
+		class SF:
+			class inclusive:
+				val = 45.3
+				err = 8.0
+			class lowNLL:
+				val = 45.3
+				err = 8.0
+			class highNLL:
+				val = 45.3
+				err = 8.0
+		
+	class legacy:
 		class SF:
 			class central:
-				val = 12.6
+				val = 45.3
 				err = 8.0
-			class forward:
-				val = 5.1
-				err = 8.2
-		#~ class EE:
-			#~ class central:
-				#~ val = 12.6
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 5.1
-				#~ err = 8.2
-		#~ class MM:
-			#~ class central:
-				#~ val = 12.6
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 5.1
-				#~ err = 8.0
-	class noBTags:
-		class SF:
-			class central:
-				val = 32.7
-				err = 8.0
-			class forward:
-				val = 13.2
-				err = 8.0
-		#~ class EE:
-			#~ class central:
-				#~ val = 32.7
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 13.2
-				#~ err = 8.0
-		#~ class MM:
-			#~ class central:
-				#~ val = 32.7
-				#~ err = 8.0
-			#~ class forward:
-				#~ val = 13.2
-				#~ err = 8.0
+		
 
 class zPredictions:
-	class NLL:
+	class MT2:
+		class SF:
+			class inclusive:
+				val = 100.4
+				err = 28.5
+			class lowNLL:
+				val = 100.4 * 0.36
+				err = 28.5 * 0.36
+			class highNLL:
+				val = 100.4 * 0.64
+				err = 28.5 * 0.64
+	class ICHEP:
 		class SF:
 			class inclusive:
 				val = 188.8
@@ -149,179 +85,91 @@ class zPredictions:
 			class highNLL:
 				val = 188.8 * 0.35
 				err = 44.2 * 0.35
+				
 	class legacy:
 		class SF:
 			class central:
 				val = 391.5
 				err = 38.5
-			#~ class forward:
-				#~ val = 24.1
-				#~ err = 3.1
-			#~ class inclusive:
-				#~ val = 86.1
-				#~ err = 8.8
-		#~ class EE:
-			#~ class central:
-				#~ val = 5
-				#~ err = 5
-			#~ class forward:
-				#~ val = 2
-				#~ err = 2
-		#~ class MM:
-			#~ class central:
-				#~ val = 5
-				#~ err = 5
-			#~ class forward:
-				#~ val = 2
-				#~ err = 2
-	#~ class geOneBTags:
-		#~ class SF:
-			#~ class central:
-				#~ val = 15.6
-				#~ err = 2.2
-			#~ class forward:
-				#~ val = 6.0
-				#~ err = 1.3
-		#~ class EE:
-			#~ class central:
-				#~ val = 2
-				#~ err = 2
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-		#~ class MM:
-			#~ class central:
-				#~ val = 2
-				#~ err = 2
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-	#~ class noBTags:
-		#~ class SF:
-			#~ class central:
-				#~ val = 46.4
-				#~ err = 7.9
-			#~ class forward:
-				#~ val = 18.1
-				#~ err = 2.8
-		#~ class EE:
-			#~ class central:
-				#~ val = 2
-				#~ err = 2
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-		#~ class MM:
-			#~ class central:
-				#~ val = 2
-				#~ err = 2
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-	#~ class geTwoBTags:
-		#~ class SF:
-			#~ class central:
-				#~ val = 2.3
-				#~ err = 1.8
-			#~ class forward:
-				#~ val = 0.8
-				#~ err = 0.8
-		#~ class EE:
-			#~ class central:
-				#~ val = 1
-				#~ err = 1
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-		#~ class MM:
-			#~ class central:
-				#~ val = 1
-				#~ err = 1
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-	#~ class eleLeading:
-		#~ class SF:
-			#~ class central:
-				#~ val = 1.7
-				#~ err = 0.51
-			#~ class forward:
-				#~ val = 0.7
-				#~ err = 0.31
-		#~ class EE:
-			#~ class central:
-				#~ val = 1
-				#~ err = 1
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-		#~ class MM:
-			#~ class central:
-				#~ val = 1
-				#~ err = 1
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-	#~ class muLeading:
-		#~ class SF:
-			#~ class central:
-				#~ val = 1.7
-				#~ err = 0.51
-			#~ class forward:
-				#~ val = 0.7
-				#~ err = 0.31
-		#~ class EE:
-			#~ class central:
-				#~ val = 1
-				#~ err = 1
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
-		#~ class MM:
-			#~ class central:
-				#~ val = 1
-				#~ err = 1
-			#~ class forward:
-				#~ val = 1
-				#~ err = 1
+			
 
 
 class systematics:
+	class rSFOF:
+		class inclusive:
+			val = 0.04
+		class central:
+			val = 0.04
+		class forward:
+			val = 0.06	
 	class rMuE:
+		class inclusive:
+			val = 0.1
 		class central:
 			val = 0.1
 		class forward:
-			val = 0.2	
+			val = 0.1	
 	class trigger:
 		class inclusive:
-			val = 0.02
+			val = 0.03
 		class central:
-			val = 0.02
+			val = 0.03
 		class forward:
-			val = 0.02
+			val = 0.03
 	class rOutIn:
-		class central:
+		class old:
 			val = 0.25
-		class forward:
-			val = 0.25		
+		class massBelow150:
+			val = 0.5		
+		class massAbove150:
+			val = 1.		
 			
 class mllBins:
+	
+	class mass20To60:
+		low = 20
+		high = 60
+	class mass60To86:
+		low = 60
+		high = 86
+	class onZ:
+		low = 86
+		high = 96
+	class mass96To150:
+		low = 96
+		high = 150
+	class mass150To200:
+		low = 150
+		high = 200
+	class mass200To300:
+		low = 200
+		high = 300
+	class mass300To400:
+		low = 300
+		high = 400
+	class mass400:
+		low = 400
+		high = 2000
+		
+	
 	class edgeMass:
 		low = 20
 		high = 70
-	class lowMass:
+	class lowMassOld:
 		low = 20
 		high = 81
-	class onZ:
-		low = 81
-		high = 101
+	class lowMass:
+		low = 20
+		high = 86
+	class highMassOld:
+		low = 101
+		high = 5000	
 	class highMass:
-		low = 101
-		high = 1000	
-		
+		low = 96
+		high = 5000	
 	class highMassRSFOF:
-		low = 101
-		high = 1000
+		low = 110
+		high = 2000
 		
 class mllBinsOld:
 	class lowMass:
@@ -373,90 +221,62 @@ class regionsToUse:
 			name = "ControlForward"
 		class inclusive: 
 			name = "Control"
-	class rSFOFOld:
-		class central: 
-			name = "ControlCentralOld"
-		class forward: 
-			name = "ControlForwardOld"
-		class inclusive: 
-			name = "ControlOld"
 	class signal:
-		class central: 
-			name = "SignalCentral"
-		class forward: 
-			name = "SignalForward"
+		class legacy: 
+			name = "SignalCentralOld"
+		class ICHEP: 
+			name = "SignalHighNLL"
 		class inclusive: 
 			name = "SignalInclusive"
-	class signalOld:
-		class central: 
-			name = "SignalCentralOld"
-		class forward: 
-			name = "SignalForwardOld"
-		class inclusive: 
-			name = "SignalInclusiveOld"
+		class Moriond: 
+			name = "SignalHighMT2DeltaPhiJetMet"
+		class MoriondLowNLL: 
+			name = "SignalLowNLLHighMT2DeltaPhiJetMet"
+		class MoriondHighNLL: 
+			name = "SignalHighNLLHighMT2DeltaPhiJetMet"
 
 class runRanges:
-	#~ name = "Run2015_25ns"
-	#~ name = "Run2016_12_9fb"
-	name = "Run2016_22fb"
+	name = "Run2016_36fb"
 
 class backgroundLists:
 	default = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
+	#~ default = ["OtherSM","SingleTop","DrellYanTauTau","RareOnZ","TT_Powheg","ZJets","DrellYanNonResonant"]
 	#~ default = ["TT_Powheg","DrellYan"]
-	#~ trigger = ["TTJets_SpinCorrelations"]
 	trigger = ["TT_Powheg","DrellYan"]
 	iso = ["TT_Powheg","DrellYan"]
-	rSFOF = ["TT_Powheg","DrellYan"]
+	#~ rSFOF = ["TT_Powheg"]
+	rSFOF = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
 	nonPrompt = ["TT_Powheg","DrellYan"]
 	Loose = ["TT_Powheg","DrellYan"]
-	#~ Loose = ["DrellYan"]
 	rareStudies = ["WW","WZ","ZZ","RareNonZ","RareZ"]
 	
 class plotLists:
-	#~ default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot","nVtxPlot","deltaPhiPlot","ptllPlot","sumMlbPlot","leadingPtPlot"]
+	#~ default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","nBJetsPlot","nVtxPlot","deltaPhiPlot","ptllPlot","sumMlbPlot","leadingPtPlot","mt2Plot"]
+	#~ default = ["mllPlot","metPlot","nJetsPlot","mt2Plot"]
 	default = ["mllPlot"]
-	#~ default = ["nVtxPlot"]
-	#~ default = ["tralingEtaPlot","trailingPtPlot","nJetsPlot","leadingJetPtPlot","nBJetsPlot"]
-	#~ default = ["leadingPtPlot"]
-	#~ trigger = ["nJetsPlotTrigger","leadingPtPlotTriggerTrailing10","leadingPtPlotTrigger","leadingPtPlotTrigger2515","leadingPtPlotTrigger2520","leadingPtPlotTrigger2525","trailigPtPlotTrigger","trailigPtPlotTrigger2515","trailigPtPlotTrigger2520","trailigPtPlotTrigger2525","trailigPtPlotTriggerLeading30","mllPlotTrigger","mllPlotTrigger2515","mllPlotTrigger2520","mllPlotTrigger2525","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger"]
-	#~ trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","leadingEtaPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger","ptllPlotTrigger","deltaPhiPlotTrigger","sumMlbPlotTrigger"]
-	#~ trigger = ["trailingPtPlotTrigger","leadingPtPlotTrigger","ptllPlotTrigger","deltaRPlotTrigger","deltaPhiPlotTrigger"]
-	#~ trigger = ["htPlotTrigger"]
-	#~ trigger = ["ptllPlotTrigger","deltaPhiPlotTrigger","sumMlbPlotTrigger"]
-	#~ trigger = ["leadingPtPlotTrigger","trailingPtPlotTrigger"]
-	trigger = ["mllPlotTrigger"]
+	#~ trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","leadingEtaPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger","ptllPlotTrigger","deltaPhiPlotTrigger","sumMlbPlotTrigger","mt2PlotTrigger"]
+	trigger = ["trailingPtPlotTrigger","leadingPtPlotTrigger"]
 	iso = ["leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","nVtxPlotTrigger"]
-	#~ rSFOF = ["mllPlot","metPlot","nJetsPlot","trailingPtPlot","leadingPtPlot"]
-	rSFOF = ["mllPlot","metPlot","nJetsPlot","trailingPtPlot","leadingPtPlot"]
-	#~ rSFOF = ["metPlot"]
-	signal = ["mllPlot"]
-	#~ signal = ["mllPlot","nLLPlot"]
-	#~ rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","trailingPtPlotRMuELeading30","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE"]
-	#~ rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE","leadingPtPlotRMuE","leadingEtaPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","trailingPtPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
-	#~ rMuE = ["trailingPtPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
-	#~ rMuE = ["nJetsPlotRMuE","nBJetsPlotRMuE"]
-	#~ rMuE = ["leadingEtaPlotRMuE","leadingPtPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","htPlotRMuE","metPlotRMuE","nVtxPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
-	rMuE = ["trailingPtPlotRMuE"]
-	#~ rMuE = ["sumMlbPlotRMuE"]
-	#~ rMuE = ["ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
-	#~ rMuE = ["leadingEtaPlotRMuE","tralingEtaPlotRMuE"]
-	#~ rMuE = ["leadingPtPlotRMuE","trailingPtPlotRMuE","mllPlotRMuE","nVtxPlotRMuE"]
-	rOutIn =  ["metPlotROutIn","nJetsPlotROutIn"]
+	#~ rSFOF = ["mllPlotRSFOF","metPlotRSFOF","nJetsPlotRSFOF","nBJetsPlotRSFOF","htPlotRSFOF","trailingPtPlotRSFOF","leadingPtPlotRSFOF","mt2PlotRSFOF","ptllPlotRSFOF","deltaPhiPlotRSFOF","sumMlbPlotRSFOF","nLLPlotRSFOF","nVtxPlotRSFOF"]
+	#~ rSFOF = ["mllPlotRSFOF","metPlotRSFOF","nJetsPlotRSFOF","nBJetsPlotRSFOF","htPlotRSFOF","trailingPtPlotRSFOF","leadingPtPlotRSFOF","mt2PlotRSFOF","ptllPlotRSFOF","deltaPhiPlotRSFOF","sumMlbPlotRSFOF","nVtxPlotRSFOF"]
+	rSFOF = ["trailingPtPlotRSFOF","leadingPtPlotRSFOF"]
+	signal = ["mllPlotROutIn"]
+	#~ rMuE = ["mllPlotRMuE","leadingPtPlotRMuE","nJetsPlotRMuE","mt2PlotRMuE","metPlotRMuE","nVtxPlotRMuE","nBJetsPlotRMuE","leadingEtaPlotRMuE","trailingPtPlotRMuE","htPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
+	#~ rMuE = ["mllPlotRMuE"]
+	rMuE = ["leadingPtPlotRMuE","trailingPtPlotRMuE"]
+	#~ rMuE = ["trailingPtPlotRMuE"]
+	rOutIn =  ["metPlotROutIn","nJetsPlotROutIn","mt2PlotROutIn"]
 	fake =  ["trailingPtPlot100","tralingEtaPlot","metPlot","htPlot",]
 
 class baselineTrigger: 
 	name = "PFHT"
 
 class cutNCountXChecks:
-	#~ cutList = {"leptonPt":["pt2010","pt3020","pt3010","pt3030"],"pileUpCuts":["lowPU","midPU","highPU"],"isoCuts":["TightIso"],"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"],"htCuts":["ht100to300","ht300"]}
-	cutList = {"bTags":["noBTags","OneBTags","TwoBTags","geOneBTags","geTwoBTags"]}
+	cutList = {"NLL":["inclusive","lowNLL","highNLL"],"Legacy":["legacy"]}
 
 
 
 class versions:
-	#~ cmssw = "sw7412"
-	cmssw = "sw8010"
-	#~ cmssw = "sw8014"
+	cmssw = "sw8021"
 	cuts = "cutsV33"
-	#~ masterListForMC = "Master74X_25nsMC_ReMiniAOD.ini"
-	masterListForMC = "Master80X_MC.ini"
+	masterListForMC = "Master80X_MC_Summer16.ini"
