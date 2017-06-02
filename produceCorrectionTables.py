@@ -3,11 +3,26 @@ import os
 import sys
 
 
-from corrections import rSFOF, rEEOF, rMMOF, rOutIn, rOutInEE, rOutInMM, rMuE, rSFOFTrig, rSFOFFact
-from centralConfig import zPredictions, regionsToUse, runRanges, baselineTrigger
+#~ from corrections import rSFOF, rEEOF, rMMOF, rOutIn, rOutInEE, rOutInMM, rMuE, rSFOFTrig, rSFOFFactOld
+from corrections import rSFOF, rEEOF, rMMOF, rOutIn, rMuE, rSFOFTrig, rSFOFFactOld
+from centralConfig import zPredictions, regionsToUse, runRanges, baselineTrigger,systematics
 
 import argparse	
 import subprocess
+
+massRanges = {
+			"mass20To60":"20-60",
+			"mass60To86":"60-86",
+			"mass96To150":"96-150",
+			"mass150To200":"150-200",
+			"mass200To300":"200-300",
+			"mass300To400":"300-400",
+			"mass400":"$>$400",
+			"edgeMass":"20-70",
+			"lowMass":"20-86",
+			"highMass":"$>$96",
+			"highMassOld":"$>$101",
+			}
 
 def saveTable(table, name):
 	tabFile = open("tab/table_%s.tex"%name, "w")
@@ -107,7 +122,8 @@ def produceRSFOFTable():
  \renewcommand{\arraystretch}{1.3}
  \setlength{\belowcaptionskip}{6pt}
  \centering
- \caption{Observed event yields in the control region and the resulting values of \Rsfof, \Reeof, and \Rmmof. The results are shown separately for the central and forward lepton selection and the same quantities derived on simulation are shown for comaprison.}
+ \caption{Observed event yields in the control region and the resulting values of \Rsfof, \Reeof, and \Rmmof. 
+ The results are shown separately for the central and forward lepton selection and the same quantities derived on simulation are shown for comparison.}
   \label{tab:rSFOF}
 \begin{tabular}{l|c|c|c|c}     
  & $N_{SF}$ & $N_{OF}$ & $ R_{SF/OF} \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
@@ -203,7 +219,8 @@ def produceRSFOFTable():
  \setlength{\belowcaptionskip}{6pt}
  \centering
  \caption{Observed event yields in the control region and the resulting values for $R_{SF/OF}$, $R_{ee/OF}$,
- and $R_{\mu\mu/OF}$.}
+ and $R_{\mu\mu/OF}$ for both data and MC. The transfer factor is defined as the ratio of $R_{SF/OF}$
+ in the signal region devided by $R_{SF/OF}$ in the control region.}
   \label{tab:rSFOF}
 \begin{tabular}{l|c|c|c|c}     
  & $N_{SF}$ & $N_{OF}$ & $ R_{SF/OF} \pm \sigma_{stat}$ & Transfer factor $\pm \sigma_{stat}$  \\    
@@ -244,7 +261,7 @@ def produceRMuETable():
 
 
 	template = r"        %s       &  %d                   & %d              &  %.3f$\pm$%.3f$\pm$%.3f    \\" +"\n"
-
+	
 	shelvesRMuE = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRanges.name),"central": readPickle("rMuE",regionsToUse.rMuE.central.name,runRanges.name), "forward":readPickle("rMuE",regionsToUse.rMuE.forward.name,runRanges.name)}
 	shelvesRMuEMC = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRanges.name,MC=True),"central": readPickle("rMuE",regionsToUse.rMuE.central.name,runRanges.name,MC=True), "forward":readPickle("rMuE",regionsToUse.rMuE.forward.name,runRanges.name,MC=True)}
 
@@ -274,10 +291,10 @@ def produceRMuETable():
 
 """
 	
-	dataCentral = template%("Data",shelvesRMuE["central"]["nMM"],shelvesRMuE["central"]["nEE"],shelvesRMuE["central"]["rMuE"],shelvesRMuE["central"]["rMuEStatErr"],shelvesRMuE["central"]["rMuESystErr"])
-	dataForward = template%("Data",shelvesRMuE["forward"]["nMM"],shelvesRMuE["forward"]["nEE"],shelvesRMuE["forward"]["rMuE"],shelvesRMuE["forward"]["rMuEStatErr"],shelvesRMuE["forward"]["rMuESystErr"])
-	mcCentral = template%("MC",shelvesRMuEMC["central"]["nMM"],shelvesRMuEMC["central"]["nEE"],shelvesRMuEMC["central"]["rMuE"],shelvesRMuEMC["central"]["rMuEStatErr"],shelvesRMuEMC["central"]["rMuESystErr"])
-	mcForward = template%("MC",shelvesRMuEMC["forward"]["nMM"],shelvesRMuEMC["forward"]["nEE"],shelvesRMuEMC["forward"]["rMuE"],shelvesRMuEMC["forward"]["rMuEStatErr"],shelvesRMuEMC["forward"]["rMuESystErr"])
+	dataCentral = template%("Data",shelvesRMuE["central"]["nMM"],shelvesRMuE["central"]["nEE"],shelvesRMuE["central"]["rMuE"],shelvesRMuE["central"]["rMuEStatErr"],shelvesRMuE["central"]["rMuESystErrOld"])
+	dataForward = template%("Data",shelvesRMuE["forward"]["nMM"],shelvesRMuE["forward"]["nEE"],shelvesRMuE["forward"]["rMuE"],shelvesRMuE["forward"]["rMuEStatErr"],shelvesRMuE["forward"]["rMuESystErrOld"])
+	mcCentral = template%("MC",shelvesRMuEMC["central"]["nMM"],shelvesRMuEMC["central"]["nEE"],shelvesRMuEMC["central"]["rMuE"],shelvesRMuEMC["central"]["rMuEStatErr"],shelvesRMuEMC["central"]["rMuESystErrOld"])
+	mcForward = template%("MC",shelvesRMuEMC["forward"]["nMM"],shelvesRMuEMC["forward"]["nEE"],shelvesRMuEMC["forward"]["rMuE"],shelvesRMuEMC["forward"]["rMuEStatErr"],shelvesRMuEMC["forward"]["rMuESystErrOld"])
 	table = tableTemplate%(dataCentral,mcCentral,dataForward,mcForward)
 	
 	saveTable(table,"rMuE_result_seperated")
@@ -288,7 +305,7 @@ def produceRMuETable():
  \setlength{\\belowcaptionskip}{6pt}
  \centering
  \caption{Result of the calculation of \rmue. Shown are the observed event yields in the Drell-Yan control region
- in the $e^{+}e^{-}$ and $\mu^{+}\mu^{-}$ channels and the resulting values fro \rmue. The same quantities derived
+ in the $e^{+}e^{-}$ and $\mu^{+}\mu^{-}$ channels and the resulting values for \rmue. The same quantities derived
  from simulation are shown for comparison.}
    \label{tab:rMuE}
   \\begin{tabular}{l| ccc }
@@ -303,11 +320,81 @@ def produceRMuETable():
 
 """
 	
-	data = template%("Data",shelvesRMuE["inclusive"]["nMM"],shelvesRMuE["inclusive"]["nEE"],shelvesRMuE["inclusive"]["rMuE"],shelvesRMuE["inclusive"]["rMuEStatErr"],shelvesRMuE["inclusive"]["rMuESystErr"])
-	mc = template%("MC",shelvesRMuEMC["inclusive"]["nMM"],shelvesRMuEMC["inclusive"]["nEE"],shelvesRMuEMC["inclusive"]["rMuE"],shelvesRMuEMC["inclusive"]["rMuEStatErr"],shelvesRMuEMC["inclusive"]["rMuESystErr"])
+	data = template%("Data",shelvesRMuE["inclusive"]["nMM"],shelvesRMuE["inclusive"]["nEE"],shelvesRMuE["inclusive"]["rMuE"],shelvesRMuE["inclusive"]["rMuEStatErr"],shelvesRMuE["inclusive"]["rMuESystErrOld"])
+	mc = template%("MC",shelvesRMuEMC["inclusive"]["nMM"],shelvesRMuEMC["inclusive"]["nEE"],shelvesRMuEMC["inclusive"]["rMuE"],shelvesRMuEMC["inclusive"]["rMuEStatErr"],shelvesRMuEMC["inclusive"]["rMuESystErrOld"])
 	table = tableTemplate%(data,mc)
 	
 	saveTable(table,"rMuE_result")
+	
+	
+	templateFitParameters = r"        %s       &  %.3f$\pm$%.3f  &  %.2f$\pm$%.2f    \\" +"\n"
+	
+	shelvesRMuEFitParameters = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRanges.name),"central": readPickle("rMuE_correctionParameters",regionsToUse.rMuE.central.name,runRanges.name), "forward":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.forward.name,runRanges.name)}
+	shelvesRMuEFitParametersMC = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRanges.name,MC=True),"central": readPickle("rMuE_correctionParameters",regionsToUse.rMuE.central.name,runRanges.name,MC=True), "forward":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.forward.name,runRanges.name,MC=True)}
+
+	
+	
+	tableTemplate = """
+\\begin{table}[hbtp]
+ \\renewcommand{\\arraystretch}{1.3}
+ \setlength{\\belowcaptionskip}{6pt}
+ \centering
+ \caption{Result of the fit of \\rmue as a function of the \pt of the trailing lepton in the Drell--Yan control region for the central and forward lepton selection. 
+ The same quantaties derived from simulation are shown for comparison. Only statistical uncertainties are given.}
+  \label{tab:rMuEFitParameters}
+  \\begin{tabular}{l| cc }
+
+    							& $a$ & $b$ \\\\ \n    
+    \hline
+    							& \multicolumn{2}{c}{Central}  \\\\ \n
+    \hline
+%s
+%s
+\hline
+    							& \multicolumn{2}{c}{Forward}  \\\\ \n
+    \hline
+%s
+%s
+  \end{tabular}
+\end{table}
+
+
+"""
+	
+	dataCentral = templateFitParameters%("Data",shelvesRMuEFitParameters["central"]["offset"],shelvesRMuEFitParameters["central"]["offsetErr"],shelvesRMuEFitParameters["central"]["falling"],shelvesRMuEFitParameters["central"]["fallingErr"])
+	dataForward = templateFitParameters%("Data",shelvesRMuEFitParameters["forward"]["offset"],shelvesRMuEFitParameters["forward"]["offsetErr"],shelvesRMuEFitParameters["forward"]["falling"],shelvesRMuEFitParameters["forward"]["fallingErr"])
+	mcCentral = templateFitParameters%("MC",shelvesRMuEFitParametersMC["central"]["offset"],shelvesRMuEFitParametersMC["central"]["offsetErr"],shelvesRMuEFitParametersMC["central"]["falling"],shelvesRMuEFitParametersMC["central"]["fallingErr"])
+	mcForward = templateFitParameters%("MC",shelvesRMuEFitParametersMC["forward"]["offset"],shelvesRMuEFitParametersMC["forward"]["offsetErr"],shelvesRMuEFitParametersMC["forward"]["falling"],shelvesRMuEFitParametersMC["forward"]["fallingErr"])
+	table = tableTemplate%(dataCentral,mcCentral,dataForward,mcForward)
+	
+	saveTable(table,"rMuE_fitParameters_seperated")
+
+	tableTemplate = """
+\\begin{table}[hbtp]
+ \\renewcommand{\\arraystretch}{1.3}
+ \setlength{\\belowcaptionskip}{6pt}
+ \centering
+ \caption{Result of the fit of \\rmue as a function of the \pt of the trailing lepton in the Drell--Yan control region. 
+ The same quantaties derived from simulation are shown for comparison. Only statistical uncertainties are given.}
+   \label{tab:rMuEFitParameters}
+  \\begin{tabular}{l| cc }
+
+    							& $a$ & $b$ \\\\ \n    
+    \hline
+%s
+%s
+  \end{tabular}
+\end{table}
+
+
+"""
+	
+	data = templateFitParameters%("Data",shelvesRMuEFitParameters["inclusive"]["offset"],shelvesRMuEFitParameters["inclusive"]["offsetErr"],shelvesRMuEFitParameters["inclusive"]["falling"],shelvesRMuEFitParameters["inclusive"]["fallingErr"])
+	mc = templateFitParameters%("MC",shelvesRMuEFitParametersMC["inclusive"]["offset"],shelvesRMuEFitParametersMC["inclusive"]["offsetErr"],shelvesRMuEFitParametersMC["inclusive"]["falling"],shelvesRMuEFitParametersMC["inclusive"]["fallingErr"])
+	
+	table = tableTemplate%(data,mc)
+	
+	saveTable(table,"rMuE_fitParameters")
 
 
 
@@ -319,318 +406,83 @@ def produceROutInTable():
 	shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name)}
 	shelvesROutInMC = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name,MC=True),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name,MC=True), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name,MC=True)}
 
-	
+
 	tableTemplate =r"""
 \begin{table}[hbtp]
  \renewcommand{\arraystretch}{1.3}
  \setlength{\belowcaptionskip}{6pt}
  \centering
- \caption{
+ \caption{ Measured values for \rinout for data and MC in the different signal regions of the off-Z analysis. The uncertainty is dominated by
+  the assigned systematic uncertainty.
      }
   \label{tab:rOutIn}
-\begin{tabular}{l|c|c|c}     
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ \Routin (SF) \pm \sigma_{stat}$  \\    
-\hline
- & \multicolumn{3}{c}{Central} \\
-\hline 
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
+\begin{tabular}{c|c|c|c|c}
+ & \multicolumn{2}{c|}{Data} & \multicolumn{2}{c}{MC}    \\ 
 %s
+mass range [GeV] & $N_{out}$ & $R_{out/in}$ & $N_{out}$ & $R_{out/in}$ \\    
+\hline 
+ %s
+ %s
+ %s
+ %s
+ %s
+ %s
+ %s
+ \hline 
+ \multicolumn{5}{c}{No MT2 cut} \\
+ \hline 
+ %s
+ \hline 
+ %s
+ %s
  
-    \hline 
-& \multicolumn{3}{c}{Forward} \\
-\hline 
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
-
   
 \end{tabular}  
 \end{table}
 """
 
-	lineTemplate = r" %s & %.1f$\pm$%.1f & %.1f$\pm$%.1f & %.3f$\pm$%.3f$\pm$%.3f \\"+"\n"
 	
-	tableCentralLowMass =""
-	tableForwardLowMass =""
+	#~ lineTemplate = r" %s & %d$\pm$%d & %.3f$\pm$%.3f$\pm$%.3f & %d$\pm$%d & %.3f$\pm$%.3f$\pm$%.3f \\"+"\n"
+	lineTemplate = r" %s & %d$\pm$%d & %.3f$\pm$%.3f & %d$\pm$%d & %.3f$\pm$%.3f \\"+"\n"
 	
-	tableCentralHighMass =""
-	tableForwardHighMass =""
-
-	tableCentralLowMass += lineTemplate%("Data",shelvesROutIn["central"]["correctedLowMassSF"],shelvesROutIn["central"]["lowMassErrorSF"],shelvesROutIn["central"]["correctedPeakSF"],shelvesROutIn["central"]["peakErrorSF"],shelvesROutIn["central"]["rOutInLowMassSF"],shelvesROutIn["central"]["rOutInLowMassErrSF"],shelvesROutIn["central"]["rOutInLowMassSystSF"])	
-	tableCentralLowMass += lineTemplate%("MC",shelvesROutInMC["central"]["correctedLowMassSF"],shelvesROutInMC["central"]["lowMassErrorSF"],shelvesROutInMC["central"]["correctedPeakSF"],shelvesROutInMC["central"]["peakErrorSF"],shelvesROutInMC["central"]["rOutInLowMassSF"],shelvesROutInMC["central"]["rOutInLowMassErrSF"],shelvesROutInMC["central"]["rOutInLowMassSystSF"])	
-
-	tableForwardLowMass += lineTemplate%("Data",shelvesROutIn["forward"]["correctedLowMassSF"],shelvesROutIn["forward"]["lowMassErrorSF"],shelvesROutIn["forward"]["correctedPeakSF"],shelvesROutIn["forward"]["peakErrorSF"],shelvesROutIn["forward"]["rOutInLowMassSF"],shelvesROutIn["forward"]["rOutInLowMassErrSF"],shelvesROutIn["forward"]["rOutInLowMassSystSF"])	
-	tableForwardLowMass += lineTemplate%("MC",shelvesROutInMC["forward"]["correctedLowMassSF"],shelvesROutInMC["forward"]["lowMassErrorSF"],shelvesROutInMC["forward"]["correctedPeakSF"],shelvesROutInMC["forward"]["peakErrorSF"],shelvesROutInMC["forward"]["rOutInLowMassSF"],shelvesROutInMC["forward"]["rOutInLowMassErrSF"],shelvesROutInMC["forward"]["rOutInLowMassSystSF"])	
-
-
-	tableCentralHighMass += lineTemplate%("Data",shelvesROutIn["central"]["correctedHighMassSF"],shelvesROutIn["central"]["highMassErrorSF"],shelvesROutIn["central"]["correctedPeakSF"],shelvesROutIn["central"]["peakErrorSF"],shelvesROutIn["central"]["rOutInHighMassSF"],shelvesROutIn["central"]["rOutInHighMassErrSF"],shelvesROutIn["central"]["rOutInHighMassSystSF"])	
-	tableCentralHighMass += lineTemplate%("MC",shelvesROutInMC["central"]["correctedHighMassSF"],shelvesROutInMC["central"]["highMassErrorSF"],shelvesROutInMC["central"]["correctedPeakSF"],shelvesROutInMC["central"]["peakErrorSF"],shelvesROutInMC["central"]["rOutInHighMassSF"],shelvesROutInMC["central"]["rOutInHighMassErrSF"],shelvesROutInMC["central"]["rOutInHighMassSystSF"])	
-
-	tableForwardHighMass += lineTemplate%("Data",shelvesROutIn["forward"]["correctedHighMassSF"],shelvesROutIn["forward"]["highMassErrorSF"],shelvesROutIn["forward"]["correctedPeakSF"],shelvesROutIn["forward"]["peakErrorSF"],shelvesROutIn["forward"]["rOutInHighMassSF"],shelvesROutIn["forward"]["rOutInHighMassErrSF"],shelvesROutIn["forward"]["rOutInHighMassSystSF"])	
-	tableForwardHighMass += lineTemplate%("MC",shelvesROutInMC["forward"]["correctedHighMassSF"],shelvesROutInMC["forward"]["highMassErrorSF"],shelvesROutInMC["forward"]["correctedPeakSF"],shelvesROutInMC["forward"]["peakErrorSF"],shelvesROutInMC["forward"]["rOutInHighMassSF"],shelvesROutInMC["forward"]["rOutInHighMassErrSF"],shelvesROutInMC["forward"]["rOutInHighMassSystSF"])	
-
-
-	saveTable(tableTemplate%(tableCentralLowMass,tableCentralHighMass,tableForwardLowMass,tableForwardHighMass), "ROutIn_Seperated")
-
-	tableTemplate =r"""
-\begin{table}[hbtp]
- \renewcommand{\arraystretch}{1.3}
- \setlength{\belowcaptionskip}{6pt}
- \centering
- \caption{
-     }
-  \label{tab:rOutIn}
-\begin{tabular}{l|c|c|c}     
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ \Routin (SF) \pm \sigma_{stat}$  \\    
-\hline
- & \multicolumn{3}{c}{Central} \\
-\hline 
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
- 
-    \hline 
-& \multicolumn{3}{c}{Forward} \\
-\hline 
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
-\hline
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ \Routin (\EE) \pm \sigma_{stat}$  \\    
-\hline
- & \multicolumn{3}{c}{Central} \\
-\hline 
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
- 
-    \hline 
-& \multicolumn{3}{c}{Forward} \\
-\hline 
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
-\hline
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ \Routin (\MM)) \pm \sigma_{stat}$  \\    
-\hline
- & \multicolumn{3}{c}{Central} \\
-\hline 
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
- 
-    \hline 
-& \multicolumn{3}{c}{Forward} \\
-\hline 
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
-  
-\end{tabular}  
-\end{table}
-"""
+	peakEventLine = "& \multicolumn{2}{c|}{ $N_{in}$ %d$\pm$%d} & \multicolumn{2}{c}{ $N_{in}$ %d$\pm$%d}    \\\\"%(shelvesROutIn["inclusive"]["corrected_peak_SF"],shelvesROutIn["inclusive"]["peak_ErrorSF"],shelvesROutInMC["inclusive"]["corrected_peak_SF"],shelvesROutInMC["inclusive"]["peak_ErrorSF"])
+	peakEventLineNoMT2Cut = "& \multicolumn{2}{c|}{ $N_{in}$ %d$\pm$%d} & \multicolumn{2}{c}{ $N_{in}$ %d$\pm$%d}    \\\\"%(shelvesROutIn["inclusive"]["corrected_peak_NoMT2Cut_SF"],shelvesROutIn["inclusive"]["peak_NoMT2Cut_ErrorSF"],shelvesROutInMC["inclusive"]["corrected_peak_NoMT2Cut_SF"],shelvesROutInMC["inclusive"]["peak_NoMT2Cut_ErrorSF"])
 	
-	lineTemplate = r" %s & %.1f$\pm$%.1f & %.1f$\pm$%.1f & %.3f$\pm$%.3f$\pm$%.3f \\"+"\n"
+	lines = {}
+	
+	massBins = ["mass20To60","mass60To86","mass96To150","mass150To200","mass200To300","mass300To400","mass400","edgeMass","highMassOld"]	
+	
+	for massBin in massBins:	
+
+		lines[massBin] = lineTemplate%(massRanges[massBin],
+										shelvesROutIn["inclusive"]["corrected_%s_SF"%massBin],shelvesROutIn["inclusive"]["%s_ErrorSF"%massBin],										
+										#~ shelvesROutIn["inclusive"]["rOutIn_%s_SF"%massBin],shelvesROutIn["inclusive"]["rOutIn_%s_ErrSF"%massBin],shelvesROutIn["inclusive"]["rOutIn_%s_SystSF"%massBin],	
+										shelvesROutIn["inclusive"]["rOutIn_%s_SF"%massBin],(shelvesROutIn["inclusive"]["rOutIn_%s_SystSF"%massBin]**2 + shelvesROutIn["inclusive"]["rOutIn_%s_ErrSF"%massBin]**2)**0.5,	
+										shelvesROutInMC["inclusive"]["corrected_%s_SF"%massBin],shelvesROutInMC["inclusive"]["%s_ErrorSF"%massBin],										
+										#~ shelvesROutInMC["inclusive"]["rOutIn_%s_SF"%massBin],shelvesROutInMC["inclusive"]["rOutIn_%s_ErrSF"%massBin],shelvesROutInMC["inclusive"]["rOutIn_%s_SystSF"%massBin])	
+										shelvesROutInMC["inclusive"]["rOutIn_%s_SF"%massBin],(shelvesROutInMC["inclusive"]["rOutIn_%s_SystSF"%massBin]**2 + shelvesROutInMC["inclusive"]["rOutIn_%s_ErrSF"%massBin]**2)**0.5)	
+										
+		lineEdge = lineTemplate%(massRanges["edgeMass"],
+										shelvesROutIn["inclusive"]["corrected_edgeMass_NoMT2Cut_SF"],shelvesROutIn["inclusive"]["edgeMass_NoMT2Cut_ErrorSF"],										
+										#~ shelvesROutIn["inclusive"]["rOutIn_edgeMass_NoMT2Cut_SF"],shelvesROutIn["inclusive"]["rOutIn_edgeMass_NoMT2Cut_ErrSF"],shelvesROutIn["inclusive"]["rOutIn_edgeMass_NoMT2Cut_SystSF"],	
+										shelvesROutIn["inclusive"]["rOutIn_edgeMass_NoMT2Cut_SF"],(shelvesROutIn["inclusive"]["rOutIn_edgeMass_NoMT2Cut_SystSF"]**2 + shelvesROutIn["inclusive"]["rOutIn_edgeMass_NoMT2Cut_ErrSF"]**2)**0.5,	
+										shelvesROutInMC["inclusive"]["corrected_edgeMass_NoMT2Cut_SF"],shelvesROutInMC["inclusive"]["edgeMass_NoMT2Cut_ErrorSF"],										
+										#~ shelvesROutInMC["inclusive"]["rOutIn_edgeMass_NoMT2Cut_SF"],shelvesROutInMC["inclusive"]["rOutIn_edgeMass_NoMT2Cut_ErrSF"],shelvesROutInMC["inclusive"]["rOutIn_edgeMass_NoMT2Cut_SystSF"])	
+										shelvesROutInMC["inclusive"]["rOutIn_edgeMass_NoMT2Cut_SF"],(shelvesROutInMC["inclusive"]["rOutIn_edgeMass_NoMT2Cut_SystSF"]**2 + shelvesROutInMC["inclusive"]["rOutIn_edgeMass_NoMT2Cut_ErrSF"]**2)**0.5)
+	
+		lineHighMass = lineTemplate%(massRanges["highMassOld"],
+										shelvesROutIn["inclusive"]["corrected_highMassOld_NoMT2Cut_SF"],shelvesROutIn["inclusive"]["highMassOld_NoMT2Cut_ErrorSF"],										
+										#~ shelvesROutIn["inclusive"]["rOutIn_highMassOld_NoMT2Cut_SF"],shelvesROutIn["inclusive"]["rOutIn_highMassOld_NoMT2Cut_ErrSF"],shelvesROutIn["inclusive"]["rOutIn_highMassOld_NoMT2Cut_SystSF"],	
+										shelvesROutIn["inclusive"]["rOutIn_highMassOld_NoMT2Cut_SF"],(shelvesROutIn["inclusive"]["rOutIn_highMassOld_NoMT2Cut_SystSF"]**2 + shelvesROutIn["inclusive"]["rOutIn_highMassOld_NoMT2Cut_ErrSF"]**2)**0.5,	
+										shelvesROutInMC["inclusive"]["corrected_highMassOld_NoMT2Cut_SF"],shelvesROutInMC["inclusive"]["highMassOld_NoMT2Cut_ErrorSF"],										
+										#~ shelvesROutInMC["inclusive"]["rOutIn_highMassOld_NoMT2Cut_SF"],shelvesROutInMC["inclusive"]["rOutIn_highMassOld_NoMT2Cut_ErrSF"],shelvesROutInMC["inclusive"]["rOutIn_highMassOld_NoMT2Cut_SystSF"])	
+										shelvesROutInMC["inclusive"]["rOutIn_highMassOld_NoMT2Cut_SF"],(shelvesROutInMC["inclusive"]["rOutIn_highMassOld_NoMT2Cut_SystSF"]**2 + shelvesROutInMC["inclusive"]["rOutIn_highMassOld_NoMT2Cut_ErrSF"]**2)**0.5)	
 	
 	
-	tableCentralEELowMass =""
-	tableForwardEELowMass =""
-	
-	tableCentralEEHighMass =""
-	tableForwardEEHighMass =""
-
-	tableCentralEELowMass += lineTemplate%("Data",shelvesROutIn["central"]["correctedLowMassEE"],shelvesROutIn["central"]["lowMassErrorEE"],shelvesROutIn["central"]["correctedPeakEE"],shelvesROutIn["central"]["peakErrorEE"],shelvesROutIn["central"]["rOutInLowMassEE"],shelvesROutIn["central"]["rOutInLowMassErrEE"],shelvesROutIn["central"]["rOutInLowMassSystEE"])	
-	tableCentralEELowMass += lineTemplate%("MC",shelvesROutInMC["central"]["correctedLowMassEE"],shelvesROutInMC["central"]["lowMassErrorEE"],shelvesROutInMC["central"]["correctedPeakEE"],shelvesROutInMC["central"]["peakErrorEE"],shelvesROutInMC["central"]["rOutInLowMassEE"],shelvesROutInMC["central"]["rOutInLowMassErrEE"],shelvesROutInMC["central"]["rOutInLowMassSystEE"])	
-
-	tableForwardEELowMass += lineTemplate%("Data",shelvesROutIn["forward"]["correctedLowMassEE"],shelvesROutIn["forward"]["lowMassErrorEE"],shelvesROutIn["forward"]["correctedPeakEE"],shelvesROutIn["forward"]["peakErrorEE"],shelvesROutIn["forward"]["rOutInLowMassEE"],shelvesROutIn["forward"]["rOutInLowMassErrEE"],shelvesROutIn["forward"]["rOutInLowMassSystEE"])	
-	tableForwardEELowMass += lineTemplate%("MC",shelvesROutInMC["forward"]["correctedLowMassEE"],shelvesROutInMC["forward"]["lowMassErrorEE"],shelvesROutInMC["forward"]["correctedPeakEE"],shelvesROutInMC["forward"]["peakErrorEE"],shelvesROutInMC["forward"]["rOutInLowMassEE"],shelvesROutInMC["forward"]["rOutInLowMassErrEE"],shelvesROutInMC["forward"]["rOutInLowMassSystEE"])	
-
-
-	tableCentralEEHighMass += lineTemplate%("Data",shelvesROutIn["central"]["correctedHighMassEE"],shelvesROutIn["central"]["highMassErrorEE"],shelvesROutIn["central"]["correctedPeakEE"],shelvesROutIn["central"]["peakErrorEE"],shelvesROutIn["central"]["rOutInHighMassEE"],shelvesROutIn["central"]["rOutInHighMassErrEE"],shelvesROutIn["central"]["rOutInHighMassSystEE"])	
-	tableCentralEEHighMass += lineTemplate%("MC",shelvesROutInMC["central"]["correctedHighMassEE"],shelvesROutInMC["central"]["highMassErrorEE"],shelvesROutInMC["central"]["correctedPeakEE"],shelvesROutInMC["central"]["peakErrorEE"],shelvesROutInMC["central"]["rOutInHighMassEE"],shelvesROutInMC["central"]["rOutInHighMassErrEE"],shelvesROutInMC["central"]["rOutInHighMassSystEE"])	
-
-	tableForwardEEHighMass += lineTemplate%("Data",shelvesROutIn["forward"]["correctedHighMassEE"],shelvesROutIn["forward"]["highMassErrorEE"],shelvesROutIn["forward"]["correctedPeakEE"],shelvesROutIn["forward"]["peakErrorEE"],shelvesROutIn["forward"]["rOutInHighMassEE"],shelvesROutIn["forward"]["rOutInHighMassErrEE"],shelvesROutIn["forward"]["rOutInHighMassSystEE"])	
-	tableForwardEEHighMass += lineTemplate%("MC",shelvesROutInMC["forward"]["correctedHighMassEE"],shelvesROutInMC["forward"]["highMassErrorEE"],shelvesROutInMC["forward"]["correctedPeakEE"],shelvesROutInMC["forward"]["peakErrorEE"],shelvesROutInMC["forward"]["rOutInHighMassEE"],shelvesROutInMC["forward"]["rOutInHighMassErrEE"],shelvesROutInMC["forward"]["rOutInHighMassSystEE"])	
-
-	
-	tableCentralMMLowMass =""
-	tableForwardMMLowMass =""
-	
-	tableCentralMMHighMass =""
-	tableForwardMMHighMass =""
-
-	tableCentralMMLowMass += lineTemplate%("Data",shelvesROutIn["central"]["correctedLowMassMM"],shelvesROutIn["central"]["lowMassErrorMM"],shelvesROutIn["central"]["correctedPeakMM"],shelvesROutIn["central"]["peakErrorMM"],shelvesROutIn["central"]["rOutInLowMassMM"],shelvesROutIn["central"]["rOutInLowMassErrMM"],shelvesROutIn["central"]["rOutInLowMassSystMM"])	
-	tableCentralMMLowMass += lineTemplate%("MC",shelvesROutInMC["central"]["correctedLowMassMM"],shelvesROutInMC["central"]["lowMassErrorMM"],shelvesROutInMC["central"]["correctedPeakMM"],shelvesROutInMC["central"]["peakErrorMM"],shelvesROutInMC["central"]["rOutInLowMassMM"],shelvesROutInMC["central"]["rOutInLowMassErrMM"],shelvesROutInMC["central"]["rOutInLowMassSystMM"])	
-
-	tableForwardMMLowMass += lineTemplate%("Data",shelvesROutIn["forward"]["correctedLowMassMM"],shelvesROutIn["forward"]["lowMassErrorMM"],shelvesROutIn["forward"]["correctedPeakMM"],shelvesROutIn["forward"]["peakErrorMM"],shelvesROutIn["forward"]["rOutInLowMassMM"],shelvesROutIn["forward"]["rOutInLowMassErrMM"],shelvesROutIn["forward"]["rOutInLowMassSystMM"])	
-	tableForwardMMLowMass += lineTemplate%("MC",shelvesROutInMC["forward"]["correctedLowMassMM"],shelvesROutInMC["forward"]["lowMassErrorMM"],shelvesROutInMC["forward"]["correctedPeakMM"],shelvesROutInMC["forward"]["peakErrorMM"],shelvesROutInMC["forward"]["rOutInLowMassMM"],shelvesROutInMC["forward"]["rOutInLowMassErrMM"],shelvesROutInMC["forward"]["rOutInLowMassSystMM"])	
-
-
-	tableCentralMMHighMass += lineTemplate%("Data",shelvesROutIn["central"]["correctedHighMassMM"],shelvesROutIn["central"]["highMassErrorMM"],shelvesROutIn["central"]["correctedPeakMM"],shelvesROutIn["central"]["peakErrorMM"],shelvesROutIn["central"]["rOutInHighMassMM"],shelvesROutIn["central"]["rOutInHighMassErrMM"],shelvesROutIn["central"]["rOutInHighMassSystMM"])	
-	tableCentralMMHighMass += lineTemplate%("MC",shelvesROutInMC["central"]["correctedHighMassMM"],shelvesROutInMC["central"]["highMassErrorMM"],shelvesROutInMC["central"]["correctedPeakMM"],shelvesROutInMC["central"]["peakErrorMM"],shelvesROutInMC["central"]["rOutInHighMassMM"],shelvesROutInMC["central"]["rOutInHighMassErrMM"],shelvesROutInMC["central"]["rOutInHighMassSystMM"])	
-
-	tableForwardMMHighMass += lineTemplate%("Data",shelvesROutIn["forward"]["correctedHighMassMM"],shelvesROutIn["forward"]["highMassErrorMM"],shelvesROutIn["forward"]["correctedPeakMM"],shelvesROutIn["forward"]["peakErrorMM"],shelvesROutIn["forward"]["rOutInHighMassMM"],shelvesROutIn["forward"]["rOutInHighMassErrMM"],shelvesROutIn["forward"]["rOutInHighMassSystMM"])	
-	tableForwardMMHighMass += lineTemplate%("MC",shelvesROutInMC["forward"]["correctedHighMassMM"],shelvesROutInMC["forward"]["highMassErrorMM"],shelvesROutInMC["forward"]["correctedPeakMM"],shelvesROutInMC["forward"]["peakErrorMM"],shelvesROutInMC["forward"]["rOutInHighMassMM"],shelvesROutInMC["forward"]["rOutInHighMassErrMM"],shelvesROutInMC["forward"]["rOutInHighMassSystMM"])	
-
-
-	
-	saveTable(tableTemplate%(tableCentralLowMass,tableCentralHighMass,tableForwardLowMass,tableForwardHighMass,tableCentralEELowMass,tableCentralEEHighMass,tableForwardEELowMass,tableForwardEEHighMass,tableCentralMMLowMass,tableCentralMMHighMass,tableForwardMMLowMass,tableForwardMMHighMass), "ROutIn_full_seperated")
-
-	
-	tableTemplate =r"""
-\begin{table}[hbtp]
- \renewcommand{\arraystretch}{1.3}
- \setlength{\belowcaptionskip}{6pt}
- \centering
-  \label{tab:rOutIn}
-\begin{tabular}{l|c|c|c}     
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ R_{Out/In} (SF) \pm \sigma_{stat}$  \\    
-\hline
- & \multicolumn{3}{c}{Edge mass}   \\ 
- %s
-\hline
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
-  
-\end{tabular}  
-\end{table}
-"""
-
-	lineTemplate = r" %s & %.1f$\pm$%.1f & %.1f$\pm$%.1f & %.3f$\pm$%.3f$\pm$%.3f \\"+"\n"
-	
-	tableEdgeMass =""
-	
-	tableLowMass =""
-	
-	tableHighMass =""
-
-	tableEdgeMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedEdgeMassSF"],shelvesROutIn["inclusive"]["edgeMassErrorSF"],shelvesROutIn["inclusive"]["correctedPeakSF"],shelvesROutIn["inclusive"]["peakErrorSF"],shelvesROutIn["inclusive"]["rOutInEdgeMassSF"],shelvesROutIn["inclusive"]["rOutInEdgeMassErrSF"],shelvesROutIn["inclusive"]["rOutInEdgeMassSystSF"])	
-	tableEdgeMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedEdgeMassSF"],shelvesROutInMC["inclusive"]["edgeMassErrorSF"],shelvesROutInMC["inclusive"]["correctedPeakSF"],shelvesROutInMC["inclusive"]["peakErrorSF"],shelvesROutInMC["inclusive"]["rOutInEdgeMassSF"],shelvesROutInMC["inclusive"]["rOutInEdgeMassErrSF"],shelvesROutInMC["inclusive"]["rOutInEdgeMassSystSF"])	
-
-	tableLowMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedLowMassSF"],shelvesROutIn["inclusive"]["lowMassErrorSF"],shelvesROutIn["inclusive"]["correctedPeakSF"],shelvesROutIn["inclusive"]["peakErrorSF"],shelvesROutIn["inclusive"]["rOutInLowMassSF"],shelvesROutIn["inclusive"]["rOutInLowMassErrSF"],shelvesROutIn["inclusive"]["rOutInLowMassSystSF"])	
-	tableLowMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedLowMassSF"],shelvesROutInMC["inclusive"]["lowMassErrorSF"],shelvesROutInMC["inclusive"]["correctedPeakSF"],shelvesROutInMC["inclusive"]["peakErrorSF"],shelvesROutInMC["inclusive"]["rOutInLowMassSF"],shelvesROutInMC["inclusive"]["rOutInLowMassErrSF"],shelvesROutInMC["inclusive"]["rOutInLowMassSystSF"])	
-
-	tableHighMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedHighMassSF"],shelvesROutIn["inclusive"]["highMassErrorSF"],shelvesROutIn["inclusive"]["correctedPeakSF"],shelvesROutIn["inclusive"]["peakErrorSF"],shelvesROutIn["inclusive"]["rOutInHighMassSF"],shelvesROutIn["inclusive"]["rOutInHighMassErrSF"],shelvesROutIn["inclusive"]["rOutInHighMassSystSF"])	
-	tableHighMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedHighMassSF"],shelvesROutInMC["inclusive"]["highMassErrorSF"],shelvesROutInMC["inclusive"]["correctedPeakSF"],shelvesROutInMC["inclusive"]["peakErrorSF"],shelvesROutInMC["inclusive"]["rOutInHighMassSF"],shelvesROutInMC["inclusive"]["rOutInHighMassErrSF"],shelvesROutInMC["central"]["rOutInHighMassSystSF"])	
+	saveTable(tableTemplate%(peakEventLine,lines["mass20To60"],lines["mass60To86"],lines["mass96To150"],lines["mass150To200"],lines["mass200To300"],lines["mass300To400"],lines["mass400"],peakEventLineNoMT2Cut,lineEdge,lineHighMass), "ROutIn")
 
 	
 
-	saveTable(tableTemplate%(tableEdgeMass,tableLowMass,tableHighMass), "ROutIn")
-
-	tableTemplate =r"""
-\begin{table}[hbtp]
- \renewcommand{\arraystretch}{1.3}
- \setlength{\belowcaptionskip}{6pt}
- \centering
-  \label{tab:rOutIn}
-\begin{tabular}{l|c|c|c}     
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ R_{Out/In} (SF) \pm \sigma_{stat}$  \\    
-\hline
- & \multicolumn{3}{c}{Edge mass}   \\ 
- %s
-\hline
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
-\hline
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ R_{Out/In} (ee) \pm \sigma_{stat}$  \\    
-\hline
- & \multicolumn{3}{c}{Edge mass}   \\ 
- %s
-\hline
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
-
-\hline
- & $N_{\text{out}}$ & $N_{\text{in}}$ & $ R_{Out/In} (\mu\mu)) \pm \sigma_{stat}$  \\    
-\hline
- & \multicolumn{3}{c}{Edge mass}   \\ 
- %s
-\hline
- & \multicolumn{3}{c}{Low mass}   \\ 
- %s
-\hline 
-& \multicolumn{3}{c}{high Mass} \\ 
-\hline
-%s
-  
-\end{tabular}  
-\end{table}
-"""
-	
-	lineTemplate = r" %s & %.1f$\pm$%.1f & %.1f$\pm$%.1f & %.3f$\pm$%.3f$\pm$%.3f \\"+"\n"
-	
-	
-	tableEEEdgeMass =""
-	
-	tableEELowMass =""
-	
-	tableEEHighMass =""
-	
-	tableEEEdgeMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedEdgeMassEE"],shelvesROutIn["inclusive"]["edgeMassErrorEE"],shelvesROutIn["inclusive"]["correctedPeakEE"],shelvesROutIn["inclusive"]["peakErrorEE"],shelvesROutIn["inclusive"]["rOutInEdgeMassEE"],shelvesROutIn["inclusive"]["rOutInEdgeMassErrEE"],shelvesROutIn["inclusive"]["rOutInEdgeMassSystEE"])	
-	tableEEEdgeMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedEdgeMassEE"],shelvesROutInMC["inclusive"]["edgeMassErrorEE"],shelvesROutInMC["inclusive"]["correctedPeakEE"],shelvesROutInMC["inclusive"]["peakErrorEE"],shelvesROutInMC["inclusive"]["rOutInEdgeMassEE"],shelvesROutInMC["inclusive"]["rOutInEdgeMassErrEE"],shelvesROutInMC["inclusive"]["rOutInEdgeMassSystEE"])	
-
-	tableEELowMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedLowMassEE"],shelvesROutIn["inclusive"]["lowMassErrorEE"],shelvesROutIn["inclusive"]["correctedPeakEE"],shelvesROutIn["inclusive"]["peakErrorEE"],shelvesROutIn["inclusive"]["rOutInLowMassEE"],shelvesROutIn["inclusive"]["rOutInLowMassErrEE"],shelvesROutIn["inclusive"]["rOutInLowMassSystEE"])	
-	tableEELowMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedLowMassEE"],shelvesROutInMC["inclusive"]["lowMassErrorEE"],shelvesROutInMC["inclusive"]["correctedPeakEE"],shelvesROutInMC["inclusive"]["peakErrorEE"],shelvesROutInMC["inclusive"]["rOutInLowMassEE"],shelvesROutInMC["inclusive"]["rOutInLowMassErrEE"],shelvesROutInMC["inclusive"]["rOutInLowMassSystEE"])	
-
-	tableEEHighMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedHighMassEE"],shelvesROutIn["inclusive"]["highMassErrorEE"],shelvesROutIn["inclusive"]["correctedPeakEE"],shelvesROutIn["inclusive"]["peakErrorEE"],shelvesROutIn["inclusive"]["rOutInHighMassEE"],shelvesROutIn["inclusive"]["rOutInHighMassErrEE"],shelvesROutIn["inclusive"]["rOutInHighMassSystEE"])	
-	tableEEHighMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedHighMassEE"],shelvesROutInMC["inclusive"]["highMassErrorEE"],shelvesROutInMC["inclusive"]["correctedPeakEE"],shelvesROutInMC["inclusive"]["peakErrorEE"],shelvesROutInMC["inclusive"]["rOutInHighMassEE"],shelvesROutInMC["inclusive"]["rOutInHighMassErrEE"],shelvesROutInMC["inclusive"]["rOutInHighMassSystEE"])	
-
-	
-	tableMMEdgeMass =""
-	
-	tableMMLowMass =""
-	
-	tableMMHighMass =""
-
-	tableMMEdgeMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedEdgeMassMM"],shelvesROutIn["inclusive"]["edgeMassErrorMM"],shelvesROutIn["inclusive"]["correctedPeakMM"],shelvesROutIn["inclusive"]["peakErrorMM"],shelvesROutIn["inclusive"]["rOutInEdgeMassMM"],shelvesROutIn["inclusive"]["rOutInEdgeMassErrMM"],shelvesROutIn["inclusive"]["rOutInEdgeMassSystMM"])	
-	tableMMEdgeMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedEdgeMassMM"],shelvesROutInMC["inclusive"]["edgeMassErrorMM"],shelvesROutInMC["inclusive"]["correctedPeakMM"],shelvesROutInMC["inclusive"]["peakErrorMM"],shelvesROutInMC["inclusive"]["rOutInEdgeMassMM"],shelvesROutInMC["inclusive"]["rOutInEdgeMassErrMM"],shelvesROutInMC["inclusive"]["rOutInEdgeMassSystMM"])	
-
-	tableMMLowMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedLowMassMM"],shelvesROutIn["inclusive"]["lowMassErrorMM"],shelvesROutIn["inclusive"]["correctedPeakMM"],shelvesROutIn["inclusive"]["peakErrorMM"],shelvesROutIn["inclusive"]["rOutInLowMassMM"],shelvesROutIn["inclusive"]["rOutInLowMassErrMM"],shelvesROutIn["inclusive"]["rOutInLowMassSystMM"])	
-	tableMMLowMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedLowMassMM"],shelvesROutInMC["inclusive"]["lowMassErrorMM"],shelvesROutInMC["inclusive"]["correctedPeakMM"],shelvesROutInMC["inclusive"]["peakErrorMM"],shelvesROutInMC["inclusive"]["rOutInLowMassMM"],shelvesROutInMC["inclusive"]["rOutInLowMassErrMM"],shelvesROutInMC["inclusive"]["rOutInLowMassSystMM"])	
-
-	tableMMHighMass += lineTemplate%("Data",shelvesROutIn["inclusive"]["correctedHighMassMM"],shelvesROutIn["inclusive"]["highMassErrorMM"],shelvesROutIn["inclusive"]["correctedPeakMM"],shelvesROutIn["inclusive"]["peakErrorMM"],shelvesROutIn["inclusive"]["rOutInHighMassMM"],shelvesROutIn["inclusive"]["rOutInHighMassErrMM"],shelvesROutIn["inclusive"]["rOutInHighMassSystMM"])	
-	tableMMHighMass += lineTemplate%("MC",shelvesROutInMC["inclusive"]["correctedHighMassMM"],shelvesROutInMC["inclusive"]["highMassErrorMM"],shelvesROutInMC["inclusive"]["correctedPeakMM"],shelvesROutInMC["inclusive"]["peakErrorMM"],shelvesROutInMC["inclusive"]["rOutInHighMassMM"],shelvesROutInMC["inclusive"]["rOutInHighMassErrMM"],shelvesROutInMC["inclusive"]["rOutInHighMassSystMM"])	
-
-
-	
-	saveTable(tableTemplate%(tableEdgeMass,tableLowMass,tableHighMass,tableEEEdgeMass,tableEELowMass,tableEEHighMass,tableMMEdgeMass,tableMMLowMass,tableMMHighMass), "ROutIn_full")
 
 def produceFactorizationTable():
 
@@ -670,9 +522,9 @@ def produceFactorizationTable():
 	tableIngredients += templateTrigger%("$R_{T}$",rSFOFTrig.central.val,rSFOFTrig.central.err,rSFOFTrig.forward.val,rSFOFTrig.forward.err)	
 
 	
-	tableResult += template%("\Rsfof",rSFOFFact.central.SF.val,rSFOFFact.central.SF.err,rSFOFFact.central.SF.valMC,rSFOFFact.central.SF.errMC,rSFOFFact.forward.SF.val,rSFOFFact.forward.SF.err,rSFOFFact.forward.SF.valMC,rSFOFFact.forward.SF.errMC)	
-	tableResult += template%("\Reeof",rSFOFFact.central.EE.val,rSFOFFact.central.EE.err,rSFOFFact.central.EE.valMC,rSFOFFact.central.EE.errMC,rSFOFFact.forward.EE.val,rSFOFFact.forward.EE.err,rSFOFFact.forward.EE.valMC,rSFOFFact.forward.EE.errMC)	
-	tableResult += template%("\Rmmof",rSFOFFact.central.MM.val,rSFOFFact.central.MM.err,rSFOFFact.central.MM.valMC,rSFOFFact.central.MM.errMC,rSFOFFact.forward.MM.val,rSFOFFact.forward.MM.err,rSFOFFact.forward.MM.valMC,rSFOFFact.forward.MM.errMC)	
+	tableResult += template%("\Rsfof",rSFOFFactOld.central.SF.val,rSFOFFactOld.central.SF.err,rSFOFFactOld.central.SF.valMC,rSFOFFactOld.central.SF.errMC,rSFOFFactOld.forward.SF.val,rSFOFFactOld.forward.SF.err,rSFOFFactOld.forward.SF.valMC,rSFOFFactOld.forward.SF.errMC)	
+	tableResult += template%("\Reeof",rSFOFFactOld.central.EE.val,rSFOFFactOld.central.EE.err,rSFOFFactOld.central.EE.valMC,rSFOFFactOld.central.EE.errMC,rSFOFFactOld.forward.EE.val,rSFOFFactOld.forward.EE.err,rSFOFFactOld.forward.EE.valMC,rSFOFFactOld.forward.EE.errMC)	
+	tableResult += template%("\Rmmof",rSFOFFactOld.central.MM.val,rSFOFFactOld.central.MM.err,rSFOFFactOld.central.MM.valMC,rSFOFFactOld.central.MM.errMC,rSFOFFactOld.forward.MM.val,rSFOFFactOld.forward.MM.err,rSFOFFactOld.forward.MM.valMC,rSFOFFactOld.forward.MM.errMC)	
 
 
 
@@ -717,9 +569,9 @@ def produceFactorizationTable():
 	tableIngredients += templateTrigger%("$R_{T}$",rSFOFTrig.inclusive.val,rSFOFTrig.inclusive.err)	
 
 	
-	tableResult += template%("$R_{SF/OF}$",rSFOFFact.inclusive.SF.val,rSFOFFact.inclusive.SF.err,rSFOFFact.inclusive.SF.valMC,rSFOFFact.inclusive.SF.errMC,)	
-	tableResult += template%("$R_{ee/OF}$",rSFOFFact.inclusive.EE.val,rSFOFFact.inclusive.EE.err,rSFOFFact.inclusive.EE.valMC,rSFOFFact.inclusive.EE.errMC,)	
-	tableResult += template%("$R_{\mu\mu/OF}$",rSFOFFact.inclusive.MM.val,rSFOFFact.inclusive.MM.err,rSFOFFact.inclusive.MM.valMC,rSFOFFact.inclusive.MM.errMC,)	
+	tableResult += template%("$R_{SF/OF}$",rSFOFFactOld.inclusive.SF.val,rSFOFFactOld.inclusive.SF.err,rSFOFFactOld.inclusive.SF.valMC,rSFOFFactOld.inclusive.SF.errMC,)	
+	tableResult += template%("$R_{ee/OF}$",rSFOFFactOld.inclusive.EE.val,rSFOFFactOld.inclusive.EE.err,rSFOFFactOld.inclusive.EE.valMC,rSFOFFactOld.inclusive.EE.errMC,)	
+	tableResult += template%("$R_{\mu\mu/OF}$",rSFOFFactOld.inclusive.MM.val,rSFOFFactOld.inclusive.MM.err,rSFOFFactOld.inclusive.MM.valMC,rSFOFFactOld.inclusive.MM.errMC,)	
 
 
 
@@ -780,25 +632,25 @@ def produceCombinedRSFOFTable():
 
 	
 		
-	tableResultSF += template%("from factorization method",rSFOFFact.central.SF.val,rSFOFFact.central.SF.err,rSFOFFact.central.SF.valMC,rSFOFFact.central.SF.errMC,rSFOFFact.forward.SF.val,rSFOFFact.forward.SF.err,rSFOFFact.forward.SF.valMC,rSFOFFact.forward.SF.errMC)	
-	tableResultSF += template%("from direct measurement",shelvesRSFOF["central"]["rSFOF"],(shelvesRSFOF["central"]["rSFOFErr"]**2+shelvesRSFOFMC["central"]["transferErr"]**2)**0.5,shelvesRSFOFMC["central"]["rSFOF"],shelvesRSFOFMC["central"]["rSFOFErr"],shelvesRSFOF["forward"]["rSFOF"],(shelvesRSFOF["forward"]["rSFOFErr"]**2+shelvesRSFOF["forward"]["transferErr"]**2)**0.5,shelvesRSFOFMC["forward"]["rSFOF"],shelvesRSFOFMC["forward"]["rSFOFErr"])	
+	tableResultSF += template%("from factorization method",rSFOFFactOld.central.SF.val,rSFOFFactOld.central.SF.err,rSFOFFactOld.central.SF.valMC,rSFOFFactOld.central.SF.errMC,rSFOFFactOld.forward.SF.val,rSFOFFactOld.forward.SF.err,rSFOFFactOld.forward.SF.valMC,rSFOFFactOld.forward.SF.errMC)	
+	tableResultSF += template%("from direct measurement",shelvesRSFOF["central"]["rSFOF"],(shelvesRSFOF["central"]["rSFOFErr"]**2+(shelvesRSFOF["central"]["rSFOF"]*systematics.rSFOF.central.val)**2)**0.5,shelvesRSFOFMC["central"]["rSFOF"],(shelvesRSFOFMC["central"]["rSFOFErr"]**2+(shelvesRSFOFMC["central"]["rSFOF"]*systematics.rSFOF.central.val)**2)**0.5,shelvesRSFOF["forward"]["rSFOF"],(shelvesRSFOF["forward"]["rSFOFErr"]**2+(shelvesRSFOF["forward"]["rSFOF"]*systematics.rSFOF.forward.val)**2)**0.5,shelvesRSFOFMC["forward"]["rSFOF"],(shelvesRSFOFMC["forward"]["rSFOFErr"]**2+(shelvesRSFOFMC["forward"]["rSFOF"]*systematics.rSFOF.forward.val)**2)**0.5)	
 	tableResultSF += template%("weighted avarage",rSFOF.central.val,rSFOF.central.err,rSFOF.central.valMC,rSFOF.central.errMC,rSFOF.forward.val,rSFOF.forward.err,rSFOF.forward.valMC,rSFOF.forward.errMC)	
 
 	
-	tableResultEE += template%("from factorization method",rSFOFFact.central.EE.val,rSFOFFact.central.EE.err,rSFOFFact.central.EE.valMC,rSFOFFact.central.EE.errMC,rSFOFFact.forward.EE.val,rSFOFFact.forward.EE.err,rSFOFFact.forward.EE.valMC,rSFOFFact.forward.EE.errMC)	
-	tableResultEE += template%("from direct measurement",shelvesRSFOF["central"]["rEEOF"],(shelvesRSFOF["central"]["rEEOFErr"]**2+shelvesRSFOFMC["central"]["transferEEErr"]**2)**0.5,shelvesRSFOFMC["central"]["rEEOF"],shelvesRSFOFMC["central"]["rEEOFErr"],shelvesRSFOF["forward"]["rEEOF"],(shelvesRSFOF["forward"]["rEEOFErr"]**2+shelvesRSFOF["forward"]["transferErr"]**2)**0.5,shelvesRSFOFMC["forward"]["rEEOF"],shelvesRSFOFMC["forward"]["rEEOFErr"])	
+	tableResultEE += template%("from factorization method",rSFOFFactOld.central.EE.val,rSFOFFactOld.central.EE.err,rSFOFFactOld.central.EE.valMC,rSFOFFactOld.central.EE.errMC,rSFOFFactOld.forward.EE.val,rSFOFFactOld.forward.EE.err,rSFOFFactOld.forward.EE.valMC,rSFOFFactOld.forward.EE.errMC)	
+	tableResultEE += template%("from direct measurement",shelvesRSFOF["central"]["rEEOF"],(shelvesRSFOF["central"]["rEEOFErr"]**2+(shelvesRSFOF["central"]["rEEOF"]*systematics.rSFOF.central.val)**2)**0.5,shelvesRSFOFMC["central"]["rEEOF"],(shelvesRSFOFMC["central"]["rEEOFErr"]**2+(shelvesRSFOFMC["central"]["rEEOF"]*systematics.rSFOF.central.val)**2)**0.5,shelvesRSFOF["forward"]["rEEOF"],(shelvesRSFOF["forward"]["rEEOFErr"]**2+(shelvesRSFOF["forward"]["rEEOF"]*systematics.rSFOF.forward.val)**2)**0.5,shelvesRSFOFMC["forward"]["rEEOF"],(shelvesRSFOFMC["forward"]["rEEOFErr"]**2+(shelvesRSFOFMC["forward"]["rEEOF"]*systematics.rSFOF.forward.val)**2)**0.5)	
 	tableResultEE += template%("weighted avarage",rEEOF.central.val,rEEOF.central.err,rEEOF.central.valMC,rEEOF.central.errMC,rEEOF.forward.val,rEEOF.forward.err,rEEOF.forward.valMC,rEEOF.forward.errMC)	
 
 	
-	tableResultMM += template%("from factorization method",rSFOFFact.central.MM.val,rSFOFFact.central.MM.err,rSFOFFact.central.MM.valMC,rSFOFFact.central.MM.errMC,rSFOFFact.forward.MM.val,rSFOFFact.forward.MM.err,rSFOFFact.forward.MM.valMC,rSFOFFact.forward.MM.errMC)	
-	tableResultMM += template%("from direct measurement",shelvesRSFOF["central"]["rMMOF"],(shelvesRSFOF["central"]["rMMOFErr"]**2+shelvesRSFOFMC["central"]["transferMMErr"]**2)**0.5,shelvesRSFOFMC["central"]["rMMOF"],shelvesRSFOFMC["central"]["rMMOFErr"],shelvesRSFOF["forward"]["rMMOF"],(shelvesRSFOF["forward"]["rMMOFErr"]**2+shelvesRSFOF["forward"]["transferErr"]**2)**0.5,shelvesRSFOFMC["forward"]["rMMOF"],shelvesRSFOFMC["forward"]["rMMOFErr"])	
+	tableResultMM += template%("from factorization method",rSFOFFactOld.central.MM.val,rSFOFFactOld.central.MM.err,rSFOFFactOld.central.MM.valMC,rSFOFFactOld.central.MM.errMC,rSFOFFactOld.forward.MM.val,rSFOFFactOld.forward.MM.err,rSFOFFactOld.forward.MM.valMC,rSFOFFactOld.forward.MM.errMC)	
+	tableResultMM += template%("from direct measurement",shelvesRSFOF["central"]["rMMOF"],(shelvesRSFOF["central"]["rMMOFErr"]**2+(shelvesRSFOF["central"]["rMMOF"]*systematics.rSFOF.central.val)**2)**0.5,shelvesRSFOFMC["central"]["rMMOF"],(shelvesRSFOFMC["central"]["rMMOFErr"]**2+(shelvesRSFOFMC["central"]["rMMOF"]*systematics.rSFOF.central.val)**2)**0.5,shelvesRSFOF["forward"]["rMMOF"],(shelvesRSFOF["forward"]["rMMOFErr"]**2+(shelvesRSFOF["forward"]["rMMOF"]*systematics.rSFOF.forward.val)**2)**0.5,shelvesRSFOFMC["forward"]["rMMOF"],(shelvesRSFOFMC["forward"]["rMMOFErr"]**2+(shelvesRSFOFMC["forward"]["rMMOF"]*systematics.rSFOF.forward.val)**2)**0.5)	
 	tableResultMM += template%("weighted avarage",rMMOF.central.val,rMMOF.central.err,rMMOF.central.valMC,rMMOF.central.errMC,rMMOF.forward.val,rMMOF.forward.err,rMMOF.forward.valMC,rMMOF.forward.errMC)	
 
 
 
 	table = tableTemplate%(tableResultSF,tableResultEE,tableResultMM)
 	
-	saveTable(table,"rSFOF_combination_result_seperated")
+	saveTable(table,"rSFOF_combinationOld_result_seperated")
 
 	tableTemplate = """
 \\begin{table}[hbtp]
@@ -840,129 +692,108 @@ def produceCombinedRSFOFTable():
 	tableResultEE =""
 	tableResultMM =""
 
-	tableResultSF += template%("from factorization method",rSFOFFact.inclusive.SF.val,rSFOFFact.inclusive.SF.err,rSFOFFact.inclusive.SF.valMC,rSFOFFact.inclusive.SF.errMC,)	
-	tableResultSF += template%("from direct measurement",shelvesRSFOF["inclusive"]["rSFOF"],(shelvesRSFOF["inclusive"]["rSFOFErr"]**2+shelvesRSFOFMC["inclusive"]["transferErr"]**2)**0.5,shelvesRSFOFMC["inclusive"]["rSFOF"],shelvesRSFOFMC["inclusive"]["rSFOFErr"])	
+	tableResultSF += template%("from factorization method",rSFOFFactOld.inclusive.SF.val,rSFOFFactOld.inclusive.SF.err,rSFOFFactOld.inclusive.SF.valMC,rSFOFFactOld.inclusive.SF.errMC,)	
+	tableResultSF += template%("from direct measurement",shelvesRSFOF["inclusive"]["rSFOF"],(shelvesRSFOF["inclusive"]["rSFOFErr"]**2+(shelvesRSFOF["inclusive"]["rSFOF"]*systematics.rSFOF.inclusive.val)**2)**0.5,shelvesRSFOFMC["inclusive"]["rSFOF"],(shelvesRSFOFMC["inclusive"]["rSFOFErr"]**2+(shelvesRSFOFMC["inclusive"]["rSFOF"]*systematics.rSFOF.inclusive.val)**2)**0.5)	
 	tableResultSF += template%("weighted avarage",rSFOF.inclusive.val,rSFOF.inclusive.err,rSFOF.inclusive.valMC,rSFOF.inclusive.errMC)	
 
 	
-	tableResultEE += template%("from factorization method",rSFOFFact.inclusive.EE.val,rSFOFFact.inclusive.EE.err,rSFOFFact.inclusive.EE.valMC,rSFOFFact.inclusive.EE.errMC,)	
-	tableResultEE += template%("from direct measurement",shelvesRSFOF["inclusive"]["rEEOF"],(shelvesRSFOF["inclusive"]["rEEOFErr"]**2+shelvesRSFOFMC["inclusive"]["transferEEErr"]**2)**0.5,shelvesRSFOFMC["inclusive"]["rEEOF"],shelvesRSFOFMC["inclusive"]["rEEOFErr"])	
+	tableResultEE += template%("from factorization method",rSFOFFactOld.inclusive.EE.val,rSFOFFactOld.inclusive.EE.err,rSFOFFactOld.inclusive.EE.valMC,rSFOFFactOld.inclusive.EE.errMC,)	
+	tableResultEE += template%("from direct measurement",shelvesRSFOF["inclusive"]["rEEOF"],(shelvesRSFOF["inclusive"]["rEEOFErr"]**2+(shelvesRSFOF["inclusive"]["rEEOF"]*systematics.rSFOF.inclusive.val)**2)**0.5,shelvesRSFOFMC["inclusive"]["rEEOF"],(shelvesRSFOFMC["inclusive"]["rEEOFErr"]**2+(shelvesRSFOFMC["inclusive"]["rEEOF"]*systematics.rSFOF.inclusive.val)**2)**0.5)	
 	tableResultEE += template%("weighted avarage",rEEOF.inclusive.val,rEEOF.inclusive.err,rEEOF.inclusive.valMC,rEEOF.inclusive.errMC)	
 
 	
-	tableResultMM += template%("from factorization method",rSFOFFact.inclusive.MM.val,rSFOFFact.inclusive.MM.err,rSFOFFact.inclusive.MM.valMC,rSFOFFact.inclusive.MM.errMC)	
-	tableResultMM += template%("from direct measurement",shelvesRSFOF["inclusive"]["rMMOF"],(shelvesRSFOF["inclusive"]["rMMOFErr"]**2+shelvesRSFOFMC["inclusive"]["transferMMErr"]**2)**0.5,shelvesRSFOFMC["inclusive"]["rMMOF"],shelvesRSFOFMC["inclusive"]["rMMOFErr"])	
+	tableResultMM += template%("from factorization method",rSFOFFactOld.inclusive.MM.val,rSFOFFactOld.inclusive.MM.err,rSFOFFactOld.inclusive.MM.valMC,rSFOFFactOld.inclusive.MM.errMC)	
+	tableResultMM += template%("from direct measurement",shelvesRSFOF["inclusive"]["rMMOF"],(shelvesRSFOF["inclusive"]["rMMOFErr"]**2+(shelvesRSFOF["inclusive"]["rMMOF"]*systematics.rSFOF.inclusive.val)**2)**0.5,shelvesRSFOFMC["inclusive"]["rMMOF"],(shelvesRSFOFMC["inclusive"]["rMMOFErr"]**2+(shelvesRSFOFMC["inclusive"]["rMMOF"]*systematics.rSFOF.inclusive.val)**2)**0.5)	
 	tableResultMM += template%("weighted avarage",rMMOF.inclusive.val,rMMOF.inclusive.err,rMMOF.inclusive.valMC,rMMOF.inclusive.errMC)	
 
 
 
 	table = tableTemplate%(tableResultSF,tableResultEE,tableResultMM)
 	
-	saveTable(table,"rSFOF_combination_result")
+	saveTable(table,"rSFOF_combinationOld_result")
 
 
 def produceTriggerEffTables():
 
 
 	shelvesTrigger = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name)}
-	#~ shelvesTriggerMC = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name,MC=True),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name,MC=True), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name,MC=True)}	
+	shelvesTriggerMC = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name,MC=True),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name,MC=True), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name,MC=True)}	
 
 
 
-	
-	#~ tableTemplate =r"""
-#~ \begin{table}[hbp] \caption{Triggerefficiency-values for data and MC with OS, $p_T>20(20)\,\GeV$ and $H_T>200\,\GeV$ for the inclusive region.} 
-#~ \centering 
-#~ \renewcommand{\arraystretch}{1.2} 
-#~ \begin{tabular}{l|c|c|c}     
-#~ 
- #~ & nominator & denominator & $\epsilon_{trigger} \pm \sigma_{stat}$ \\    
-#~ 
-#~ &\multicolumn{3}{c}{Data, Inclusive} \\
-#~ \hline
-#~ %s 
- #~ 
-#~ \end{tabular}  
-#~ \label{tab:EffValues_Inclusive}
-#~ \end{table}
-#~ 
-#~ \hline
-#~ & \multicolumn{3}{c}{MC, Inclusive } \\
-#~ \hline
-#~ 
-#~ %s    
-    #~ \hline 
-#~ """
 	tableTemplate =r"""
-\begin{table}[hbp] \caption{Triggerefficiency-values for data with OS, $p_T>25(20)\,\GeV$ and $H_T>200\,\GeV$.} 
+\begin{table}[hbp] \caption{Trigger efficiency values for data and MC with OS, $p_T>25(20)\,\GeV$ and $H_T>200\,\GeV$.} 
 \centering 
 \renewcommand{\arraystretch}{1.2} 
-\begin{tabular}{l|c|c|c}     
+\begin{tabular}{l|c|c|c|c|c|c}  
 
- & nominator & denominator & $\epsilon_{trigger} \pm \sigma_{stat}$ \\    
+&\multicolumn{3}{c|}{Data} &\multicolumn{3}{c}{MC} \\   
 
-&\multicolumn{3}{c}{Data} \\
+ & nominator & denominator & $\epsilon_{trigger} \pm \sigma_{stat}$ & nominator & denominator & $\epsilon_{trigger} \pm \sigma_{stat}$ \\    
 \hline
 %s 
+\hline
+%s 
+
  
 \end{tabular}  
 \label{tab:TriggerEffValues}
 \end{table}
 
 """
-	lineTemplate = r"%s & %d & %d & %.3f$\pm$%.3f \\"+"\n"
+	lineTemplate = r"%s & %d & %d & %.3f$\pm$%.3f & %d & %d & %.3f$\pm$%.3f \\"+"\n"
+	lineTemplateRT = r"$R_{T}$ & \multicolumn{3}{c|}{%.3f$\pm$%.3f}  & \multicolumn{3}{c}{%.3f$\pm$%.3f}  \\"+"\n"
 
 
-	tableMC =""
-	tableData =""
+	table =""
+	#~ tableData =""
 
 	
-	tableData += lineTemplate%("ee",shelvesTrigger["inclusive"][runRanges.name]["EE"]["Nominator"],shelvesTrigger["inclusive"][runRanges.name]["EE"]["Denominator"],shelvesTrigger["inclusive"][runRanges.name]["EE"]["Efficiency"],max(shelvesTrigger["inclusive"][runRanges.name]["EE"]["UncertaintyUp"],shelvesTrigger["inclusive"][runRanges.name]["EE"]["UncertaintyDown"]))	
-	tableData += lineTemplate%("$\mu\mu$",shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["Nominator"],shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["Denominator"],shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["Efficiency"],max(shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["UncertaintyUp"],shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["UncertaintyDown"]))	
-	tableData += lineTemplate%("e$\mu$",shelvesTrigger["inclusive"][runRanges.name]["EMu"]["Nominator"],shelvesTrigger["inclusive"][runRanges.name]["EMu"]["Denominator"],shelvesTrigger["inclusive"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTrigger["inclusive"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTrigger["inclusive"][runRanges.name]["EMu"]["UncertaintyDown"]))
+	table += lineTemplate%("ee",
+								shelvesTrigger["inclusive"][runRanges.name]["EE"]["Nominator"],
+								shelvesTrigger["inclusive"][runRanges.name]["EE"]["Denominator"],
+								shelvesTrigger["inclusive"][runRanges.name]["EE"]["Efficiency"],
+								max(shelvesTrigger["inclusive"][runRanges.name]["EE"]["UncertaintyUp"],shelvesTrigger["inclusive"][runRanges.name]["EE"]["UncertaintyDown"]),
+								shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["Nominator"],
+								shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["Denominator"],
+								shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["Efficiency"],
+								max(shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["UncertaintyUp"],shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["UncertaintyDown"])
+								)	
+	table += lineTemplate%("$\mu\mu$",
+								shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["Nominator"],
+								shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["Denominator"],
+								shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["Efficiency"],
+								max(shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["UncertaintyUp"],shelvesTrigger["inclusive"][runRanges.name]["MuMu"]["UncertaintyDown"]),
+								shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["Nominator"],
+								shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["Denominator"],
+								shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["Efficiency"],
+								max(shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["UncertaintyUp"],shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["UncertaintyDown"])
+								)	
+	table += lineTemplate%("e$\mu$",
+								shelvesTrigger["inclusive"][runRanges.name]["EMu"]["Nominator"],
+								shelvesTrigger["inclusive"][runRanges.name]["EMu"]["Denominator"],
+								shelvesTrigger["inclusive"][runRanges.name]["EMu"]["Efficiency"],
+								max(shelvesTrigger["inclusive"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTrigger["inclusive"][runRanges.name]["EMu"]["UncertaintyDown"]),
+								shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["Nominator"],
+								shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["Denominator"],
+								shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["Efficiency"],
+								max(shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["UncertaintyDown"])
+								)
+
+	RTLine = lineTemplateRT%(
+								shelvesTrigger["inclusive"][runRanges.name]["RT"],
+								(shelvesTrigger["inclusive"][runRanges.name]["RTErrStat"]**2+shelvesTrigger["inclusive"][runRanges.name]["RTErrSyst"]**2)**0.5,
+								shelvesTriggerMC["inclusive"][runRanges.name]["RT"],
+								(shelvesTriggerMC["inclusive"][runRanges.name]["RTErrStat"]**2+shelvesTriggerMC["inclusive"][runRanges.name]["RTErrSyst"]**2)**0.5
+								)
 
 
-
-	#~ tableMC += lineTemplate%("ee",shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["Nominator"],shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["Denominator"],shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["Efficiency"],max(shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["UncertaintyUp"],shelvesTriggerMC["inclusive"][runRanges.name]["EE"]["UncertaintyDown"]))	
-	#~ tableMC += lineTemplate%("$\mu\mu$",shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["Nominator"],shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["Denominator"],shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["Efficiency"],max(shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["UncertaintyUp"],shelvesTriggerMC["inclusive"][runRanges.name]["MuMu"]["UncertaintyDown"]))	
-	#~ tableMC += lineTemplate%("e$\mu$",shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["Nominator"],shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["Denominator"],shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTriggerMC["inclusive"][runRanges.name]["EMu"]["UncertaintyDown"]))	
-
-
-		
-	#~ saveTable(tableTemplate%(tableData,tableMC), "TriggerEffsExclusive_Inclusive")
-	saveTable(tableTemplate%(tableData), "TriggerEffsExclusive_Inclusive")
+	saveTable(tableTemplate%(table,RTLine), "TriggerEffsExclusive_Inclusive")
 
 
 # Table with Barrel and Endcap seperated
 
 
-	#~ tableTemplate =r"""
-#~ \begin{table}[hbp] \caption{Triggerefficiency-values for data and MC with OS, $p_T>20(20)\,\GeV$ and $H_T>200\,\GeV$ for central and forward region seperated.} 
-#~ \centering 
-#~ \renewcommand{\arraystretch}{1.2} 
-#~ \begin{tabular}{l|c|c|c|c|c|c}     
-#~ 
- #~ & nominator & denominator & $\epsilon_{trigger} \pm \sigma_{stat}$ &  nominator & denominator & $\epsilon_{trigger} \pm \sigma_{stat}$  \\ 
-#~ \hline
-#~ 
-#~ &\multicolumn{6}{c}{Data} \\
-#~ \hline
-#~ &  \multicolumn{3}{c|}{Central } & \multicolumn{3}{|c}{ Forward }\\
-#~ \hline
-#~ %s 
- #~ 
-#~ 
-#~ 
-#~ & \multicolumn{6}{c}{MC} \\
-#~ \hline
-#~ &  \multicolumn{3}{c|}{Central } & \multicolumn{3}{|c}{ Forward } \\
-#~ \hline 
-#~ %s    
-    #~ \hline 
-#~ \end{tabular}  
-#~ \label{tab:EffValues_Seperated}
-#~ \end{table}	
-#~ """
 	tableTemplate =r"""
 \begin{table}[hbp] \caption{Triggerefficiency-values for data and MC with OS, $p_T>20(20)\,\GeV$ and $H_T>200\,\GeV$ for central and forward region seperated.} 
 \centering 
@@ -978,11 +809,38 @@ def produceTriggerEffTables():
 \hline
 %s 
  
+
+
+& \multicolumn{6}{c}{MC} \\
+\hline
+&  \multicolumn{3}{c|}{Central } & \multicolumn{3}{|c}{ Forward } \\
+\hline 
+%s    
     \hline 
 \end{tabular}  
 \label{tab:EffValues_Seperated}
 \end{table}	
 """
+	#~ tableTemplate =r"""
+#~ \begin{table}[hbp] \caption{Triggerefficiency-values for data and MC with OS, $p_T>20(20)\,\GeV$ and $H_T>200\,\GeV$ for central and forward region seperated.} 
+#~ \centering 
+#~ \renewcommand{\arraystretch}{1.2} 
+#~ \begin{tabular}{l|c|c|c|c|c|c}     
+#~ 
+ #~ & nominator & denominator & $\epsilon_{trigger} \pm \sigma_{stat}$ &  nominator & denominator & $\epsilon_{trigger} \pm \sigma_{stat}$  \\ 
+#~ \hline
+#~ 
+#~ &\multicolumn{6}{c}{Data} \\
+#~ \hline
+#~ &  \multicolumn{3}{c|}{Central } & \multicolumn{3}{|c}{ Forward }\\
+#~ \hline
+#~ %s 
+ #~ 
+    #~ \hline 
+#~ \end{tabular}  
+#~ \label{tab:EffValues_Seperated}
+#~ \end{table}	
+#~ """
 	lineTemplate = r"%s & %d & %d & %.3f$\pm$%.3f & %d & %d & %.3f$\pm$%.3f \\"+"\n"
 	lineTemplateMC = r"%s & %.1f & %.1f & %.3f$\pm$%.3f & %.1f & %.1f & %.3f$\pm$%.3f \\"+"\n"
 	tableMC =""
@@ -993,13 +851,13 @@ def produceTriggerEffTables():
 	tableData += lineTemplate%("e$\mu$",shelvesTrigger["central"][runRanges.name]["EMu"]["Nominator"],shelvesTrigger["central"][runRanges.name]["EMu"]["Denominator"],shelvesTrigger["central"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTrigger["central"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTrigger["central"][runRanges.name]["EMu"]["UncertaintyDown"]),shelvesTrigger["forward"][runRanges.name]["EMu"]["Nominator"],shelvesTrigger["forward"][runRanges.name]["EMu"]["Denominator"],shelvesTrigger["forward"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTrigger["forward"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTrigger["forward"][runRanges.name]["EMu"]["UncertaintyDown"]))
 
 
-	#~ tableMC += lineTemplateMC%("ee",shelvesTriggerMC["central"][runRanges.name]["EE"]["Nominator"],shelvesTriggerMC["central"][runRanges.name]["EE"]["Denominator"],shelvesTriggerMC["central"][runRanges.name]["EE"]["Efficiency"],max(shelvesTriggerMC["central"][runRanges.name]["EE"]["UncertaintyUp"],shelvesTriggerMC["central"][runRanges.name]["EE"]["UncertaintyDown"]),shelvesTriggerMC["forward"][runRanges.name]["EE"]["Nominator"],shelvesTriggerMC["forward"][runRanges.name]["EE"]["Denominator"],shelvesTriggerMC["forward"][runRanges.name]["EE"]["Efficiency"],max(shelvesTriggerMC["forward"][runRanges.name]["EE"]["UncertaintyUp"],shelvesTriggerMC["forward"][runRanges.name]["EE"]["UncertaintyDown"]))	
-	#~ tableMC += lineTemplateMC%("$\mu\mu$",shelvesTriggerMC["central"][runRanges.name]["MuMu"]["Nominator"],shelvesTriggerMC["central"][runRanges.name]["MuMu"]["Denominator"],shelvesTriggerMC["central"][runRanges.name]["MuMu"]["Efficiency"],max(shelvesTriggerMC["central"][runRanges.name]["MuMu"]["UncertaintyUp"],shelvesTriggerMC["central"][runRanges.name]["MuMu"]["UncertaintyDown"]),shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["Nominator"],shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["Denominator"],shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["Efficiency"],max(shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["UncertaintyUp"],shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["UncertaintyDown"]))	
-	#~ tableMC += lineTemplateMC%("e$\mu$",shelvesTriggerMC["central"][runRanges.name]["EMu"]["Nominator"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["Denominator"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTriggerMC["central"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["UncertaintyDown"]),shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Nominator"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Denominator"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTriggerMC["forward"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["UncertaintyDown"]))	
+	tableMC += lineTemplateMC%("ee",shelvesTriggerMC["central"][runRanges.name]["EE"]["Nominator"],shelvesTriggerMC["central"][runRanges.name]["EE"]["Denominator"],shelvesTriggerMC["central"][runRanges.name]["EE"]["Efficiency"],max(shelvesTriggerMC["central"][runRanges.name]["EE"]["UncertaintyUp"],shelvesTriggerMC["central"][runRanges.name]["EE"]["UncertaintyDown"]),shelvesTriggerMC["forward"][runRanges.name]["EE"]["Nominator"],shelvesTriggerMC["forward"][runRanges.name]["EE"]["Denominator"],shelvesTriggerMC["forward"][runRanges.name]["EE"]["Efficiency"],max(shelvesTriggerMC["forward"][runRanges.name]["EE"]["UncertaintyUp"],shelvesTriggerMC["forward"][runRanges.name]["EE"]["UncertaintyDown"]))	
+	tableMC += lineTemplateMC%("$\mu\mu$",shelvesTriggerMC["central"][runRanges.name]["MuMu"]["Nominator"],shelvesTriggerMC["central"][runRanges.name]["MuMu"]["Denominator"],shelvesTriggerMC["central"][runRanges.name]["MuMu"]["Efficiency"],max(shelvesTriggerMC["central"][runRanges.name]["MuMu"]["UncertaintyUp"],shelvesTriggerMC["central"][runRanges.name]["MuMu"]["UncertaintyDown"]),shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["Nominator"],shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["Denominator"],shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["Efficiency"],max(shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["UncertaintyUp"],shelvesTriggerMC["forward"][runRanges.name]["MuMu"]["UncertaintyDown"]))	
+	tableMC += lineTemplateMC%("e$\mu$",shelvesTriggerMC["central"][runRanges.name]["EMu"]["Nominator"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["Denominator"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTriggerMC["central"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTriggerMC["central"][runRanges.name]["EMu"]["UncertaintyDown"]),shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Nominator"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Denominator"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["Efficiency"],max(shelvesTriggerMC["forward"][runRanges.name]["EMu"]["UncertaintyUp"],shelvesTriggerMC["forward"][runRanges.name]["EMu"]["UncertaintyDown"]))	
 
 
-	#~ saveTable(tableTemplate%(tableData,tableMC), "TriggerEffsExclusive_Seperated")	
-	saveTable(tableTemplate%(tableData), "TriggerEffsExclusive_Seperated")	
+	saveTable(tableTemplate%(tableData,tableMC), "TriggerEffsExclusive_Seperated")	
+	#~ saveTable(tableTemplate%(tableData), "TriggerEffsExclusive_Seperated")	
 
 	
 def main():

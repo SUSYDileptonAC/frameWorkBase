@@ -5,11 +5,17 @@ import sys
 
 from setTDRStyle import setTDRStyle
 
-from corrections import rSFOF, rEEOF, rMMOF, rOutIn, rOutInEE, rOutInMM
-from centralConfig import zPredictions, regionsToUse, runRanges, OtherPredictions, OnlyZPredictions
+from corrections import rSFOF,rSFOFDirect,rSFOFTrig, rEEOF, rMMOF, rOutIn
+from centralConfig import zPredictions, regionsToUse, runRanges, OtherPredictions, OnlyZPredictions,systematics
+from helpers import createMyColors
+from defs import myColors,thePlots,getPlot,theCuts
+
+import ratios
+
+from array import array
 
 import ROOT
-from ROOT import TCanvas
+from ROOT import TCanvas, TEfficiency, TPad, TH1F, TH1I, THStack, TLegend, TMath, TGraphErrors, TF1, gStyle, TGraphAsymmErrors, TFile, TH2F
 
 def saveTable(table, name):
 	tabFile = open("tab/table_%s.tex"%name, "w")
@@ -32,12 +38,27 @@ def readPickle(name,regionName,runName,MC=False):
 			sys.exit()
 
 	return result	
+	
+### load pickles for the systematics
+def loadPickles(path):
+	from glob import glob
+	result = {}
+	for pklPath in glob(path):
+		pklFile = open(pklPath, "r")
+		result.update(pickle.load(pklFile))
+	return result
 
+def getWeightedAverage(val1,err1,val2,err2):
+	
+	weightedAverage = (val1/(err1**2) +val2/(err2**2))/(1./err1**2+1./err2**2)
+	weightedAverageErr = 1./(1./err1**2+1./err2**2)**0.5
+	
+	return weightedAverage, weightedAverageErr
 
 tableHeaders = {"default":"being inclusive in the number of b-tagged jets","geOneBTags":"requiring at least one b-tagged jet","geTwoBTags":"requiring at least two b-tagged jets"}
 tableColumnHeaders = {"default":"no b-tag requirement","noBTags":"veto on b-tagged jets","geOneBTags":"$\geq$ 1 b-tagged jets","geTwoBTags":"$\geq$ 2 b-tagged jets"}
 
-def getResults(shelve,region,selection):
+def getResultsOld(shelve,region,selection):
 	
 	result = {}
 	
@@ -254,8 +275,1283 @@ def getResults(shelve,region,selection):
 	
 	return result
 
+			
+def getResultsNLL(shelve,signalRegion):
+	
+	NLLRegions = ["lowNLL","highNLL"]
+	massRegions = ["mass20To60","mass60To86","mass96To150","mass150To200","mass200To300","mass300To400","mass400","lowMass","highMass","highMassOld"]	
+	MT2Regions = ["highMT2"]
+	result = {}
+	
+	region = "inclusive"
+	
 
-def makeOverviewPlot(countingShelves,region):
+	result["rSFOFDirect"] = getattr(rSFOFDirect,region).val
+	result["rSFOFDirectErr"] = getattr(rSFOFDirect,region).err
+	result["rSFOFTrig"] = getattr(rSFOFTrig,region).val
+	result["rSFOFTrigErr"] = getattr(rSFOFTrig,region).err
+
+	result["onZPrediction_highNLL_highMT2"] = OnlyZPredictions.MT2.SF.highNLL.val
+	result["onZPrediction_lowNLL_highMT2"] = OnlyZPredictions.MT2.SF.lowNLL.val
+	result["onZPrediction_highNLL_highMT2_Err"] = OnlyZPredictions.MT2.SF.highNLL.err
+	result["onZPrediction_lowNLL_highMT2_Err"] = OnlyZPredictions.MT2.SF.lowNLL.err
+	
+	result["rarePrediction_highNLL_highMT2"] = OtherPredictions.MT2.SF.highNLL.val
+	result["rarePrediction_lowNLL_highMT2"] = OtherPredictions.MT2.SF.lowNLL.val
+	result["rarePrediction_highNLL_highMT2_Err"] = OtherPredictions.MT2.SF.highNLL.err
+	result["rarePrediction_lowNLL_highMT2_Err"] = OtherPredictions.MT2.SF.lowNLL.err
+	
+
+	
+	for selection in NLLRegions:
+		result[selection] = {}
+		for MT2Region in MT2Regions:
+			for massRegion in massRegions:		
+			
+				result[selection]["%s_%s_EE"%(MT2Region,massRegion)] = shelve[signalRegion][selection][getattr(theCuts.mt2Cuts,MT2Region).name+"_"+getattr(theCuts.massCuts,massRegion).name]["EE"]
+				result[selection]["%s_%s_MM"%(MT2Region,massRegion)] = shelve[signalRegion][selection][getattr(theCuts.mt2Cuts,MT2Region).name+"_"+getattr(theCuts.massCuts,massRegion).name]["MM"]
+				result[selection]["%s_%s_SF"%(MT2Region,massRegion)] = shelve[signalRegion][selection][getattr(theCuts.mt2Cuts,MT2Region).name+"_"+getattr(theCuts.massCuts,massRegion).name]["EE"] + shelve[signalRegion][selection][getattr(theCuts.mt2Cuts,MT2Region).name+"_"+getattr(theCuts.massCuts,massRegion).name]["MM"]
+				result[selection]["%s_%s_OF"%(MT2Region,massRegion)] = shelve[signalRegion][selection][getattr(theCuts.mt2Cuts,MT2Region).name+"_"+getattr(theCuts.massCuts,massRegion).name]["EM"]
+				result[selection]["%s_%s_OFRMuEScaled"%(MT2Region,massRegion)] = shelve[signalRegion][selection][getattr(theCuts.mt2Cuts,MT2Region).name+"_"+getattr(theCuts.massCuts,massRegion).name]["EMRMuEScaled"]
+				result[selection]["%s_%s_OFRMuEScaledUp"%(MT2Region,massRegion)] = shelve[signalRegion][selection][getattr(theCuts.mt2Cuts,MT2Region).name+"_"+getattr(theCuts.massCuts,massRegion).name]["EMRMuEScaledUp"]
+				result[selection]["%s_%s_OFRMuEScaledDown"%(MT2Region,massRegion)] = shelve[signalRegion][selection][getattr(theCuts.mt2Cuts,MT2Region).name+"_"+getattr(theCuts.massCuts,massRegion).name]["EMRMuEScaledDown"]
+				
+				yield_up = ROOT.Double(1.)
+				yield_down = ROOT.Double(1.)
+				## calculate poisson error
+				ROOT.RooHistError.instance().getPoissonInterval(result[selection]["%s_%s_OF"%(MT2Region,massRegion)],yield_down,yield_up,1.)
+				
+				yieldSF_up = ROOT.Double(1.)
+				yieldSF_down = ROOT.Double(1.)
+				ROOT.RooHistError.instance().getPoissonInterval(result[selection]["%s_%s_SF"%(MT2Region,massRegion)],yieldSF_down,yieldSF_up,1.)
+				
+				result[selection]["%s_%s_SFUp"%(MT2Region,massRegion)] = yieldSF_up - result[selection]["%s_%s_SF"%(MT2Region,massRegion)]
+				result[selection]["%s_%s_SFDown"%(MT2Region,massRegion)] = result[selection]["%s_%s_SF"%(MT2Region,massRegion)] - yieldSF_down
+
+				result[selection]["%s_%s_PredFactSF"%(MT2Region,massRegion)] = result[selection]["%s_%s_OFRMuEScaled"%(MT2Region,massRegion)]*getattr(rSFOFTrig,region).val
+				if result[selection]["%s_%s_OF"%(MT2Region,massRegion)] > 0:
+					result[selection]["%s_%s_PredFactStatUpSF"%(MT2Region,massRegion)] = yield_up*result[selection]["%s_%s_PredFactSF"%(MT2Region,massRegion)]/result[selection]["%s_%s_OF"%(MT2Region,massRegion)] - result[selection]["%s_%s_PredFactSF"%(MT2Region,massRegion)]
+					result[selection]["%s_%s_PredFactStatDownSF"%(MT2Region,massRegion)] = result[selection]["%s_%s_PredFactSF"%(MT2Region,massRegion)] - yield_down*result[selection]["%s_%s_PredFactSF"%(MT2Region,massRegion)]/result[selection]["%s_%s_OF"%(MT2Region,massRegion)]
+					result[selection]["%s_%s_PredFactSystErrSF"%(MT2Region,massRegion)] = result[selection]["%s_%s_OFRMuEScaled"%(MT2Region,massRegion)]*(getattr(rSFOFTrig,region).err**2 + max(abs(result[selection]["%s_%s_OFRMuEScaled"%(MT2Region,massRegion)] - result[selection]["%s_%s_OFRMuEScaledUp"%(MT2Region,massRegion)])/result[selection]["%s_%s_OFRMuEScaled"%(MT2Region,massRegion)],abs(result[selection]["%s_%s_OFRMuEScaled"%(MT2Region,massRegion)] - result[selection]["%s_%s_OFRMuEScaledDown"%(MT2Region,massRegion)])/result[selection]["%s_%s_OFRMuEScaled"%(MT2Region,massRegion)])**2)**0.5		
+				else:
+					result[selection]["%s_%s_PredFactStatUpSF"%(MT2Region,massRegion)] = 1.8*getattr(rSFOFTrig,region).val
+					result[selection]["%s_%s_PredFactStatDownSF"%(MT2Region,massRegion)] = yield_down*getattr(rSFOFTrig,region).val
+					result[selection]["%s_%s_PredFactSystErrSF"%(MT2Region,massRegion)] = 0
+				
+				if result[selection]["%s_%s_OF"%(MT2Region,massRegion)] > 0:
+					result[selection]["%s_%s_RSFOF_Fact"%(MT2Region,massRegion)] = result[selection]["%s_%s_PredFactSF"%(MT2Region,massRegion)] / result[selection]["%s_%s_OF"%(MT2Region,massRegion)]
+					result[selection]["%s_%s_RSFOF_Fact_Err"%(MT2Region,massRegion)] = result[selection]["%s_%s_PredFactSystErrSF"%(MT2Region,massRegion)] / result[selection]["%s_%s_OF"%(MT2Region,massRegion)]
+				else:
+					result[selection]["%s_%s_RSFOF_Fact"%(MT2Region,massRegion)] = 0.
+					result[selection]["%s_%s_RSFOF_Fact_Err"%(MT2Region,massRegion)] = 0.
+				
+				if result[selection]["%s_%s_OF"%(MT2Region,massRegion)] > 0:
+					result[selection]["%s_%s_RSFOF_Combined"%(MT2Region,massRegion)],result[selection]["%s_%s_RSFOF_Combined_Err"%(MT2Region,massRegion)] = getWeightedAverage(result[selection]["%s_%s_RSFOF_Fact"%(MT2Region,massRegion)],result[selection]["%s_%s_RSFOF_Fact_Err"%(MT2Region,massRegion)],getattr(rSFOFDirect,region).val,getattr(rSFOFDirect,region).err)
+				else:
+					result[selection]["%s_%s_RSFOF_Combined"%(MT2Region,massRegion)] = getattr(rSFOFDirect,region).val
+					result[selection]["%s_%s_RSFOF_Combined_Err"%(MT2Region,massRegion)] = getattr(rSFOFDirect,region).err
+				
+				result[selection]["%s_%s_PredSF"%(MT2Region,massRegion)] = result[selection]["%s_%s_OF"%(MT2Region,massRegion)]*result[selection]["%s_%s_RSFOF_Combined"%(MT2Region,massRegion)]
+				if result[selection]["%s_%s_PredSF"%(MT2Region,massRegion)] > 0:
+					result[selection]["%s_%s_PredStatUpSF"%(MT2Region,massRegion)] = yield_up*result[selection]["%s_%s_RSFOF_Combined"%(MT2Region,massRegion)] - result[selection]["%s_%s_PredSF"%(MT2Region,massRegion)]
+				else:
+					result[selection]["%s_%s_PredStatUpSF"%(MT2Region,massRegion)] = 1.8*result[selection]["%s_%s_RSFOF_Combined"%(MT2Region,massRegion)] 
+				result[selection]["%s_%s_PredStatDownSF"%(MT2Region,massRegion)] = result[selection]["%s_%s_PredSF"%(MT2Region,massRegion)] - yield_down*result[selection]["%s_%s_RSFOF_Combined"%(MT2Region,massRegion)] 
+				result[selection]["%s_%s_PredSystErrSF"%(MT2Region,massRegion)] = result[selection]["%s_%s_OF"%(MT2Region,massRegion)]*result[selection]["%s_%s_RSFOF_Combined_Err"%(MT2Region,massRegion)]
+				
+				result[selection]["%s_%s_ZPredSF"%(MT2Region,massRegion)] = result["onZPrediction_%s_%s"%(selection,MT2Region)]*getattr(getattr(rOutIn,massRegion),region).val
+				if MT2Region == "highMT2":
+					result[selection]["%s_%s_ZPredErrSF"%(MT2Region,massRegion)] = ((result["onZPrediction_%s_%s"%(selection,MT2Region)]*getattr(getattr(rOutIn,massRegion),region).err)**2 + (result["onZPrediction_%s_%s_Err"%(selection,MT2Region)] * getattr(getattr(rOutIn,massRegion),region).val)**2 )**0.5
+				else:
+					result[selection]["%s_%s_ZPredErrSF"%(MT2Region,massRegion)] = ((result["onZPrediction_%s_%s"%(selection,MT2Region)]*getattr(getattr(rOutIn,massRegion),region).err)**2 + result["onZPrediction_%s_%s"%(selection,MT2Region)] * getattr(getattr(rOutIn,massRegion),region).val**2 )**0.5
+				
+				result[selection]["%s_%s_RarePredROutInSF"%(MT2Region,massRegion)] = result["rarePrediction_%s_%s"%(selection,MT2Region)]*getattr(getattr(rOutIn,massRegion),region).val
+				result[selection]["%s_%s_RarePredROutInErrSF"%(MT2Region,massRegion)] = ((result["rarePrediction_%s_%s"%(selection,MT2Region)]*getattr(getattr(rOutIn,massRegion),region).err)**2 + (result["rarePrediction_%s_%s_Err"%(selection,MT2Region)] * getattr(getattr(rOutIn,massRegion),region).val)**2 )**0.5
+					
+				result[selection]["%s_%s_RarePredSF"%(MT2Region,massRegion)] = shelve["Rares"]["%s_%s_SF"%(massRegion,selection)] - shelve["Rares"]["%s_%s_OF"%(massRegion,selection)]
+				result[selection]["%s_%s_RarePredSF_Up"%(MT2Region,massRegion)] = shelve["Rares"]["%s_%s_SF_Up"%(massRegion,selection)] - shelve["Rares"]["%s_%s_OF_Up"%(massRegion,selection)]
+				result[selection]["%s_%s_RarePredSF_Down"%(MT2Region,massRegion)] = shelve["Rares"]["%s_%s_SF_Down"%(massRegion,selection)] - shelve["Rares"]["%s_%s_OF_Down"%(massRegion,selection)]
+				result[selection]["%s_%s_RarePredErrSF"%(MT2Region,massRegion)] = max(abs(result[selection]["%s_%s_RarePredSF_Up"%(MT2Region,massRegion)]-result[selection]["%s_%s_RarePredSF"%(MT2Region,massRegion)]),abs(result[selection]["%s_%s_RarePredSF_Down"%(MT2Region,massRegion)]-result[selection]["%s_%s_RarePredSF"%(MT2Region,massRegion)]))
+		
+				
+				result[selection]["%s_%s_TotalPredROutInSF"%(MT2Region,massRegion)] = result[selection]["%s_%s_PredSF"%(MT2Region,massRegion)] + result[selection]["%s_%s_ZPredSF"%(MT2Region,massRegion)] + result[selection]["%s_%s_RarePredROutInSF"%(MT2Region,massRegion)]
+				result[selection]["%s_%s_TotalPredROutInErrUpSF"%(MT2Region,massRegion)] = ( result[selection]["%s_%s_PredStatUpSF"%(MT2Region,massRegion)]**2 +  result[selection]["%s_%s_PredSystErrSF"%(MT2Region,massRegion)]**2 + result[selection]["%s_%s_ZPredErrSF"%(MT2Region,massRegion)]**2 + result[selection]["%s_%s_RarePredROutInErrSF"%(MT2Region,massRegion)]**2)**0.5
+				result[selection]["%s_%s_TotalPredROutInErrDownSF"%(MT2Region,massRegion)] = ( result[selection]["%s_%s_PredStatDownSF"%(MT2Region,massRegion)]**2 +  result[selection]["%s_%s_PredSystErrSF"%(MT2Region,massRegion)]**2 + result[selection]["%s_%s_ZPredErrSF"%(MT2Region,massRegion)]**2 + result[selection]["%s_%s_RarePredROutInErrSF"%(MT2Region,massRegion)]**2)**0.5
+				
+				result[selection]["%s_%s_TotalPredSF"%(MT2Region,massRegion)] = result[selection]["%s_%s_PredSF"%(MT2Region,massRegion)] + result[selection]["%s_%s_ZPredSF"%(MT2Region,massRegion)] + result[selection]["%s_%s_RarePredSF"%(MT2Region,massRegion)]
+				result[selection]["%s_%s_TotalPredErrUpSF"%(MT2Region,massRegion)] = ( result[selection]["%s_%s_PredStatUpSF"%(MT2Region,massRegion)]**2 +  result[selection]["%s_%s_PredSystErrSF"%(MT2Region,massRegion)]**2 + result[selection]["%s_%s_ZPredErrSF"%(MT2Region,massRegion)]**2 + result[selection]["%s_%s_RarePredErrSF"%(MT2Region,massRegion)]**2)**0.5
+				result[selection]["%s_%s_TotalPredErrDownSF"%(MT2Region,massRegion)] = ( result[selection]["%s_%s_PredStatDownSF"%(MT2Region,massRegion)]**2 +  result[selection]["%s_%s_PredSystErrSF"%(MT2Region,massRegion)]**2 + result[selection]["%s_%s_ZPredErrSF"%(MT2Region,massRegion)]**2 + result[selection]["%s_%s_RarePredErrSF"%(MT2Region,massRegion)]**2)**0.5
+
+	for massRegion in ["highMassOld"]:		
+	
+		result["highNLL"]["%s_EE"%massRegion] = shelve[signalRegion]["highNLL"][getattr(theCuts.massCuts,massRegion).name]["EE"]
+		result["highNLL"]["%s_MM"%massRegion] = shelve[signalRegion]["highNLL"][getattr(theCuts.massCuts,massRegion).name]["MM"]
+		result["highNLL"]["%s_SF"%massRegion] = shelve[signalRegion]["highNLL"][getattr(theCuts.massCuts,massRegion).name]["EE"] + shelve[signalRegion]["highNLL"][getattr(theCuts.massCuts,massRegion).name]["MM"]
+		result["highNLL"]["%s_OF"%massRegion] = shelve[signalRegion]["highNLL"][getattr(theCuts.massCuts,massRegion).name]["EM"]
+		result["highNLL"]["%s_OFRMuEScaled"%massRegion] = shelve[signalRegion]["highNLL"][getattr(theCuts.massCuts,massRegion).name]["EMRMuEScaled"]
+		result["highNLL"]["%s_OFRMuEScaledUp"%massRegion] = shelve[signalRegion]["highNLL"][getattr(theCuts.massCuts,massRegion).name]["EMRMuEScaledUp"]
+		result["highNLL"]["%s_OFRMuEScaledDown"%massRegion] = shelve[signalRegion]["highNLL"][getattr(theCuts.massCuts,massRegion).name]["EMRMuEScaledDown"]
+		
+		yield_up = ROOT.Double(1.)
+		yield_down = ROOT.Double(1.)
+		## calculate poisson error
+		ROOT.RooHistError.instance().getPoissonInterval(result["highNLL"]["%s_OF"%massRegion],yield_down,yield_up,1.)
+		
+		result["highNLL"]["%s_PredFactSF"%massRegion] = result["highNLL"]["%s_OFRMuEScaled"%massRegion]*getattr(rSFOFTrig,region).val
+		if result["highNLL"]["%s_OF"%massRegion] > 0:
+			result["highNLL"]["%s_PredFactStatUpSF"%massRegion] = yield_up*result["highNLL"]["%s_PredFactSF"%massRegion]/result["highNLL"]["%s_OF"%massRegion] - result["highNLL"]["%s_PredFactSF"%massRegion]
+			result["highNLL"]["%s_PredFactStatDownSF"%massRegion] = result["highNLL"]["%s_PredFactSF"%massRegion] - yield_down*result["highNLL"]["%s_PredFactSF"%massRegion]/result["highNLL"]["%s_OF"%massRegion]
+			result["highNLL"]["%s_PredFactSystErrSF"%massRegion] = result["highNLL"]["%s_OFRMuEScaled"%massRegion]*(getattr(rSFOFTrig,region).err**2 + max(abs(result["highNLL"]["%s_OFRMuEScaled"%massRegion] - result["highNLL"]["%s_OFRMuEScaledUp"%massRegion])/result["highNLL"]["%s_OFRMuEScaled"%massRegion],abs(result["highNLL"]["%s_OFRMuEScaled"%massRegion] - result["highNLL"]["%s_OFRMuEScaledDown"%massRegion])/result["highNLL"]["%s_OFRMuEScaled"%massRegion])**2)**0.5		
+		else:
+			result["highNLL"]["%s_PredFactStatUpSF"%massRegion] = 1.8*getattr(rSFOFTrig,region).val
+			result["highNLL"]["%s_PredFactStatDownSF"%massRegion] = yield_down*getattr(rSFOFTrig,region).val
+			result["highNLL"]["%s_PredFactSystErrSF"%massRegion] = 0
+		
+		if result["highNLL"]["%s_OF"%massRegion] > 0:
+			result["highNLL"]["%s_RSFOF_Fact"%massRegion] = result["highNLL"]["%s_PredFactSF"%massRegion] / result["highNLL"]["%s_OF"%massRegion]
+			result["highNLL"]["%s_RSFOF_Fact_Err"%massRegion] = result["highNLL"]["%s_PredFactSystErrSF"%massRegion] / result["highNLL"]["%s_OF"%massRegion]
+		else:
+			result["highNLL"]["%s_RSFOF_Fact"%massRegion] = 0.
+			result["highNLL"]["%s_RSFOF_Fact_Err"%massRegion] = 0.
+		
+		if result["highNLL"]["%s_OF"%massRegion] > 0:
+			result["highNLL"]["%s_RSFOF_Combined"%massRegion],result["highNLL"]["%s_RSFOF_Combined_Err"%massRegion] = getWeightedAverage(result["highNLL"]["%s_RSFOF_Fact"%massRegion],result["highNLL"]["%s_RSFOF_Fact_Err"%massRegion],getattr(rSFOFDirect,region).val,getattr(rSFOFDirect,region).err)
+		else:
+			result["highNLL"]["%s_RSFOF_Combined"%massRegion] = getattr(rSFOFDirect,region).val
+			result["highNLL"]["%s_RSFOF_Combined_Err"%massRegion] = getattr(rSFOFDirect,region).err
+		
+		result["highNLL"]["%s_PredSF"%massRegion] = result["highNLL"]["%s_OF"%massRegion]*result["highNLL"]["%s_RSFOF_Combined"%massRegion]
+		if result["highNLL"]["%s_PredSF"%massRegion] > 0:
+			result["highNLL"]["%s_PredStatUpSF"%massRegion] = yield_up*result["highNLL"]["%s_RSFOF_Combined"%massRegion] - result["highNLL"]["%s_PredSF"%massRegion]
+		else:
+			result["highNLL"]["%s_PredStatUpSF"%massRegion] =1.8*result["highNLL"]["%s_RSFOF_Combined"%massRegion]
+		result["highNLL"]["%s_PredStatDownSF"%massRegion] = result["highNLL"]["%s_PredSF"%massRegion] - yield_down*result["highNLL"]["%s_RSFOF_Combined"%massRegion] 
+		result["highNLL"]["%s_PredSystErrSF"%massRegion] = result["highNLL"]["%s_OF"%massRegion]*result["highNLL"]["%s_RSFOF_Combined_Err"%massRegion]
+		
+		result["highNLL"]["%s_ZPredSF"%massRegion] = shelve["onZICHEP"]["%s_%s_SF"%(massRegion,"highNLL")] - shelve["onZICHEP"]["%s_%s_OF"%(massRegion,"highNLL")]
+		result["highNLL"]["%s_ZPredSF_Up"%massRegion] = shelve["onZICHEP"]["%s_%s_SF_Up"%(massRegion,"highNLL")] - shelve["onZICHEP"]["%s_%s_OF_Up"%(massRegion,"highNLL")]
+		result["highNLL"]["%s_ZPredSF_Down"%massRegion] = shelve["onZICHEP"]["%s_%s_SF_Down"%(massRegion,"highNLL")] - shelve["onZICHEP"]["%s_%s_OF_Down"%(massRegion,"highNLL")]
+		result["highNLL"]["%s_ZPredErrSF"%massRegion] = max(abs(result["highNLL"]["%s_ZPredSF_Up"%massRegion]-result["highNLL"]["%s_ZPredSF"%massRegion]),abs(result["highNLL"]["%s_ZPredSF_Down"%massRegion]-result["highNLL"]["%s_ZPredSF"%massRegion]))
+		
+		result["highNLL"]["%s_TotalPredSF"%massRegion] = result["highNLL"]["%s_PredSF"%massRegion] + result["highNLL"]["%s_ZPredSF"%massRegion]
+		result["highNLL"]["%s_TotalPredErrUpSF"%massRegion] = ( result["highNLL"]["%s_PredStatUpSF"%massRegion]**2 +  result["highNLL"]["%s_PredSystErrSF"%massRegion]**2 + result["highNLL"]["%s_ZPredErrSF"%massRegion]**2 )**0.5
+		result["highNLL"]["%s_TotalPredErrDownSF"%massRegion] = ( result["highNLL"]["%s_PredStatDownSF"%massRegion]**2 +  result["highNLL"]["%s_PredSystErrSF"%massRegion]**2 + result["highNLL"]["%s_ZPredErrSF"%massRegion]**2 )**0.5			
+	
+	
+	return result
+	
+def getResultsLegacy(shelve,signalRegion):
+	
+	region = "central"
+	result = {}
+	
+	result["rSFOF"] = getattr(rSFOF,region).val
+	result["rSFOFErr"] = getattr(rSFOF,region).err
+	result["rEEOF"] = getattr(rEEOF,region).val
+	result["rEEOFErr"] = getattr(rEEOF,region).err
+	result["rMMOF"] = getattr(rMMOF,region).val
+	result["rMMOFErr"] = getattr(rMMOF,region).err
+	
+	result["onZPrediction"] = shelve["onZLegacy"]["86To96_SF"] - shelve["onZLegacy"]["86To96_OF"]
+	
+	## Rescale MC to unblinded dataset
+	result["onZPrediction"] = result["onZPrediction"]  * 17.3/36.2
+	
+		
+	result["EdgeMassEE"] = shelve[signalRegion]["default"]["edgeMass"]["EE"]
+	result["EdgeMassMM"] = shelve[signalRegion]["default"]["edgeMass"]["MM"]
+	result["EdgeMassSF"] = shelve[signalRegion]["default"]["edgeMass"]["EE"] + shelve[signalRegion]["default"]["edgeMass"]["MM"]
+	result["EdgeMassOF"] = shelve[signalRegion]["default"]["edgeMass"]["EM"]
+	
+	result["EdgeMassOFRMuEScaled"] = shelve[signalRegion]["default"]["edgeMass"]["EMRMuEScaled"]
+	result["EdgeMassOFRMuEScaledUp"] = shelve[signalRegion]["default"]["edgeMass"]["EMRMuEScaledUp"]
+	result["EdgeMassOFRMuEScaledDown"] = shelve[signalRegion]["default"]["edgeMass"]["EMRMuEScaledDown"]
+	
+	
+	
+	yield_up = ROOT.Double(1.)
+	yield_down = ROOT.Double(1.)
+	## calculate poisson error
+	ROOT.RooHistError.instance().getPoissonInterval(result["EdgeMassOF"],yield_down,yield_up,1.)
+	
+	yieldSF_up = ROOT.Double(1.)
+	yieldSF_down = ROOT.Double(1.)
+	ROOT.RooHistError.instance().getPoissonInterval(result["EdgeMassSF"],yieldSF_down,yieldSF_up,1.)
+	
+	result["EdgeMassSFUp"] = yieldSF_up - result["EdgeMassSF"]
+	result["EdgeMassSFDown"] = result["EdgeMassSF"] - yieldSF_down
+	
+	result["EdgeMassPredFactSF"] = result["EdgeMassOFRMuEScaled"]*getattr(rSFOFTrig,region).val
+	result["EdgeMassPredFactStatUpSF"] = yield_up*result["EdgeMassPredFactSF"]/result["EdgeMassOF"] - result["EdgeMassPredFactSF"]
+	result["EdgeMassPredFactStatDownSF"] = result["EdgeMassPredFactSF"] - yield_down*result["EdgeMassPredFactSF"]/result["EdgeMassOF"]
+	result["EdgeMassPredFactSystErrSF"] = result["EdgeMassOFRMuEScaled"]*(getattr(rSFOFTrig,region).err**2 + max(abs(result["EdgeMassOFRMuEScaled"] - result["EdgeMassOFRMuEScaledUp"])/result["EdgeMassOFRMuEScaled"],abs(result["EdgeMassOFRMuEScaled"] - result["EdgeMassOFRMuEScaledUp"])/result["EdgeMassOFRMuEScaled"])**2)**0.5		
+	
+	result["EdgeMassRSFOFFact"] = result["EdgeMassPredFactSF"] / result["EdgeMassOF"]
+	result["EdgeMassRSFOFFactErr"] = result["EdgeMassPredFactSystErrSF"] / result["EdgeMassOF"]
+
+	result["EdgeMassRSFOFCombined"],result["EdgeMassRSFOFCombinedErr"] = getWeightedAverage(result["EdgeMassRSFOFFact"],result["EdgeMassRSFOFFactErr"],getattr(rSFOFDirect,region).val,getattr(rSFOFDirect,region).err)
+				
+	result["EdgeMassPredSF"] = result["EdgeMassOF"]*result["EdgeMassRSFOFCombined"]
+	result["EdgeMassPredStatUpSF"] = yield_up*result["EdgeMassRSFOFCombined"] - result["EdgeMassPredSF"] 
+	result["EdgeMassPredStatDownSF"] = result["EdgeMassPredSF"]  - yield_down*result["EdgeMassRSFOFCombined"]
+	result["EdgeMassPredSystErrSF"] = result["EdgeMassOF"]*result["EdgeMassRSFOFCombinedErr"]
+			
+			
+	
+	result["EdgeMassZPredSF"] = result["onZPrediction"]*getattr(rOutIn.edgeMass,region).val
+	result["EdgeMassZPredErrSF"] =  ((result["onZPrediction"]*getattr(rOutIn.edgeMass,region).err)**2 + result["onZPrediction"] * getattr(rOutIn.edgeMass,region).val**2 )**0.5
+					
+	result["EdgeMassTotalPredSF"] = result["EdgeMassPredSF"] + result["EdgeMassZPredSF"]
+	result["EdgeMassTotalPredErrUpSF"] = ( result["EdgeMassPredStatUpSF"]**2 +  result["EdgeMassPredSystErrSF"]**2 + result["EdgeMassZPredErrSF"]**2 )**0.5
+	result["EdgeMassTotalPredErrDownSF"] = ( result["EdgeMassPredStatDownSF"]**2 +  result["EdgeMassPredSystErrSF"]**2 + result["EdgeMassZPredErrSF"]**2 )**0.5
+
+	
+	return result
+
+
+def makeOverviewMllPlotBkgOnly(shelves,region,normalizeToBinWidth=False):
+
+
+	colors = createMyColors()
+	
+	plot = getPlot("mllResultPlot")
+	
+	results = getResultsNLL(shelves,"NLL")
+	
+	
+	histPred = ROOT.TH1F("histPred","histPred",len(plot.binning)-1, array("f",plot.binning))
+	histFlavSym = ROOT.TH1F("histFlavSym","histFlavSym",len(plot.binning)-1, array("f",plot.binning))
+	histDY = ROOT.TH1F("histDY","histDY",len(plot.binning)-1, array("f",plot.binning))
+	histFullBG = ROOT.TH1F("histFullBG","histFullBG",len(plot.binning)-1, array("f",plot.binning))
+	
+				
+	hCanvas = TCanvas("hCanvas", "Distribution", 800,800)
+	
+	plotPad = ROOT.TPad("plotPad","plotPad",0,0,1,1)
+	style = setTDRStyle()
+	style.SetPadTopMargin(0.07)
+	ROOT.gStyle.SetOptStat(0)
+	plotPad.UseCurrentStyle()
+	plotPad.Draw()	
+	plotPad.cd()
+	
+	
+	histFlavSym.SetBinContent(1,results[region]["highMT2_mass20To60_PredSF"])
+	histFlavSym.SetBinContent(2,results[region]["highMT2_mass60To86_PredSF"])
+	histFlavSym.SetBinContent(3,0)
+	histFlavSym.SetBinContent(4,results[region]["highMT2_mass96To150_PredSF"])
+	histFlavSym.SetBinContent(5,results[region]["highMT2_mass150To200_PredSF"])
+	histFlavSym.SetBinContent(6,results[region]["highMT2_mass200To300_PredSF"])
+	histFlavSym.SetBinContent(7,results[region]["highMT2_mass300To400_PredSF"])
+	histFlavSym.SetBinContent(8,results[region]["highMT2_mass400_PredSF"])
+
+	histDY.SetBinContent(1,results[region]["highMT2_mass20To60_ZPredSF"])
+	histDY.SetBinContent(2,results[region]["highMT2_mass60To86_ZPredSF"])
+	histDY.SetBinContent(3,0)
+	histDY.SetBinContent(4,results[region]["highMT2_mass96To150_ZPredSF"])
+	histDY.SetBinContent(5,results[region]["highMT2_mass150To200_ZPredSF"])
+	histDY.SetBinContent(6,results[region]["highMT2_mass200To300_ZPredSF"])
+	histDY.SetBinContent(7,results[region]["highMT2_mass300To400_ZPredSF"])
+	histDY.SetBinContent(8,results[region]["highMT2_mass400_ZPredSF"])	
+	
+	errGraph = ROOT.TGraphAsymmErrors()
+	
+	for i in range(1,histFlavSym.GetNbinsX()+1):
+		if i <= 3:
+			errGraph.SetPoint(i,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i))
+		else:
+			errGraph.SetPoint(i-1,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i))
+		
+
+	errGraph.SetPointError(1,0.5*histFlavSym.GetBinWidth(1),0.5*histFlavSym.GetBinWidth(1),results[region]["highMT2_mass20To60_TotalPredErrDownSF"],results[region]["highMT2_mass20To60_TotalPredErrUpSF"])
+	errGraph.SetPointError(2,0.5*histFlavSym.GetBinWidth(2),0.5*histFlavSym.GetBinWidth(2),results[region]["highMT2_mass60To86_TotalPredErrDownSF"],results[region]["highMT2_mass60To86_TotalPredErrUpSF"])
+	#~ errGraph.SetPointError(3,0.5*histFlavSym.GetBinWidth(3),0.5*histFlavSym.GetBinWidth(3),0,0)
+	errGraph.SetPointError(3,0.5*histFlavSym.GetBinWidth(4),0.5*histFlavSym.GetBinWidth(4),results[region]["highMT2_mass96To150_TotalPredErrDownSF"],results[region]["highMT2_mass96To150_TotalPredErrUpSF"])
+	errGraph.SetPointError(4,0.5*histFlavSym.GetBinWidth(5),0.5*histFlavSym.GetBinWidth(5),results[region]["highMT2_mass150To200_TotalPredErrDownSF"],results[region]["highMT2_mass150To200_TotalPredErrUpSF"])
+	errGraph.SetPointError(5,0.5*histFlavSym.GetBinWidth(6),0.5*histFlavSym.GetBinWidth(6),results[region]["highMT2_mass200To300_TotalPredErrDownSF"],results[region]["highMT2_mass200To300_TotalPredErrUpSF"])
+	errGraph.SetPointError(6,0.5*histFlavSym.GetBinWidth(7),0.5*histFlavSym.GetBinWidth(7),results[region]["highMT2_mass300To400_TotalPredErrDownSF"],results[region]["highMT2_mass300To400_TotalPredErrUpSF"])
+	errGraph.SetPointError(7,0.5*histFlavSym.GetBinWidth(8),0.5*histFlavSym.GetBinWidth(8),results[region]["highMT2_mass400_TotalPredErrDownSF"],results[region]["highMT2_mass400_TotalPredErrUpSF"])
+	
+	errGraph.SetFillColor(myColors["MyBlueOverview"])
+	errGraph.SetFillStyle(3002)	
+	errGraph.SetLineWidth(0)	
+	
+	histFlavSym.SetLineColor(ROOT.kBlue+3)
+	histFlavSym.SetLineWidth(2)
+	
+	histDY.SetLineColor(ROOT.kGreen+3)
+	histDY.SetFillColor(ROOT.kGreen+3)
+	#~ histDY.SetFillStyle(3002)
+
+
+	#~ histFlavSym.SetFillColor(ROOT.kBlue-2)
+	#~ histDY.SetFillColor(ROOT.kGreen+2)
+	
+	if normalizeToBinWidth:
+		print histFlavSym.GetNbinsX()
+		for i in range(1,histFlavSym.GetNbinsX()+1):
+			if i < 3:
+				histFlavSym.SetBinContent(i,histFlavSym.GetBinContent(i)/histFlavSym.GetBinWidth(i))
+				histDY.SetBinContent(i,histDY.GetBinContent(i)/histDY.GetBinWidth(i))
+				errGraph.SetPoint(i,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i))
+				errGraph.SetPointError(i,0.5*histFlavSym.GetBinWidth(i),0.5*histFlavSym.GetBinWidth(i),errGraph.GetErrorYlow(i)/histFlavSym.GetBinWidth(i),errGraph.GetErrorYhigh(i)/histFlavSym.GetBinWidth(i))
+			elif i > 3 and i < histFlavSym.GetNbinsX():
+				histFlavSym.SetBinContent(i,histFlavSym.GetBinContent(i)/histFlavSym.GetBinWidth(i))
+				histDY.SetBinContent(i,histDY.GetBinContent(i)/histDY.GetBinWidth(i))
+				errGraph.SetPoint(i-1,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i))
+				errGraph.SetPointError(i-1,0.5*histFlavSym.GetBinWidth(i),0.5*histFlavSym.GetBinWidth(i),errGraph.GetErrorYlow(i-1)/histFlavSym.GetBinWidth(i),errGraph.GetErrorYhigh(i-1)/histFlavSym.GetBinWidth(i))
+			elif i == histFlavSym.GetNbinsX():
+				histFlavSym.SetBinContent(i,histFlavSym.GetBinContent(i)/histFlavSym.GetBinWidth(i-1))
+				histDY.SetBinContent(i,histDY.GetBinContent(i)/histDY.GetBinWidth(i-1))
+				errGraph.SetPoint(i-1,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i))
+				errGraph.SetPointError(i-1,0.5*histFlavSym.GetBinWidth(i),0.5*histFlavSym.GetBinWidth(i),errGraph.GetErrorYlow(i-1)/histFlavSym.GetBinWidth(i-1),errGraph.GetErrorYhigh(i-1)/histFlavSym.GetBinWidth(i-1))
+	
+	
+	from ROOT import THStack
+	
+	stack = THStack()
+	stack.Add(histDY)	
+	stack.Add(histFlavSym)
+	
+	histFullBG.Add(histDY)	
+	histFullBG.Add(histFlavSym)
+	
+	
+	ymax = histFullBG.GetBinContent(histFullBG.GetMaximumBin()) * 2.
+	ymin = 0
+	if region == "highNLL":
+		regionLabel = "non t#bar{t} like signal region"
+	else:
+		regionLabel = "t#bar{t} like signal region"
+
+	
+	
+	if normalizeToBinWidth:
+		hCanvas.DrawFrame(20,ymin,500,ymax,"; m_{ll} [GeV] ; Events / GeV")
+	else:
+		hCanvas.DrawFrame(20,ymin,500,ymax,"; m_{ll} [GeV] ; Events / Bin")
+	
+	latex = ROOT.TLatex()
+	latex.SetTextFont(42)
+	latex.SetTextAlign(31)
+	latex.SetTextSize(0.04)
+	latex.SetNDC(True)
+	latexCMS = ROOT.TLatex()
+	latexCMS.SetTextFont(61)
+	#latexCMS.SetTextAlign(31)
+	latexCMS.SetTextSize(0.06)
+	latexCMS.SetNDC(True)
+	latexCMSExtra = ROOT.TLatex()
+	latexCMSExtra.SetTextFont(52)
+	#latexCMSExtra.SetTextAlign(31)
+	latexCMSExtra.SetTextSize(0.045)
+	latexCMSExtra.SetNDC(True)		
+	
+
+
+	intlumi = ROOT.TLatex()
+	intlumi.SetTextAlign(12)
+	intlumi.SetTextSize(0.03)
+	intlumi.SetNDC(True)		
+
+	latex.DrawLatex(0.95, 0.95, "%s fb^{-1} (13 TeV)"%"36.2")
+	
+	cmsExtra = "Preliminary"
+	latexCMS.DrawLatex(0.18,0.87,"CMS")
+	if "Simulation" in cmsExtra:
+		yLabelPos = 0.80	
+	else:
+		yLabelPos = 0.83	
+
+	latexCMSExtra.DrawLatex(0.18,yLabelPos,"%s"%(cmsExtra))
+	
+
+	leg = ROOT.TLegend(0.55, 0.45, 0.95, 0.92,regionLabel,"brNDC")
+
+	#~ leg.SetNColumns(2)
+	leg.SetFillColor(10)
+	leg.SetLineColor(10)
+	leg.SetShadowColor(0)
+	leg.SetBorderSize(1)
+	
+	bkgHistForLegend = histFlavSym.Clone("bkgHistForLegend")
+	bkgHistForLegend.SetLineColor(ROOT.kBlue+3)
+	bkgHistForLegend.SetFillColor(ROOT.kWhite)
+	bkgHistForLegend.SetLineWidth(2)
+	
+	leg.AddEntry(bkgHistForLegend, "Flavor symmetric","f")
+	leg.AddEntry(histDY,"Drell-Yan", "f")
+	leg.AddEntry(errGraph,"Total uncertainty", "f")	
+	
+
+	#~ errGraph.Draw("same02")
+	stack.Draw("samehist")	
+	errGraph.Draw("same02")
+	
+	
+	leg.Draw("same")
+
+
+	plotPad.RedrawAxis()	
+	
+	ROOT.gPad.RedrawAxis()
+	plotPad.RedrawAxis()
+	
+	hCanvas.Print("cutNCountResultMllBkgOnly_%s.pdf"%region)
+
+def makeOverviewMllPlot(shelves,region,normalizeToBinWidth=False):
+
+
+	colors = createMyColors()
+	
+	plot = getPlot("mllResultPlot")
+	
+	results = getResultsNLL(shelves,"NLL")
+	
+	
+	histObs = ROOT.TH1F("histObs","histObs",len(plot.binning)-1, array("f",plot.binning))
+	
+	histObs.SetMarkerColor(ROOT.kBlack)
+	histObs.SetLineColor(ROOT.kBlack)
+	histObs.SetMarkerStyle(20)
+	
+	histPred = ROOT.TH1F("histPred","histPred",len(plot.binning)-1, array("f",plot.binning))
+	histFlavSym = ROOT.TH1F("histFlavSym","histFlavSym",len(plot.binning)-1, array("f",plot.binning))
+	histDY = ROOT.TH1F("histDY","histDY",len(plot.binning)-1, array("f",plot.binning))
+	histRare = ROOT.TH1F("histRare","histRare",len(plot.binning)-1, array("f",plot.binning))
+	histFullBG = ROOT.TH1F("histFullBG","histFullBG",len(plot.binning)-1, array("f",plot.binning))
+	
+		
+	hCanvas = TCanvas("hCanvas", "Distribution", 800,800)
+	
+	plotPad = ROOT.TPad("plotPad","plotPad",0,0.3,1,1)
+	ratioPad = ROOT.TPad("ratioPad","ratioPad",0,0.,1,0.3)
+	style = setTDRStyle()
+	style.SetPadTopMargin(0.07)
+	ROOT.gStyle.SetOptStat(0)
+	plotPad.UseCurrentStyle()
+	ratioPad.UseCurrentStyle()
+	plotPad.Draw()	
+	ratioPad.Draw()	
+	plotPad.cd()
+	
+	graphObs = ROOT.TGraphAsymmErrors()	
+	
+	histObs.SetBinContent(1,results[region]["highMT2_mass20To60_SF"])
+	histObs.SetBinContent(2,results[region]["highMT2_mass60To86_SF"])
+	histObs.SetBinContent(3,0)
+	histObs.SetBinContent(4,results[region]["highMT2_mass96To150_SF"])
+	histObs.SetBinContent(5,results[region]["highMT2_mass150To200_SF"])
+	histObs.SetBinContent(6,results[region]["highMT2_mass200To300_SF"])
+	histObs.SetBinContent(7,results[region]["highMT2_mass300To400_SF"])
+	histObs.SetBinContent(8,results[region]["highMT2_mass400_SF"])	
+	
+	histFlavSym.SetBinContent(1,results[region]["highMT2_mass20To60_PredSF"])
+	histFlavSym.SetBinContent(2,results[region]["highMT2_mass60To86_PredSF"])
+	histFlavSym.SetBinContent(3,0)
+	histFlavSym.SetBinContent(4,results[region]["highMT2_mass96To150_PredSF"])
+	histFlavSym.SetBinContent(5,results[region]["highMT2_mass150To200_PredSF"])
+	histFlavSym.SetBinContent(6,results[region]["highMT2_mass200To300_PredSF"])
+	histFlavSym.SetBinContent(7,results[region]["highMT2_mass300To400_PredSF"])
+	histFlavSym.SetBinContent(8,results[region]["highMT2_mass400_PredSF"])
+
+	histDY.SetBinContent(1,results[region]["highMT2_mass20To60_ZPredSF"])
+	histDY.SetBinContent(2,results[region]["highMT2_mass60To86_ZPredSF"])
+	histDY.SetBinContent(3,0)
+	histDY.SetBinContent(4,results[region]["highMT2_mass96To150_ZPredSF"])
+	histDY.SetBinContent(5,results[region]["highMT2_mass150To200_ZPredSF"])
+	histDY.SetBinContent(6,results[region]["highMT2_mass200To300_ZPredSF"])
+	histDY.SetBinContent(7,results[region]["highMT2_mass300To400_ZPredSF"])
+	histDY.SetBinContent(8,results[region]["highMT2_mass400_ZPredSF"])	
+	
+	histRare.SetBinContent(1,results[region]["highMT2_mass20To60_RarePredSF"])
+	histRare.SetBinContent(2,results[region]["highMT2_mass60To86_RarePredSF"])
+	histRare.SetBinContent(3,0)
+	histRare.SetBinContent(4,results[region]["highMT2_mass96To150_RarePredSF"])
+	histRare.SetBinContent(5,results[region]["highMT2_mass150To200_RarePredSF"])
+	histRare.SetBinContent(6,results[region]["highMT2_mass200To300_RarePredSF"])
+	histRare.SetBinContent(7,results[region]["highMT2_mass300To400_RarePredSF"])
+	histRare.SetBinContent(8,results[region]["highMT2_mass400_RarePredSF"])	
+	
+	errGraph = ROOT.TGraphAsymmErrors()
+	errGraphRatio = ROOT.TGraphAsymmErrors()
+	
+	for i in range(1,histFlavSym.GetNbinsX()+1):
+		if i <= 3:
+			graphObs.SetPoint(i,histObs.GetBinCenter(i),histObs.GetBinContent(i))
+			errGraph.SetPoint(i,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i)+histRare.GetBinContent(i))
+			errGraphRatio.SetPoint(i,histFlavSym.GetBinCenter(i),1)
+		else:
+			#~ if i == histFlavSym.GetNbinsX():
+				#~ graphObs.SetPoint(i-1,histObs.GetBinCenter(i-1)+histObs.GetBinWidth(i-1),histObs.GetBinContent(i))
+			#~ else:
+			graphObs.SetPoint(i-1,histObs.GetBinCenter(i),histObs.GetBinContent(i))
+			errGraph.SetPoint(i-1,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i)+histRare.GetBinContent(i))
+			errGraphRatio.SetPoint(i-1,histFlavSym.GetBinCenter(i),1)
+		
+
+	graphObs.SetPointError(1,0,0,results[region]["highMT2_mass20To60_SFDown"],results[region]["highMT2_mass20To60_SFUp"])
+	graphObs.SetPointError(2,0,0,results[region]["highMT2_mass60To86_SFDown"],results[region]["highMT2_mass60To86_SFUp"])
+	graphObs.SetPointError(3,0,0,results[region]["highMT2_mass96To150_SFDown"],results[region]["highMT2_mass96To150_SFUp"])
+	graphObs.SetPointError(4,0,0,results[region]["highMT2_mass150To200_SFDown"],results[region]["highMT2_mass150To200_SFUp"])
+	graphObs.SetPointError(5,0,0,results[region]["highMT2_mass200To300_SFDown"],results[region]["highMT2_mass200To300_SFUp"])
+	graphObs.SetPointError(6,0,0,results[region]["highMT2_mass300To400_SFDown"],results[region]["highMT2_mass300To400_SFUp"])
+	graphObs.SetPointError(7,0,0,results[region]["highMT2_mass400_SFDown"],results[region]["highMT2_mass400_SFUp"])
+
+	errGraph.SetPointError(1,0.5*histFlavSym.GetBinWidth(1),0.5*histFlavSym.GetBinWidth(1),results[region]["highMT2_mass20To60_TotalPredErrDownSF"],results[region]["highMT2_mass20To60_TotalPredErrUpSF"])
+	errGraph.SetPointError(2,0.5*histFlavSym.GetBinWidth(2),0.5*histFlavSym.GetBinWidth(2),results[region]["highMT2_mass60To86_TotalPredErrDownSF"],results[region]["highMT2_mass60To86_TotalPredErrUpSF"])
+	errGraph.SetPointError(3,0.5*histFlavSym.GetBinWidth(4),0.5*histFlavSym.GetBinWidth(4),results[region]["highMT2_mass96To150_TotalPredErrDownSF"],results[region]["highMT2_mass96To150_TotalPredErrUpSF"])
+	errGraph.SetPointError(4,0.5*histFlavSym.GetBinWidth(5),0.5*histFlavSym.GetBinWidth(5),results[region]["highMT2_mass150To200_TotalPredErrDownSF"],results[region]["highMT2_mass150To200_TotalPredErrUpSF"])
+	errGraph.SetPointError(5,0.5*histFlavSym.GetBinWidth(6),0.5*histFlavSym.GetBinWidth(6),results[region]["highMT2_mass200To300_TotalPredErrDownSF"],results[region]["highMT2_mass200To300_TotalPredErrUpSF"])
+	errGraph.SetPointError(6,0.5*histFlavSym.GetBinWidth(7),0.5*histFlavSym.GetBinWidth(7),results[region]["highMT2_mass300To400_TotalPredErrDownSF"],results[region]["highMT2_mass300To400_TotalPredErrUpSF"])
+	errGraph.SetPointError(7,0.5*histFlavSym.GetBinWidth(8),0.5*histFlavSym.GetBinWidth(8),results[region]["highMT2_mass400_TotalPredErrDownSF"],results[region]["highMT2_mass400_TotalPredErrUpSF"])
+	
+	errGraphRatio.SetPointError(1,0.5*histFlavSym.GetBinWidth(1),0.5*histFlavSym.GetBinWidth(1),results[region]["highMT2_mass20To60_TotalPredErrDownSF"]/results[region]["highMT2_mass20To60_TotalPredSF"],results[region]["highMT2_mass20To60_TotalPredErrUpSF"]/results[region]["highMT2_mass20To60_TotalPredSF"])
+	errGraphRatio.SetPointError(2,0.5*histFlavSym.GetBinWidth(2),0.5*histFlavSym.GetBinWidth(2),results[region]["highMT2_mass60To86_TotalPredErrDownSF"]/results[region]["highMT2_mass60To86_TotalPredSF"],results[region]["highMT2_mass60To86_TotalPredErrUpSF"]/results[region]["highMT2_mass60To86_TotalPredSF"])
+	errGraphRatio.SetPointError(3,0.5*histFlavSym.GetBinWidth(4),0.5*histFlavSym.GetBinWidth(4),results[region]["highMT2_mass96To150_TotalPredErrDownSF"]/results[region]["highMT2_mass96To150_TotalPredSF"],results[region]["highMT2_mass96To150_TotalPredErrUpSF"]/results[region]["highMT2_mass96To150_TotalPredSF"])
+	errGraphRatio.SetPointError(4,0.5*histFlavSym.GetBinWidth(5),0.5*histFlavSym.GetBinWidth(5),results[region]["highMT2_mass150To200_TotalPredErrDownSF"]/results[region]["highMT2_mass150To200_TotalPredSF"],results[region]["highMT2_mass150To200_TotalPredErrUpSF"]/results[region]["highMT2_mass150To200_TotalPredSF"])
+	errGraphRatio.SetPointError(5,0.5*histFlavSym.GetBinWidth(6),0.5*histFlavSym.GetBinWidth(6),results[region]["highMT2_mass200To300_TotalPredErrDownSF"]/results[region]["highMT2_mass200To300_TotalPredSF"],results[region]["highMT2_mass200To300_TotalPredErrUpSF"]/results[region]["highMT2_mass200To300_TotalPredSF"])
+	errGraphRatio.SetPointError(6,0.5*histFlavSym.GetBinWidth(7),0.5*histFlavSym.GetBinWidth(7),results[region]["highMT2_mass300To400_TotalPredErrDownSF"]/results[region]["highMT2_mass300To400_TotalPredSF"],results[region]["highMT2_mass300To400_TotalPredErrUpSF"]/results[region]["highMT2_mass300To400_TotalPredSF"])
+	errGraphRatio.SetPointError(7,0.5*histFlavSym.GetBinWidth(8),0.5*histFlavSym.GetBinWidth(8),results[region]["highMT2_mass400_TotalPredErrDownSF"]/results[region]["highMT2_mass400_TotalPredSF"],results[region]["highMT2_mass400_TotalPredErrUpSF"]/results[region]["highMT2_mass400_TotalPredSF"])
+	
+	errGraph.SetFillColor(myColors["MyBlueOverview"])
+	errGraph.SetFillStyle(3354)	
+	errGraph.SetLineWidth(0)	
+	
+	errGraphRatio.SetFillColor(myColors["MyBlueOverview"])
+	errGraphRatio.SetFillStyle(3354)
+
+	histFlavSym.SetLineColor(ROOT.kBlue+3)
+	histFlavSym.SetLineWidth(2)
+	
+	histDY.SetLineColor(ROOT.kGreen+3)
+	histDY.SetFillColor(ROOT.kGreen+3)
+	#~ histDY.SetFillStyle(3002)
+	
+	histRare.SetLineColor(ROOT.kViolet+2)
+	histRare.SetFillColor(ROOT.kViolet+2)
+
+	
+	if normalizeToBinWidth:
+		print histFlavSym.GetNbinsX()
+		for i in range(1,histFlavSym.GetNbinsX()+1):
+			if i < 3:
+				histObs.SetBinContent(i,histObs.GetBinContent(i)/histObs.GetBinWidth(i))
+				histFlavSym.SetBinContent(i,histFlavSym.GetBinContent(i)/histFlavSym.GetBinWidth(i))
+				histDY.SetBinContent(i,histDY.GetBinContent(i)/histDY.GetBinWidth(i))
+				histRare.SetBinContent(i,histRare.GetBinContent(i)/histRare.GetBinWidth(i))
+				graphObs.SetPoint(i,histObs.GetBinCenter(i),histObs.GetBinContent(i))
+				graphObs.SetPointError(i,0,0,graphObs.GetErrorYlow(i)/histObs.GetBinWidth(i),graphObs.GetErrorYhigh(i)/histObs.GetBinWidth(i))
+				errGraph.SetPoint(i,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i)+histRare.GetBinContent(i))
+				errGraph.SetPointError(i,0.5*histFlavSym.GetBinWidth(i),0.5*histFlavSym.GetBinWidth(i),errGraph.GetErrorYlow(i)/histFlavSym.GetBinWidth(i),errGraph.GetErrorYhigh(i)/histFlavSym.GetBinWidth(i))
+			elif i > 3:
+				histObs.SetBinContent(i,histObs.GetBinContent(i)/histObs.GetBinWidth(i))
+				histFlavSym.SetBinContent(i,histFlavSym.GetBinContent(i)/histFlavSym.GetBinWidth(i))
+				histDY.SetBinContent(i,histDY.GetBinContent(i)/histDY.GetBinWidth(i))
+				histRare.SetBinContent(i,histRare.GetBinContent(i)/histRare.GetBinWidth(i))
+				graphObs.SetPoint(i-1,histObs.GetBinCenter(i),histObs.GetBinContent(i))
+				graphObs.SetPointError(i-1,0,0,graphObs.GetErrorYlow(i-1)/histObs.GetBinWidth(i),graphObs.GetErrorYhigh(i-1)/histObs.GetBinWidth(i))
+				errGraph.SetPoint(i-1,histFlavSym.GetBinCenter(i),histFlavSym.GetBinContent(i)+histDY.GetBinContent(i)+histRare.GetBinContent(i))
+				errGraph.SetPointError(i-1,0.5*histFlavSym.GetBinWidth(i),0.5*histFlavSym.GetBinWidth(i),errGraph.GetErrorYlow(i-1)/histFlavSym.GetBinWidth(i),errGraph.GetErrorYhigh(i-1)/histFlavSym.GetBinWidth(i))
+			
+	from ROOT import THStack
+	
+	stack = THStack()
+	stack.Add(histDY)	
+	stack.Add(histRare)	
+	stack.Add(histFlavSym)
+	
+	histFullBG.Add(histDY)	
+	histFullBG.Add(histRare)	
+	histFullBG.Add(histFlavSym)
+	
+	
+	ymax = histObs.GetBinContent(histObs.GetMaximumBin()) * 1.75
+	ymin = 0
+	if region == "highNLL":
+		regionLabel = "non t#bar{t} like signal region"
+	else:
+		regionLabel = "t#bar{t} like signal region"
+
+	
+	if normalizeToBinWidth:
+		hCanvas.DrawFrame(20,ymin,500,ymax,"; m_{ll} [GeV] ; Events / GeV")
+	else:
+		hCanvas.DrawFrame(20,ymin,500,ymax,"; m_{ll} [GeV] ; Events / Bin")
+	
+	latex = ROOT.TLatex()
+	latex.SetTextFont(42)
+	latex.SetTextAlign(31)
+	latex.SetTextSize(0.04)
+	latex.SetNDC(True)
+	latexCMS = ROOT.TLatex()
+	latexCMS.SetTextFont(61)
+	#latexCMS.SetTextAlign(31)
+	latexCMS.SetTextSize(0.06)
+	latexCMS.SetNDC(True)
+	latexCMSExtra = ROOT.TLatex()
+	latexCMSExtra.SetTextFont(52)
+	#latexCMSExtra.SetTextAlign(31)
+	latexCMSExtra.SetTextSize(0.045)
+	latexCMSExtra.SetNDC(True)		
+	
+
+
+	intlumi = ROOT.TLatex()
+	intlumi.SetTextAlign(12)
+	intlumi.SetTextSize(0.03)
+	intlumi.SetNDC(True)		
+
+	latex.DrawLatex(0.95, 0.95, "%s fb^{-1} (13 TeV)"%"35.9")
+	
+	#~ cmsExtra = "Preliminary"
+	cmsExtra = ""
+	latexCMS.DrawLatex(0.18,0.87,"CMS")
+	if "Simulation" in cmsExtra:
+		yLabelPos = 0.80	
+	else:
+		yLabelPos = 0.83	
+
+	latexCMSExtra.DrawLatex(0.18,yLabelPos,"%s"%(cmsExtra))
+	
+
+	leg = ROOT.TLegend(0.55, 0.45, 0.95, 0.92,regionLabel,"brNDC")
+
+	#~ leg.SetNColumns(2)
+	leg.SetFillColor(10)
+	leg.SetLineColor(10)
+	leg.SetShadowColor(0)
+	leg.SetBorderSize(1)
+	
+	bkgHistForLegend = histFlavSym.Clone("bkgHistForLegend")
+	bkgHistForLegend.SetLineColor(ROOT.kBlue+3)
+	bkgHistForLegend.SetFillColor(ROOT.kWhite)
+	bkgHistForLegend.SetLineWidth(2)
+	
+	#~ leg.AddEntry(histObs,"Data","pe")
+	leg.AddEntry(graphObs,"Data","pe")
+	#~ leg.AddEntry(histFlavSym, "Total backgrounds","l")
+	leg.AddEntry(bkgHistForLegend, "FS","f")
+	leg.AddEntry(errGraph,"Tot. unc.", "f")	
+	leg.AddEntry(histDY,"Template", "f")
+	leg.AddEntry(histRare,"Rares", "f")	
+
+	errGraph.Draw("same02")
+	stack.Draw("samehist")	
+	
+	#~ histObs.Draw("pesame")
+	graphObs.Draw("pesame")
+	
+	leg.Draw("same")
+
+
+	plotPad.RedrawAxis()	
+
+
+	ratioPad.cd()
+	
+	
+	xs = []
+	ys = []
+	yErrorsUp = []
+	yErrorsDown = []
+	widths = []
+	
+	for i in range(0,histObs.GetNbinsX()):
+		if i <= 3:
+			xs.append(histObs.GetBinCenter(i))
+			widths.append(0.5*histObs.GetBinWidth(i))		
+			if histFullBG.GetBinContent(i) > 0:
+				ys.append(histObs.GetBinContent(i)/histFullBG.GetBinContent(i))
+				yErrorsUp.append(graphObs.GetErrorYhigh(i)/histFullBG.GetBinContent(i))			
+				yErrorsDown.append(graphObs.GetErrorYlow(i)/histFullBG.GetBinContent(i))				
+		
+			else:
+				ys.append(10.)
+				yErrorsUp.append(0)			
+				yErrorsDown.append(0)
+		else:
+			xs.append(histObs.GetBinCenter(i))
+			widths.append(0.5*histObs.GetBinWidth(i))		
+			ys.append(histObs.GetBinContent(i)/histFullBG.GetBinContent(i))
+			yErrorsUp.append(graphObs.GetErrorYhigh(i-1)/histFullBG.GetBinContent(i))			
+			yErrorsDown.append(graphObs.GetErrorYlow(i-1)/histFullBG.GetBinContent(i))				
+		
+	
+	
+	ROOT.gPad.cd()
+
+		# axis
+	nBinsX = 20
+	nBinsY = 10
+	hAxis = ROOT.TH2F("hAxis", "", nBinsX, 20, 500, nBinsY, 0, 2)
+	hAxis.Draw("AXIS")
+		
+	hAxis.GetYaxis().SetNdivisions(408)
+	hAxis.SetTitleOffset(0.4, "Y")
+	hAxis.SetTitleSize(0.15, "Y")
+	hAxis.SetYTitle("#frac{Data}{Prediction}  ")
+	hAxis.GetXaxis().SetLabelSize(0.0)
+	hAxis.GetYaxis().SetLabelSize(0.1)
+
+	oneLine = ROOT.TLine(20, 1.0, 500, 1.0)
+	#~ oneLine.SetLineStyle(2)
+	oneLine.Draw()
+	oneLine2 = ROOT.TLine(20, 0.5, 500, 0.5)
+	oneLine2.SetLineStyle(2)
+	oneLine2.Draw()
+	oneLine3 = ROOT.TLine(20, 1.5, 500, 1.5)
+	oneLine3.SetLineStyle(2)
+	oneLine3.Draw()
+	
+	errGraphRatio.Draw("same02")
+	
+	ratioGraph = ROOT.TGraphAsymmErrors(len(xs), array("d", xs), array("d", ys), array("d", widths), array("d", widths), array("d", yErrorsDown), array("d", yErrorsUp))
+		
+	ratioGraph.Draw("same pe0")	
+
+
+	
+	ROOT.gPad.RedrawAxis()
+	plotPad.RedrawAxis()
+	ratioPad.RedrawAxis()
+	
+	hCanvas.Print("cutNCountResultMll_%s.pdf"%region)
+	
+def makeOverviewPlot(shelves):
+
+	from helpers import createMyColors
+	from defs import myColors
+	colors = createMyColors()	
+
+	
+	resultsNLL = getResultsNLL(shelves,"NLL")
+	resultsLegacy = getResultsLegacy(shelves,"legacy")
+	
+	
+	histObs = ROOT.TH1F("histObs","histObs",16,0,16)
+	
+	histObs.SetMarkerColor(ROOT.kBlack)
+	histObs.SetLineColor(ROOT.kBlack)
+	histObs.SetMarkerStyle(20)
+	
+	histPred = ROOT.TH1F("histPred","histPred",16,0,16)
+	histFlavSym = ROOT.TH1F("histFlavSym","histFlavSym",16,0,16)
+	histDY = ROOT.TH1F("histDY","histDY",16,0,16)
+	
+	hCanvas = TCanvas("hCanvas", "Distribution", 1000,800)
+	
+	plotPad = ROOT.TPad("plotPad","plotPad",0,0,1,1)
+	style=setTDRStyle()
+	style.SetPadBottomMargin(0.3)
+	plotPad.UseCurrentStyle()
+	plotPad.Draw()	
+	plotPad.cd()
+	plotPad.SetLogy()	
+	
+	
+	histObs.SetBinContent(1,resultsNLL["lowNLL"]["highMT2_mass20To60_SF"])
+	histObs.SetBinContent(2,resultsNLL["lowNLL"]["highMT2_mass60To86_SF"])
+	histObs.SetBinContent(3,resultsNLL["lowNLL"]["highMT2_mass96To150_SF"])
+	histObs.SetBinContent(4,resultsNLL["lowNLL"]["highMT2_mass150To200_SF"])
+	histObs.SetBinContent(5,resultsNLL["lowNLL"]["highMT2_mass200To300_SF"])
+	histObs.SetBinContent(6,resultsNLL["lowNLL"]["highMT2_mass300To400_SF"])
+	histObs.SetBinContent(7,resultsNLL["lowNLL"]["highMT2_mass400_SF"])	
+	
+	histObs.SetBinContent(8,resultsNLL["highNLL"]["highMT2_mass20To60_SF"])
+	histObs.SetBinContent(9,resultsNLL["highNLL"]["highMT2_mass60To86_SF"])
+	histObs.SetBinContent(10,resultsNLL["highNLL"]["highMT2_mass96To150_SF"])
+	histObs.SetBinContent(11,resultsNLL["highNLL"]["highMT2_mass150To200_SF"])
+	histObs.SetBinContent(12,resultsNLL["highNLL"]["highMT2_mass200To300_SF"])
+	histObs.SetBinContent(13,resultsNLL["highNLL"]["highMT2_mass300To400_SF"])
+	histObs.SetBinContent(14,resultsNLL["highNLL"]["highMT2_mass400_SF"])	
+	
+	histObs.SetBinContent(15,resultsNLL["highNLL"]["highMassOld_SF"])	
+	histObs.SetBinContent(16,resultsLegacy["EdgeMassSF"])	
+
+	
+	
+	names = ["m_{ll}: 20-60 GeV","m_{ll}: 60-86 GeV","m_{ll}: 96-150 GeV","m_{ll}: 150-200 GeV","m_{ll}: 200-300 GeV","m_{ll}: 300-400 GeV","m_{ll}: > 400 GeV","m_{ll}: 20-60 GeV","m_{ll}: 60-86 GeV","m_{ll}: 96-150 GeV","m_{ll}: 150-200 GeV","m_{ll}: 200-300 GeV","m_{ll}: 300-400 GeV","m_{ll}: > 400 GeV","ICHEP legacy","8 TeV legacy"]
+	
+	for index, name in enumerate(names):
+	
+		histObs.GetXaxis().SetBinLabel(index+1,name)
+		
+	histFlavSym.SetBinContent(1,resultsNLL["lowNLL"]["highMT2_mass20To60_PredSF"])
+	histFlavSym.SetBinContent(2,resultsNLL["lowNLL"]["highMT2_mass60To86_PredSF"])
+	histFlavSym.SetBinContent(3,resultsNLL["lowNLL"]["highMT2_mass96To150_PredSF"])
+	histFlavSym.SetBinContent(4,resultsNLL["lowNLL"]["highMT2_mass150To200_PredSF"])
+	histFlavSym.SetBinContent(5,resultsNLL["lowNLL"]["highMT2_mass200To300_PredSF"])
+	histFlavSym.SetBinContent(6,resultsNLL["lowNLL"]["highMT2_mass300To400_PredSF"])
+	histFlavSym.SetBinContent(7,resultsNLL["lowNLL"]["highMT2_mass400_PredSF"])	
+	
+	histFlavSym.SetBinContent(8,resultsNLL["highNLL"]["highMT2_mass20To60_PredSF"])
+	histFlavSym.SetBinContent(9,resultsNLL["highNLL"]["highMT2_mass60To86_PredSF"])
+	histFlavSym.SetBinContent(10,resultsNLL["highNLL"]["highMT2_mass96To150_PredSF"])
+	histFlavSym.SetBinContent(11,resultsNLL["highNLL"]["highMT2_mass150To200_PredSF"])
+	histFlavSym.SetBinContent(12,resultsNLL["highNLL"]["highMT2_mass200To300_PredSF"])
+	histFlavSym.SetBinContent(13,resultsNLL["highNLL"]["highMT2_mass300To400_PredSF"])
+	histFlavSym.SetBinContent(14,resultsNLL["highNLL"]["highMT2_mass400_PredSF"])	
+	
+	histFlavSym.SetBinContent(15,resultsNLL["highNLL"]["highMassOld_PredSF"])	
+	histFlavSym.SetBinContent(16,resultsLegacy["EdgeMassPredSF"])
+
+	histDY.SetBinContent(1,resultsNLL["lowNLL"]["highMT2_mass20To60_ZPredSF"])
+	histDY.SetBinContent(2,resultsNLL["lowNLL"]["highMT2_mass60To86_ZPredSF"])
+	histDY.SetBinContent(3,resultsNLL["lowNLL"]["highMT2_mass96To150_ZPredSF"])
+	histDY.SetBinContent(4,resultsNLL["lowNLL"]["highMT2_mass150To200_ZPredSF"])
+	histDY.SetBinContent(5,resultsNLL["lowNLL"]["highMT2_mass200To300_ZPredSF"])
+	histDY.SetBinContent(6,resultsNLL["lowNLL"]["highMT2_mass300To400_ZPredSF"])
+	histDY.SetBinContent(7,resultsNLL["lowNLL"]["highMT2_mass400_ZPredSF"])	
+	
+	histDY.SetBinContent(8,resultsNLL["highNLL"]["highMT2_mass20To60_ZPredSF"])
+	histDY.SetBinContent(9,resultsNLL["highNLL"]["highMT2_mass60To86_ZPredSF"])
+	histDY.SetBinContent(10,resultsNLL["highNLL"]["highMT2_mass96To150_ZPredSF"])
+	histDY.SetBinContent(11,resultsNLL["highNLL"]["highMT2_mass150To200_ZPredSF"])
+	histDY.SetBinContent(12,resultsNLL["highNLL"]["highMT2_mass200To300_ZPredSF"])
+	histDY.SetBinContent(13,resultsNLL["highNLL"]["highMT2_mass300To400_ZPredSF"])
+	histDY.SetBinContent(14,resultsNLL["highNLL"]["highMT2_mass400_ZPredSF"])	
+	
+	histDY.SetBinContent(15,resultsNLL["highNLL"]["highMassOld_ZPredSF"])	
+	histDY.SetBinContent(16,resultsLegacy["EdgeMassZPredSF"])
+
+	errGraph = ROOT.TGraphAsymmErrors()
+	graphObs = ROOT.TGraphAsymmErrors()
+	
+	for i in range(1,histFlavSym.GetNbinsX()+1):
+		graphObs.SetPoint(i,histObs.GetBinCenter(i),histObs.GetBinContent(i))
+		errGraph.SetPoint(i,i-0.5,histFlavSym.GetBinContent(i)+histDY.GetBinContent(i))
+		
+		
+
+	graphObs.SetPointError(1,0,0,resultsNLL["lowNLL"]["highMT2_mass20To60_SFDown"],resultsNLL["lowNLL"]["highMT2_mass20To60_SFUp"])
+	graphObs.SetPointError(2,0,0,resultsNLL["lowNLL"]["highMT2_mass60To86_SFDown"],resultsNLL["lowNLL"]["highMT2_mass60To86_SFUp"])
+	graphObs.SetPointError(3,0,0,resultsNLL["lowNLL"]["highMT2_mass96To150_SFDown"],resultsNLL["lowNLL"]["highMT2_mass96To150_SFUp"])
+	graphObs.SetPointError(4,0,0,resultsNLL["lowNLL"]["highMT2_mass150To200_SFDown"],resultsNLL["lowNLL"]["highMT2_mass150To200_SFUp"])
+	graphObs.SetPointError(5,0,0,resultsNLL["lowNLL"]["highMT2_mass200To300_SFDown"],resultsNLL["lowNLL"]["highMT2_mass200To300_SFUp"])
+	graphObs.SetPointError(6,0,0,resultsNLL["lowNLL"]["highMT2_mass300To400_SFDown"],resultsNLL["lowNLL"]["highMT2_mass300To400_SFUp"])
+	graphObs.SetPointError(7,0,0,resultsNLL["lowNLL"]["highMT2_mass400_SFDown"],resultsNLL["lowNLL"]["highMT2_mass400_SFUp"])
+
+	graphObs.SetPointError(8,0,0,resultsNLL["highNLL"]["highMT2_mass20To60_SFDown"],resultsNLL["highNLL"]["highMT2_mass20To60_SFUp"])
+	graphObs.SetPointError(9,0,0,resultsNLL["highNLL"]["highMT2_mass60To86_SFDown"],resultsNLL["highNLL"]["highMT2_mass60To86_SFUp"])
+	graphObs.SetPointError(10,0,0,resultsNLL["highNLL"]["highMT2_mass96To150_SFDown"],resultsNLL["highNLL"]["highMT2_mass96To150_SFUp"])
+	graphObs.SetPointError(11,0,0,resultsNLL["highNLL"]["highMT2_mass150To200_SFDown"],resultsNLL["highNLL"]["highMT2_mass150To200_SFUp"])
+	graphObs.SetPointError(12,0,0,resultsNLL["highNLL"]["highMT2_mass200To300_SFDown"],resultsNLL["highNLL"]["highMT2_mass200To300_SFUp"])
+	graphObs.SetPointError(13,0,0,resultsNLL["highNLL"]["highMT2_mass300To400_SFDown"],resultsNLL["highNLL"]["highMT2_mass300To400_SFUp"])
+	graphObs.SetPointError(14,0,0,resultsNLL["highNLL"]["highMT2_mass400_SFDown"],resultsNLL["highNLL"]["highMT2_mass400_SFUp"])
+	
+	graphObs.SetPointError(15,0,0,resultsNLL["highNLL"]["highMassOld_SFDown"],resultsNLL["highNLL"]["highMassOld_SFUp"])
+	graphObs.SetPointError(16,0,0,resultsLegacy["EdgeMassSFDown"],resultsLegacy["EdgeMassSFUp"])
+
+
+	errGraph.SetPointError(1,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass20To60_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass20To60_TotalPredErrUpSF"])
+	errGraph.SetPointError(2,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass60To86_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass60To86_TotalPredErrUpSF"])
+	errGraph.SetPointError(3,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass96To150_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass96To150_TotalPredErrUpSF"])
+	errGraph.SetPointError(4,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass150To200_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass150To200_TotalPredErrUpSF"])
+	errGraph.SetPointError(5,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass200To300_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass200To300_TotalPredErrUpSF"])
+	errGraph.SetPointError(6,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass300To400_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass300To400_TotalPredErrUpSF"])
+	errGraph.SetPointError(7,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass400_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass400_TotalPredErrUpSF"])
+	
+	errGraph.SetPointError(8,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass20To60_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass20To60_TotalPredErrUpSF"])
+	errGraph.SetPointError(9,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass60To86_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass60To86_TotalPredErrUpSF"])
+	errGraph.SetPointError(10,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass96To150_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass96To150_TotalPredErrUpSF"])
+	errGraph.SetPointError(11,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass150To200_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass150To200_TotalPredErrUpSF"])
+	errGraph.SetPointError(12,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass200To300_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass200To300_TotalPredErrUpSF"])
+	errGraph.SetPointError(13,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass300To400_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass300To400_TotalPredErrUpSF"])
+	errGraph.SetPointError(14,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass400_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass400_TotalPredErrUpSF"])
+	
+	errGraph.SetPointError(15,0.5,0.5,resultsNLL["highNLL"]["highMassOld_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMassOld_TotalPredErrUpSF"])
+	errGraph.SetPointError(16,0.5,0.5,resultsLegacy["EdgeMassTotalPredErrDownSF"],resultsLegacy["EdgeMassTotalPredErrUpSF"])
+
+	errGraph.SetFillColor(myColors["MyBlueOverview"])
+	errGraph.SetFillStyle(3354)	
+
+	histFlavSym.SetLineColor(ROOT.kBlue+3)
+	histFlavSym.SetLineWidth(2)
+	
+	histDY.SetLineColor(ROOT.kGreen+3)
+	histDY.SetFillColor(ROOT.kGreen+3)
+	#~ histDY.SetFillStyle(3002)
+	
+	from ROOT import THStack
+	
+	stack = THStack()
+	stack.Add(histDY)	
+	stack.Add(histFlavSym)	
+	
+	histObs.GetYaxis().SetRangeUser(0.5,90000)
+	histObs.GetYaxis().SetTitle("Events")
+	histObs.LabelsOption("v")
+
+	histObs.UseCurrentStyle()
+	histObs.Draw("pe")
+
+	
+	
+	#~ hCanvas.DrawFrame(-0.5,0,30.5,65,"; %s ; %s" %("","Events"))
+	
+	latex = ROOT.TLatex()
+	latex.SetTextFont(42)
+	latex.SetTextAlign(31)
+	latex.SetTextSize(0.04)
+	latex.SetNDC(True)
+	latexCMS = ROOT.TLatex()
+	latexCMS.SetTextFont(61)
+	#latexCMS.SetTextAlign(31)
+	latexCMS.SetTextSize(0.06)
+	latexCMS.SetNDC(True)
+	latexCMSExtra = ROOT.TLatex()
+	latexCMSExtra.SetTextFont(52)
+	#latexCMSExtra.SetTextAlign(31)
+	latexCMSExtra.SetTextSize(0.045)
+	latexCMSExtra.SetNDC(True)		
+	
+
+
+	intlumi = ROOT.TLatex()
+	intlumi.SetTextAlign(12)
+	intlumi.SetTextSize(0.03)
+	intlumi.SetNDC(True)		
+
+	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"35.9")
+	
+	#~ cmsExtra = "Preliminary"
+	cmsExtra = ""
+	latexCMS.DrawLatex(0.19,0.88,"CMS")
+	if "Simulation" in cmsExtra:
+		yLabelPos = 0.81	
+	else:
+		yLabelPos = 0.84	
+
+	latexCMSExtra.DrawLatex(0.19,yLabelPos,"%s"%(cmsExtra))
+
+	leg = ROOT.TLegend(0.37, 0.7, 0.89, 0.95,"","brNDC")
+	leg.SetNColumns(2)
+	leg.SetFillColor(10)
+	leg.SetLineColor(10)
+	leg.SetShadowColor(0)
+	leg.SetBorderSize(1)
+	
+	bkgHistForLegend = histFlavSym.Clone("bkgHistForLegend")
+	bkgHistForLegend.SetLineColor(ROOT.kBlue+3)
+	bkgHistForLegend.SetFillColor(ROOT.kWhite)
+	bkgHistForLegend.SetLineWidth(2)
+	
+	leg.AddEntry(histObs,"Data","pe")
+	#~ leg.AddEntry(histFlavSym, "Total backgrounds","l")
+	leg.AddEntry(bkgHistForLegend, "Flavor symmetric","f")
+	leg.AddEntry(histDY,"Non FS", "f")
+	leg.AddEntry(errGraph,"Total uncertainty", "f")	
+	
+
+	errGraph.Draw("same02")
+	stack.Draw("samehist")	
+	
+	graphObs.Draw("pesame")
+	
+	leg.Draw("same")
+
+	
+	
+	line1 = ROOT.TLine(7,0,7,500)
+	line2 = ROOT.TLine(14,0,14,500)
+	line3 = ROOT.TLine(15,0,15,300)
+
+	line1.SetLineColor(ROOT.kBlack)
+	line2.SetLineColor(ROOT.kBlack)
+	line3.SetLineColor(ROOT.kBlack)
+
+	line1.SetLineWidth(2)
+	line2.SetLineWidth(2)
+	line3.SetLineWidth(2)
+
+	line1.Draw("same")
+	line2.Draw("same")
+	line3.Draw("same")
+	
+
+
+	label = ROOT.TLatex()
+	label.SetTextAlign(12)
+	label.SetTextSize(0.04)
+	label.SetTextColor(ROOT.kBlack)	
+	label.SetTextAlign(22)	
+	#~ label.SetTextAngle(-45)	
+	
+	label.DrawLatex(3.5,400,"t#bar{t} like")
+	label.DrawLatex(10.5,400,"non t#bar{t} like")
+	
+
+	plotPad.RedrawAxis()
+	
+	hCanvas.Print("edgeOverview.pdf")
+	#~ hCanvas.Print("edgeOverview.root")
+	
+def makeOverviewPlotNoLegacy(shelves):
+
+	from helpers import createMyColors
+	from defs import myColors
+	colors = createMyColors()	
+
+	
+	resultsNLL = getResultsNLL(shelves,"NLL")
+	
+	
+	histObs = ROOT.TH1F("histObs","histObs",14,0,14)
+	
+	histObs.SetMarkerColor(ROOT.kBlack)
+	histObs.SetLineColor(ROOT.kBlack)
+	histObs.SetMarkerStyle(20)
+	
+	histPred = ROOT.TH1F("histPred","histPred",14,0,14)
+	histFlavSym = ROOT.TH1F("histFlavSym","histFlavSym",14,0,14)
+	histDY = ROOT.TH1F("histDY","histDY",14,0,14)
+	histRare = ROOT.TH1F("histRare","histRare",14,0,14)
+	
+	hCanvas = TCanvas("hCanvas", "Distribution", 1000,800)
+	
+	plotPad = ROOT.TPad("plotPad","plotPad",0,0,1,1)
+	style=setTDRStyle()
+	style.SetPadBottomMargin(0.28)
+	style.SetPadLeftMargin(0.13)
+	style.SetTitleYOffset(0.9)
+	plotPad.UseCurrentStyle()
+	plotPad.Draw()	
+	plotPad.cd()
+	plotPad.SetLogy()	
+	
+	
+	histObs.SetBinContent(1,resultsNLL["lowNLL"]["highMT2_mass20To60_SF"])
+	histObs.SetBinContent(2,resultsNLL["lowNLL"]["highMT2_mass60To86_SF"])
+	histObs.SetBinContent(3,resultsNLL["lowNLL"]["highMT2_mass96To150_SF"])
+	histObs.SetBinContent(4,resultsNLL["lowNLL"]["highMT2_mass150To200_SF"])
+	histObs.SetBinContent(5,resultsNLL["lowNLL"]["highMT2_mass200To300_SF"])
+	histObs.SetBinContent(6,resultsNLL["lowNLL"]["highMT2_mass300To400_SF"])
+	histObs.SetBinContent(7,resultsNLL["lowNLL"]["highMT2_mass400_SF"])	
+	
+	histObs.SetBinContent(8,resultsNLL["highNLL"]["highMT2_mass20To60_SF"])
+	histObs.SetBinContent(9,resultsNLL["highNLL"]["highMT2_mass60To86_SF"])
+	histObs.SetBinContent(10,resultsNLL["highNLL"]["highMT2_mass96To150_SF"])
+	histObs.SetBinContent(11,resultsNLL["highNLL"]["highMT2_mass150To200_SF"])
+	histObs.SetBinContent(12,resultsNLL["highNLL"]["highMT2_mass200To300_SF"])
+	histObs.SetBinContent(13,resultsNLL["highNLL"]["highMT2_mass300To400_SF"])
+	histObs.SetBinContent(14,resultsNLL["highNLL"]["highMT2_mass400_SF"])	
+
+	
+	
+	names = ["m_{ll}: 20-60 GeV","m_{ll}: 60-86 GeV","m_{ll}: 96-150 GeV","m_{ll}: 150-200 GeV","m_{ll}: 200-300 GeV","m_{ll}: 300-400 GeV","m_{ll}: > 400 GeV","m_{ll}: 20-60 GeV","m_{ll}: 60-86 GeV","m_{ll}: 96-150 GeV","m_{ll}: 150-200 GeV","m_{ll}: 200-300 GeV","m_{ll}: 300-400 GeV","m_{ll}: > 400 GeV"]
+	
+	for index, name in enumerate(names):
+	
+		histObs.GetXaxis().SetBinLabel(index+1,name)
+		
+	histFlavSym.SetBinContent(1,resultsNLL["lowNLL"]["highMT2_mass20To60_PredSF"])
+	histFlavSym.SetBinContent(2,resultsNLL["lowNLL"]["highMT2_mass60To86_PredSF"])
+	histFlavSym.SetBinContent(3,resultsNLL["lowNLL"]["highMT2_mass96To150_PredSF"])
+	histFlavSym.SetBinContent(4,resultsNLL["lowNLL"]["highMT2_mass150To200_PredSF"])
+	histFlavSym.SetBinContent(5,resultsNLL["lowNLL"]["highMT2_mass200To300_PredSF"])
+	histFlavSym.SetBinContent(6,resultsNLL["lowNLL"]["highMT2_mass300To400_PredSF"])
+	histFlavSym.SetBinContent(7,resultsNLL["lowNLL"]["highMT2_mass400_PredSF"])	
+	
+	histFlavSym.SetBinContent(8,resultsNLL["highNLL"]["highMT2_mass20To60_PredSF"])
+	histFlavSym.SetBinContent(9,resultsNLL["highNLL"]["highMT2_mass60To86_PredSF"])
+	histFlavSym.SetBinContent(10,resultsNLL["highNLL"]["highMT2_mass96To150_PredSF"])
+	histFlavSym.SetBinContent(11,resultsNLL["highNLL"]["highMT2_mass150To200_PredSF"])
+	histFlavSym.SetBinContent(12,resultsNLL["highNLL"]["highMT2_mass200To300_PredSF"])
+	histFlavSym.SetBinContent(13,resultsNLL["highNLL"]["highMT2_mass300To400_PredSF"])
+	histFlavSym.SetBinContent(14,resultsNLL["highNLL"]["highMT2_mass400_PredSF"])	
+
+	histDY.SetBinContent(1,resultsNLL["lowNLL"]["highMT2_mass20To60_ZPredSF"])
+	histDY.SetBinContent(2,resultsNLL["lowNLL"]["highMT2_mass60To86_ZPredSF"])
+	histDY.SetBinContent(3,resultsNLL["lowNLL"]["highMT2_mass96To150_ZPredSF"])
+	histDY.SetBinContent(4,resultsNLL["lowNLL"]["highMT2_mass150To200_ZPredSF"])
+	histDY.SetBinContent(5,resultsNLL["lowNLL"]["highMT2_mass200To300_ZPredSF"])
+	histDY.SetBinContent(6,resultsNLL["lowNLL"]["highMT2_mass300To400_ZPredSF"])
+	histDY.SetBinContent(7,resultsNLL["lowNLL"]["highMT2_mass400_ZPredSF"])	
+	
+	histDY.SetBinContent(8,resultsNLL["highNLL"]["highMT2_mass20To60_ZPredSF"])
+	histDY.SetBinContent(9,resultsNLL["highNLL"]["highMT2_mass60To86_ZPredSF"])
+	histDY.SetBinContent(10,resultsNLL["highNLL"]["highMT2_mass96To150_ZPredSF"])
+	histDY.SetBinContent(11,resultsNLL["highNLL"]["highMT2_mass150To200_ZPredSF"])
+	histDY.SetBinContent(12,resultsNLL["highNLL"]["highMT2_mass200To300_ZPredSF"])
+	histDY.SetBinContent(13,resultsNLL["highNLL"]["highMT2_mass300To400_ZPredSF"])
+	histDY.SetBinContent(14,resultsNLL["highNLL"]["highMT2_mass400_ZPredSF"])	
+
+	histRare.SetBinContent(1,resultsNLL["lowNLL"]["highMT2_mass20To60_RarePredSF"])
+	histRare.SetBinContent(2,resultsNLL["lowNLL"]["highMT2_mass60To86_RarePredSF"])
+	histRare.SetBinContent(3,resultsNLL["lowNLL"]["highMT2_mass96To150_RarePredSF"])
+	histRare.SetBinContent(4,resultsNLL["lowNLL"]["highMT2_mass150To200_RarePredSF"])
+	histRare.SetBinContent(5,resultsNLL["lowNLL"]["highMT2_mass200To300_RarePredSF"])
+	histRare.SetBinContent(6,resultsNLL["lowNLL"]["highMT2_mass300To400_RarePredSF"])
+	histRare.SetBinContent(7,resultsNLL["lowNLL"]["highMT2_mass400_RarePredSF"])	
+	
+	histRare.SetBinContent(8,resultsNLL["highNLL"]["highMT2_mass20To60_RarePredSF"])
+	histRare.SetBinContent(9,resultsNLL["highNLL"]["highMT2_mass60To86_RarePredSF"])
+	histRare.SetBinContent(10,resultsNLL["highNLL"]["highMT2_mass96To150_RarePredSF"])
+	histRare.SetBinContent(11,resultsNLL["highNLL"]["highMT2_mass150To200_RarePredSF"])
+	histRare.SetBinContent(12,resultsNLL["highNLL"]["highMT2_mass200To300_RarePredSF"])
+	histRare.SetBinContent(13,resultsNLL["highNLL"]["highMT2_mass300To400_RarePredSF"])
+	histRare.SetBinContent(14,resultsNLL["highNLL"]["highMT2_mass400_RarePredSF"])	
+
+	errGraph = ROOT.TGraphAsymmErrors()
+	graphObs = ROOT.TGraphAsymmErrors()
+	
+	for i in range(1,histFlavSym.GetNbinsX()+1):
+		graphObs.SetPoint(i,histObs.GetBinCenter(i),histObs.GetBinContent(i))
+		errGraph.SetPoint(i,i-0.5,histFlavSym.GetBinContent(i)+histDY.GetBinContent(i)+histRare.GetBinContent(i))
+		
+		
+
+	graphObs.SetPointError(1,0,0,resultsNLL["lowNLL"]["highMT2_mass20To60_SFDown"],resultsNLL["lowNLL"]["highMT2_mass20To60_SFUp"])
+	graphObs.SetPointError(2,0,0,resultsNLL["lowNLL"]["highMT2_mass60To86_SFDown"],resultsNLL["lowNLL"]["highMT2_mass60To86_SFUp"])
+	graphObs.SetPointError(3,0,0,resultsNLL["lowNLL"]["highMT2_mass96To150_SFDown"],resultsNLL["lowNLL"]["highMT2_mass96To150_SFUp"])
+	graphObs.SetPointError(4,0,0,resultsNLL["lowNLL"]["highMT2_mass150To200_SFDown"],resultsNLL["lowNLL"]["highMT2_mass150To200_SFUp"])
+	graphObs.SetPointError(5,0,0,resultsNLL["lowNLL"]["highMT2_mass200To300_SFDown"],resultsNLL["lowNLL"]["highMT2_mass200To300_SFUp"])
+	graphObs.SetPointError(6,0,0,resultsNLL["lowNLL"]["highMT2_mass300To400_SFDown"],resultsNLL["lowNLL"]["highMT2_mass300To400_SFUp"])
+	graphObs.SetPointError(7,0,0,resultsNLL["lowNLL"]["highMT2_mass400_SFDown"],resultsNLL["lowNLL"]["highMT2_mass400_SFUp"])
+
+	graphObs.SetPointError(8,0,0,resultsNLL["highNLL"]["highMT2_mass20To60_SFDown"],resultsNLL["highNLL"]["highMT2_mass20To60_SFUp"])
+	graphObs.SetPointError(9,0,0,resultsNLL["highNLL"]["highMT2_mass60To86_SFDown"],resultsNLL["highNLL"]["highMT2_mass60To86_SFUp"])
+	graphObs.SetPointError(10,0,0,resultsNLL["highNLL"]["highMT2_mass96To150_SFDown"],resultsNLL["highNLL"]["highMT2_mass96To150_SFUp"])
+	graphObs.SetPointError(11,0,0,resultsNLL["highNLL"]["highMT2_mass150To200_SFDown"],resultsNLL["highNLL"]["highMT2_mass150To200_SFUp"])
+	graphObs.SetPointError(12,0,0,resultsNLL["highNLL"]["highMT2_mass200To300_SFDown"],resultsNLL["highNLL"]["highMT2_mass200To300_SFUp"])
+	graphObs.SetPointError(13,0,0,resultsNLL["highNLL"]["highMT2_mass300To400_SFDown"],resultsNLL["highNLL"]["highMT2_mass300To400_SFUp"])
+	graphObs.SetPointError(14,0,0,resultsNLL["highNLL"]["highMT2_mass400_SFDown"],resultsNLL["highNLL"]["highMT2_mass400_SFUp"])
+
+
+	errGraph.SetPointError(1,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass20To60_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass20To60_TotalPredErrUpSF"])
+	errGraph.SetPointError(2,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass60To86_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass60To86_TotalPredErrUpSF"])
+	errGraph.SetPointError(3,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass96To150_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass96To150_TotalPredErrUpSF"])
+	errGraph.SetPointError(4,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass150To200_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass150To200_TotalPredErrUpSF"])
+	errGraph.SetPointError(5,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass200To300_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass200To300_TotalPredErrUpSF"])
+	errGraph.SetPointError(6,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass300To400_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass300To400_TotalPredErrUpSF"])
+	errGraph.SetPointError(7,0.5,0.5,resultsNLL["lowNLL"]["highMT2_mass400_TotalPredErrDownSF"],resultsNLL["lowNLL"]["highMT2_mass400_TotalPredErrUpSF"])
+	
+	errGraph.SetPointError(8,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass20To60_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass20To60_TotalPredErrUpSF"])
+	errGraph.SetPointError(9,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass60To86_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass60To86_TotalPredErrUpSF"])
+	errGraph.SetPointError(10,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass96To150_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass96To150_TotalPredErrUpSF"])
+	errGraph.SetPointError(11,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass150To200_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass150To200_TotalPredErrUpSF"])
+	errGraph.SetPointError(12,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass200To300_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass200To300_TotalPredErrUpSF"])
+	errGraph.SetPointError(13,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass300To400_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass300To400_TotalPredErrUpSF"])
+	errGraph.SetPointError(14,0.5,0.5,resultsNLL["highNLL"]["highMT2_mass400_TotalPredErrDownSF"],resultsNLL["highNLL"]["highMT2_mass400_TotalPredErrUpSF"])
+
+	errGraph.SetFillColor(myColors["MyBlueOverview"])
+	errGraph.SetFillStyle(3354)	
+
+	histFlavSym.SetLineColor(ROOT.kBlue+3)
+	histFlavSym.SetLineWidth(2)
+	
+	histDY.SetLineColor(ROOT.kGreen+3)
+	histDY.SetFillColor(ROOT.kGreen+3)
+	#~ histDY.SetFillStyle(3002)
+	
+	histRare.SetLineColor(ROOT.kViolet+2)
+	histRare.SetFillColor(ROOT.kViolet+2)
+	
+	from ROOT import THStack
+	
+	stack = THStack()
+	stack.Add(histDY)	
+	stack.Add(histRare)	
+	stack.Add(histFlavSym)	
+	
+	histObs.GetYaxis().SetRangeUser(0.5,90000)
+	histObs.GetYaxis().SetTitle("Events")
+	histObs.LabelsOption("v")
+
+	histObs.UseCurrentStyle()
+	histObs.Draw("pe")
+
+	
+	
+	#~ hCanvas.DrawFrame(-0.5,0,30.5,65,"; %s ; %s" %("","Events"))
+	
+	latex = ROOT.TLatex()
+	latex.SetTextFont(42)
+	latex.SetTextAlign(31)
+	latex.SetTextSize(0.04)
+	latex.SetNDC(True)
+	latexCMS = ROOT.TLatex()
+	latexCMS.SetTextFont(61)
+	#latexCMS.SetTextAlign(31)
+	latexCMS.SetTextSize(0.06)
+	latexCMS.SetNDC(True)
+	latexCMSExtra = ROOT.TLatex()
+	latexCMSExtra.SetTextFont(52)
+	#latexCMSExtra.SetTextAlign(31)
+	latexCMSExtra.SetTextSize(0.045)
+	latexCMSExtra.SetNDC(True)		
+	
+
+
+	intlumi = ROOT.TLatex()
+	intlumi.SetTextAlign(12)
+	intlumi.SetTextSize(0.03)
+	intlumi.SetNDC(True)		
+
+	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"35.9")
+	
+	#~ cmsExtra = "Preliminary"
+	cmsExtra = ""
+	latexCMS.DrawLatex(0.17,0.88,"CMS")
+	if "Simulation" in cmsExtra:
+		yLabelPos = 0.81	
+	else:
+		yLabelPos = 0.84	
+
+	latexCMSExtra.DrawLatex(0.17,yLabelPos,"%s"%(cmsExtra))
+
+	leg = ROOT.TLegend(0.37, 0.7, 0.89, 0.95,"","brNDC")
+	leg.SetNColumns(3)
+	leg.SetFillColor(10)
+	leg.SetLineColor(10)
+	leg.SetShadowColor(0)
+	leg.SetBorderSize(1)
+	
+	bkgHistForLegend = histFlavSym.Clone("bkgHistForLegend")
+	bkgHistForLegend.SetLineColor(ROOT.kBlue+3)
+	bkgHistForLegend.SetFillColor(ROOT.kWhite)
+	bkgHistForLegend.SetLineWidth(2)
+	
+	leg.AddEntry(histObs,"Data","pe")
+	#~ leg.AddEntry(histFlavSym, "Total backgrounds","l")
+	leg.AddEntry(bkgHistForLegend, "FS","f")
+	leg.AddEntry(errGraph,"Tot. unc.", "f")	
+	leg.AddEntry(histDY,"Template", "f")
+	leg.AddEntry(histRare,"Rares", "f")
+	
+
+	errGraph.Draw("same02")
+	stack.Draw("samehist")	
+	
+	graphObs.Draw("pesame")
+	
+	leg.Draw("same")
+
+	
+	
+	line1 = ROOT.TLine(7,0,7,500)
+	line1.SetLineColor(ROOT.kBlack)
+	line1.SetLineWidth(2)
+	line1.Draw("same")
+
+
+	label = ROOT.TLatex()
+	label.SetTextAlign(12)
+	label.SetTextSize(0.04)
+	label.SetTextColor(ROOT.kBlack)	
+	label.SetTextAlign(22)	
+	#~ label.SetTextAngle(-45)	
+	
+	label.DrawLatex(3.5,400,"t#bar{t} like")
+	label.DrawLatex(10.5,400,"non t#bar{t} like")
+
+	plotPad.RedrawAxis()
+	
+	hCanvas.Print("edgeOverviewNoLegacy.pdf")
+	#~ hCanvas.Print("edgeOverview.root")
+	
+def makeOverviewPlotOld(countingShelves,region):
 
 	from helpers import createMyColors
 	from defs import myColors
@@ -288,10 +1584,6 @@ def makeOverviewPlot(countingShelves,region):
 	plotPad.UseCurrentStyle()
 	plotPad.Draw()	
 	plotPad.cd()	
-	
-	
-	#~ observedCentral = observedTemplate%(resultsCentral["lowMass%s"%region],resultsCentral["belowZ%s"%region],resultsCentral["onZ%s"%region],resultsCentral["aboveZ%s"%region],resultsCentral["highMass%s"%region])
-	
 	
 	histObs.SetBinContent(1,resultsCentral["lowMassSF"])
 	histObs.SetBinContent(2,resultsCentralGeOneBTags["lowMassSF"])
@@ -329,8 +1621,6 @@ def makeOverviewPlot(countingShelves,region):
 	histObs.SetBinContent(29,resultsForwardGeOneBTags["aboveZSF"])
 	histObs.SetBinContent(30,resultsForwardGeTwoBTags["aboveZSF"])
 	
-	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
-	#~ names = ["#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 0 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f"]
 	names = ["inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)"]
 	
 	for index, name in enumerate(names):
@@ -455,7 +1745,7 @@ def makeOverviewPlot(countingShelves,region):
 	errGraph.SetPointError(30,0.5,0.5,resultsForwardGeTwoBTags["aboveZTotalPredErrSF"],resultsForwardGeTwoBTags["aboveZTotalPredErrSF"])
 
 	errGraph.SetFillColor(myColors["MyBlueOverview"])
-	errGraph.SetFillStyle(3001)	
+	errGraph.SetFillStyle(3004)	
 
 	histFlavSym.SetLineColor(ROOT.kBlue+3)
 	histFlavSym.SetLineWidth(2)
@@ -465,9 +1755,6 @@ def makeOverviewPlot(countingShelves,region):
 	histDY.SetFillStyle(3002)
 
 
-	#~ histFlavSym.SetFillColor(ROOT.kBlue-2)
-	#~ histDY.SetFillColor(ROOT.kGreen+2)
-	
 	from ROOT import THStack
 	
 	stack = THStack()
@@ -483,10 +1770,6 @@ def makeOverviewPlot(countingShelves,region):
 	histObs.UseCurrentStyle()
 	histObs.Draw("pe")
 
-	
-	
-	#~ hCanvas.DrawFrame(-0.5,0,30.5,65,"; %s ; %s" %("","Events"))
-	
 	latex = ROOT.TLatex()
 	latex.SetTextFont(42)
 	latex.SetTextAlign(31)
@@ -503,8 +1786,6 @@ def makeOverviewPlot(countingShelves,region):
 	latexCMSExtra.SetTextSize(0.045)
 	latexCMSExtra.SetNDC(True)		
 	
-
-
 	intlumi = ROOT.TLatex()
 	intlumi.SetTextAlign(12)
 	intlumi.SetTextSize(0.03)
@@ -541,8 +1822,6 @@ def makeOverviewPlot(countingShelves,region):
 	
 	leg.Draw("same")
 
-	
-	
 	line1 = ROOT.TLine(6,0,6,350)
 	line2 = ROOT.TLine(12,0,12,350)
 	line3 = ROOT.TLine(18,0,18,350)
@@ -647,10 +1926,6 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	plotPad.Draw()	
 	plotPad.cd()	
 	
-	
-	#~ observedCentral = observedTemplate%(resultsCentral["lowMass%s"%region],resultsCentral["belowZ%s"%region],resultsCentral["onZ%s"%region],resultsCentral["aboveZ%s"%region],resultsCentral["highMass%s"%region])
-	
-	
 	histObs.SetBinContent(1,resultsCentral["lowMassSF"])
 	histObs.SetBinContent(2,resultsCentralGeOneBTags["lowMassSF"])
 	histObs.SetBinContent(3,resultsCentralGeTwoBTags["lowMassSF"])
@@ -687,8 +1962,6 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	histObs.SetBinContent(30,resultsForwardGeTwoBTags["highMassSF"])
 
 	
-	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
-	#~ names = ["#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 0 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f"]
 	names = ["inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)","inclusive (c)","b-Veto (c)","b-Tagged (c)","inclusive (f)","b-Veto (f)","b-Tagged (f)"]
 	
 	for index, name in enumerate(names):
@@ -866,10 +2139,6 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	
 	histTotal.SetLineColor(ROOT.kBlue+3)
 	histTotal.SetLineWidth(3)
-
-
-	#~ histFlavSym.SetFillColor(ROOT.kBlue-2)
-	#~ histDY.SetFillColor(ROOT.kGreen+2)
 	
 	from ROOT import THStack
 	
@@ -924,21 +2193,6 @@ def makeOverviewPlotSplitted(countingShelves,region):
 		yLabelPos = 0.81	
 	else:
 		yLabelPos = 0.84	
-
-	#~ latexCMSExtra.DrawLatex(0.19,yLabelPos,"%s"%(cmsExtra))
-
-	#~ leg = ROOT.TLegend(0.4, 0.7, 0.925, 0.95,"","brNDC")
-	#~ leg.SetNColumns(2)
-	#~ leg.SetFillColor(10)
-	#~ leg.SetLineColor(10)
-	#~ leg.SetShadowColor(0)
-	#~ leg.SetBorderSize(1)
-	#~ 
-	#~ leg.AddEntry(histObs,"Data","pe")
-	#~ leg.AddEntry(histFlavSym, "Total backgrounds","l")
-	#~ leg.AddEntry(histOnlyDY,"Z+jets", "f")
-	#~ leg.AddEntry(histOther,"Rare", "f")
-	#~ leg.AddEntry(errGraph,"Total uncert.", "f")	
 	
 	
 	leg1 = ROOT.TLegend(0.42, 0.84, 0.57, 0.93,"","brNDC")
@@ -1054,397 +2308,28 @@ def makeOverviewPlotSplitted(countingShelves,region):
 	hCanvas.Print("edgeOverviewRare.pdf")
 	hCanvas.Print("edgeOverviewRare.root")
 	
-def makeOverviewPlotWithOnZ():
-
-	from helpers import createMyColors
-	from defs import myColors
-	colors = createMyColors()	
-
-	
-	
-	histObs = ROOT.TH1F("histObs","histObs",17,0,17)
-	
-	histObs.SetMarkerColor(ROOT.kBlack)
-	histObs.SetLineColor(ROOT.kBlack)
-	histObs.SetMarkerStyle(20)
-	
-	histTotal = ROOT.TH1F("histPred","histPred",17,0,17)
-	histFlavSym = ROOT.TH1F("histFlavSym","histFlavSym",17,0,17)
-	histDY = ROOT.TH1F("histDY","histDY",17,0,17)
-	histMC = ROOT.TH1F("histMC","histMC",17,0,17)
-	
-	hCanvas = TCanvas("hCanvas", "Distribution", 800,800)
-	
-	plotPad = ROOT.TPad("plotPad","plotPad",0,0,1,1)
-	style=setTDRStyle()
-	style.SetPadBottomMargin(0.3)
-	plotPad.UseCurrentStyle()
-	plotPad.Draw()	
-	plotPad.cd()	
-	
-
-
-
-
-	### on-Z numbers from PAS draft
-
-	histObs.SetBinContent(1,28)
-	histObs.SetBinContent(2,7)
-	histObs.SetBinContent(3,6)		
-	histObs.SetBinContent(4,6)
-
-	histObs.SetBinContent(5,21)
-	histObs.SetBinContent(6,6)
-	histObs.SetBinContent(7,1)		
-	histObs.SetBinContent(8,3)
-
-	histObs.SetBinContent(9,20)
-	histObs.SetBinContent(10,10)
-	histObs.SetBinContent(11,2)		
-	histObs.SetBinContent(12,0)
-
-	histObs.SetBinContent(13,45)
-	histObs.SetBinContent(14,23)
-	histObs.SetBinContent(15,4)		
-	histObs.SetBinContent(16,3)
-	
-	histObs.SetBinContent(17,14)
-
-	
-	#~ names = ["low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward","low-Mass central","below-Z central","on-Z central","above-Z central","high-Mass central","low-Mass forward","below-Z forward","on-Z forward","above-Z forward","high-Mass forward"]
-	#~ names = ["#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","= 0 b-tags c","#geq 1 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f","#geq 0 b-tags c","#geq 1 b-tags c","= 0 b-tags c","#geq 0 b-tags f","= 0 b-tags f","#geq 1 b-tags f"]
-	names = ["E_{T}^{miss} 100-150 GeV","E_{T}^{miss} 150-225 GeV","E_{T}^{miss} 225-300 GeV","E_{T}^{miss} > 300 GeV","E_{T}^{miss} 100-150 GeV","E_{T}^{miss} 150-225 GeV","E_{T}^{miss} 225-300 GeV","E_{T}^{miss} > 300 GeV","E_{T}^{miss} 100-150 GeV","E_{T}^{miss} 150-225 GeV","E_{T}^{miss} 225-300 GeV","E_{T}^{miss} > 300 GeV","E_{T}^{miss} 100-150 GeV","E_{T}^{miss} 150-225 GeV","E_{T}^{miss} 225-300 GeV","E_{T}^{miss} > 300 GeV","ATLAS SR"]
-	
-	for index, name in enumerate(names):
-	
-		histObs.GetXaxis().SetBinLabel(index+1,name)
-	
-#~ 
-	histTotal.SetBinContent(1, 29.1)
-	histTotal.SetBinContent(2, 9.1)
-	histTotal.SetBinContent(3, 3.4)
-	histTotal.SetBinContent(4, 2.1)
-
-	histTotal.SetBinContent(5, 14.3)
-	histTotal.SetBinContent(6, 6.9)
-	histTotal.SetBinContent(7, 6.1)
-	histTotal.SetBinContent(8, 1.5)
-	
-	histTotal.SetBinContent(9, 23.6)
-	histTotal.SetBinContent(10, 8.2)
-	histTotal.SetBinContent(11, 0.8)
-	histTotal.SetBinContent(12, 1.5)
-
-	histTotal.SetBinContent(13, 44.7)
-	histTotal.SetBinContent(14, 16.8)
-	histTotal.SetBinContent(15, 0.6)
-	histTotal.SetBinContent(16, 1.5)
-	
-	histTotal.SetBinContent(17, 12.3)	
-
-	histDY.SetBinContent(1, 24.3)
-	histDY.SetBinContent(2, 4.6)
-	histDY.SetBinContent(3, 1.5)
-	histDY.SetBinContent(4, 1.1)
-
-	histDY.SetBinContent(5, 4.5)
-	histDY.SetBinContent(6, 1.4)
-	histDY.SetBinContent(7, 0.7)
-	histDY.SetBinContent(8, 0.2)
-	
-	histDY.SetBinContent(9, 10.0)
-	histDY.SetBinContent(10, 3.2)
-	histDY.SetBinContent(11, 0.3)
-	histDY.SetBinContent(12, 0.1)
-
-	histDY.SetBinContent(13, 5.0)
-	histDY.SetBinContent(14, 1.6)
-	histDY.SetBinContent(15, 0.4)
-	histDY.SetBinContent(16, 0.3)
-	
-	histDY.SetBinContent(17, 3.9)
-	
-	histFlavSym.SetBinContent(1,3.2)
-	histFlavSym.SetBinContent(2,3.2)
-	histFlavSym.SetBinContent(3,1.1)
-	histFlavSym.SetBinContent(4,0)
-
-	histFlavSym.SetBinContent(5,9.5)
-	histFlavSym.SetBinContent(6,5.3)
-	histFlavSym.SetBinContent(7,5.3)
-	histFlavSym.SetBinContent(8,1.1)
-	
-	histFlavSym.SetBinContent(9,12.6)
-	histFlavSym.SetBinContent(10,4.2)
-	histFlavSym.SetBinContent(11,0)
-	histFlavSym.SetBinContent(12,1.1)
-
-	histFlavSym.SetBinContent(13,38.9)
-	histFlavSym.SetBinContent(14,14.7)
-	histFlavSym.SetBinContent(15,0.0)
-	histFlavSym.SetBinContent(16,1.1)
-	
-	histFlavSym.SetBinContent(17,6.13)	
-
-
-	histMC.SetBinContent(1,1.6)
-	histMC.SetBinContent(2,1.3)
-	histMC.SetBinContent(3,0.8)
-	histMC.SetBinContent(4,1)
-
-	histMC.SetBinContent(5,0.3)
-	histMC.SetBinContent(6,0.2)
-	histMC.SetBinContent(7,0.1)
-	histMC.SetBinContent(8,0.2)
-	
-	histMC.SetBinContent(9,1)
-	histMC.SetBinContent(10,0.8)
-	histMC.SetBinContent(11,0.5)
-	histMC.SetBinContent(12,0.3)
-
-	histMC.SetBinContent(13,0.8)
-	histMC.SetBinContent(14,0.5)
-	histMC.SetBinContent(15,0.2)
-	histMC.SetBinContent(16,0.1)
-	
-	histMC.SetBinContent(17,2.1)	
-
-	
-	
-	
-	errGraph = ROOT.TGraphAsymmErrors()
-	
-	for i in range(1,histFlavSym.GetNbinsX()+1):
-		errGraph.SetPoint(i,i-0.5,histTotal.GetBinContent(i))
-		
-
-	errGraph.SetPointError(1,0.5,0.5,4.7,5.3)
-	errGraph.SetPointError(2,0.5,0.5,1.9,3.2)
-	errGraph.SetPointError(3,0.5,0.5,1.0,2.5)
-	errGraph.SetPointError(4,0.5,0.5,0.7,1.4)
-
-	errGraph.SetPointError(5,0.5,0.5,3.2,4.4)
-	errGraph.SetPointError(6,0.5,0.5,2.3,3.6)
-	errGraph.SetPointError(7,0.5,0.5,2.3,3.6)
-	errGraph.SetPointError(8,0.5,0.5,0.9,2.4)
-
-	errGraph.SetPointError(9,0.5,0.5,3.7,4.9)
-	errGraph.SetPointError(10,0.5,0.5,2.1,3.4)
-	errGraph.SetPointError(11,0.5,0.5,0.2,1.2)
-	errGraph.SetPointError(12,0.5,0.5,0.9,2.4)
-
-	errGraph.SetPointError(13,0.5,0.5,6.6,7.7)
-	errGraph.SetPointError(14,0.5,0.5,3.9,5.1)
-	errGraph.SetPointError(15,0.5,0.5,0.3,1.2)
-	errGraph.SetPointError(16,0.5,0.5,0.9,2.4)
-
-	errGraph.SetPointError(17,0.5,0.5,2.8,4.0)	
-
-	errGraph.SetFillColor(myColors["MyBlueOverview"])
-	errGraph.SetFillStyle(3001)	
-
-	histFlavSym.SetLineColor(ROOT.kBlue+3)
-	histFlavSym.SetLineWidth(3)
-	
-	histDY.SetLineColor(ROOT.kGreen+2)
-	histDY.SetFillColor(ROOT.kGreen+2)
-	#~ histDY.SetFillStyle(3002)
-	
-	histMC.SetLineColor(ROOT.kViolet+2)
-	histMC.SetFillColor(ROOT.kViolet+2)
-	#~ histMC.SetFillStyle(3002)
-	
-	histTotal.SetLineColor(ROOT.kBlue+3)
-	histTotal.SetLineWidth(3)
-
-	
-	from ROOT import THStack
-	
-	#~ histDY.Add(histMC)
-	stack = THStack()
-	stack.Add(histMC)	
-	stack.Add(histDY)	
-	#~ stack.Add(histFlavSym)
-
-	
-	
-	histObs.GetYaxis().SetRangeUser(0,100)
-	histObs.GetYaxis().SetTitle("Events")
-	histObs.LabelsOption("v")
-
-	histObs.UseCurrentStyle()
-	histObs.SetMarkerSize(2)
-	histObs.SetLineWidth(2)
-	histObs.Draw("pe")
-
-	
-	
-	#~ hCanvas.DrawFrame(-0.5,0,30.5,65,"; %s ; %s" %("","Events"))
-	
-	latex = ROOT.TLatex()
-	latex.SetTextFont(42)
-	latex.SetTextAlign(31)
-	latex.SetTextSize(0.04)
-	latex.SetNDC(True)
-	latexCMS = ROOT.TLatex()
-	latexCMS.SetTextFont(61)
-	#latexCMS.SetTextAlign(31)
-	latexCMS.SetTextSize(0.06)
-	latexCMS.SetNDC(True)
-	latexCMSExtra = ROOT.TLatex()
-	latexCMSExtra.SetTextFont(52)
-	#latexCMSExtra.SetTextAlign(31)
-	latexCMSExtra.SetTextSize(0.045)
-	latexCMSExtra.SetNDC(True)		
-	
-
-
-	intlumi = ROOT.TLatex()
-	intlumi.SetTextAlign(12)
-	intlumi.SetTextSize(0.03)
-	intlumi.SetNDC(True)		
-
-	latex.DrawLatex(0.95, 0.96, "%s fb^{-1} (13 TeV)"%"2.3")
-	
-	cmsExtra = "Preliminary"
-	latexCMS.DrawLatex(0.19,0.88,"CMS")
-	if "Simulation" in cmsExtra:
-		yLabelPos = 0.81	
-	else:
-		yLabelPos = 0.84	
-
-	#~ latexCMSExtra.DrawLatex(0.19,yLabelPos,"%s"%(cmsExtra))
-
-	
-	leg1 = ROOT.TLegend(0.42, 0.86, 0.57, 0.93,"","brNDC")
-	leg1.SetNColumns(2)
-	leg1.SetFillColor(10)
-	leg1.SetLineColor(10)
-	leg1.SetShadowColor(0)
-	leg1.SetBorderSize(1)
-	
-	
-	leg1.AddEntry(histObs,"  Data  ","pe")
-	
-	leg2 = ROOT.TLegend(0.65, 0.86, 0.95, 0.93,"","brNDC")
-	leg2.SetNColumns(2)
-	leg2.SetFillColor(10)
-	leg2.SetLineColor(10)
-	leg2.SetShadowColor(0)
-	leg2.SetBorderSize(1)
-	
-	leg2.AddEntry(errGraph,"Total uncertainty  ", "f")
-	
-	
-	leg3 = ROOT.TLegend(0.41, 0.78, 0.925, 0.86,"","brNDC")
-	leg3.SetNColumns(3)
-	leg3.SetFillColor(10)
-	leg3.SetLineColor(10)
-	leg3.SetShadowColor(0)
-	leg3.SetBorderSize(1)
-	
-	leg3.AddEntry(histFlavSym,"Flavor symmetric", "f")	
-	leg3.AddEntry(histDY,"Z+jets  ", "f")
-	leg3.AddEntry(histMC,"Other SM", "f")
-	
-	
-
-	
-	stack.Draw("samehist")
-	errGraph.Draw("same02")
-	histTotal.Draw("samehist")
-	#~ errGraph.Draw("same 02")
-	
-	
-	histObs.Draw("pesame")
-	
-	leg1.Draw("same")
-	leg2.Draw("same")
-	leg3.Draw("same")
-
-	
-	
-	line1 = ROOT.TLine(8,0,8,45)
-	line2 = ROOT.TLine(16,0,16,45)
-	line3 = ROOT.TLine(18,0,18,45)
-	line4 = ROOT.TLine(24,0,24,45)
-
-	line1.SetLineColor(ROOT.kBlack)
-	line2.SetLineColor(ROOT.kBlack)
-	line3.SetLineColor(ROOT.kBlack)
-	line4.SetLineColor(ROOT.kBlack)
-
-	line1.SetLineWidth(2)
-	line2.SetLineWidth(2)
-	line3.SetLineWidth(4)
-	line4.SetLineWidth(2)
-
-	line1.Draw("same")
-	line2.Draw("same")
-	
-	line5 = ROOT.TLine(4,0,4,35)
-	line6 = ROOT.TLine(12,0,12,35)
-	line7 = ROOT.TLine(15,0,15,180)
-	line8 = ROOT.TLine(21,0,21,180)
-	line9 = ROOT.TLine(27,0,27,180)
-
-	line5.SetLineColor(ROOT.kBlack)
-	line6.SetLineColor(ROOT.kBlack)
-	line7.SetLineColor(ROOT.kBlack)
-	line8.SetLineColor(ROOT.kBlack)
-	line9.SetLineColor(ROOT.kBlack)
-
-	line5.SetLineWidth(2)
-	line6.SetLineWidth(2)
-	line7.SetLineWidth(2)
-	line8.SetLineWidth(2)
-	line9.SetLineWidth(2)
-	line5.SetLineStyle(ROOT.kDashed)
-	line6.SetLineStyle(ROOT.kDashed)
-	line7.SetLineStyle(ROOT.kDashed)
-	line8.SetLineStyle(ROOT.kDashed)
-	line9.SetLineStyle(ROOT.kDashed)
-
-	line5.Draw("same")
-	line6.Draw("same")
-
-
-	label = ROOT.TLatex()
-	label.SetTextAlign(12)
-	label.SetTextSize(0.04)
-	label.SetTextColor(ROOT.kBlack)	
-	#~ label.SetTextAngle(45)	
-	
-	label.DrawLatex(2.,60,"#splitline{N_{jets} = 2-3}{H_{T} > 400 GeV}")
-	label.DrawLatex(10.5,60,"N_{jets} #geq 4")
-	
-	label = ROOT.TLatex()
-	label.SetTextAlign(12)
-	label.SetTextSize(0.04)
-	label.SetTextColor(ROOT.kBlack)	
-	label.SetTextAngle(45)	
-	
-	label.DrawLatex(1.5,30,"N_{b} = 0")
-	label.DrawLatex(5.5,30,"N_{b} #geq 1")
-	label.DrawLatex(9.5,30,"N_{b} = 0")
-	label.DrawLatex(13.5,30,"N_{b} #geq 1")
-
-
-
-	plotPad.RedrawAxis()
-	
-	hCanvas.Print("onZOverviewRare.pdf")
-	hCanvas.Print("onZOverviewRare.root")
 
 	
 def main():
 	
+	OnZPickle = loadPickles("/disk1/user/schomakers/SignalRegionOptimationStudies/shelvesMT2/OnZBG_36fb.pkl")
+	OnZPickleICHEP = loadPickles("/disk1/user/schomakers/SignalRegionOptimationStudies/shelves/OnZBG_ICHEP_36fb.pkl")
+	OnZPickleLegacy = loadPickles("/disk1/user/schomakers/SignalRegionOptimationStudies/shelves/OnZBG_legacy_36fb.pkl")
+	RaresPickle = loadPickles("/disk1/user/schomakers/SignalRegionOptimationStudies/shelvesMT2/RareOnZ_Powheg.pkl")
+	
 	
 	name = "cutAndCount"
-	countingShelves = {"inclusive":readPickle(name,regionsToUse.signal.inclusive.name , runRanges.name),"central": readPickle(name,regionsToUse.signal.central.name,runRanges.name), "forward":readPickle(name,regionsToUse.signal.forward.name,runRanges.name)}	
+	countingShelves= {"NLL":readPickle("cutAndCountNLL",regionsToUse.signal.inclusive.name , runRanges.name),"legacy": readPickle("cutAndCount",regionsToUse.signal.legacy.name,runRanges.name),"onZ":OnZPickle,"onZICHEP":OnZPickleICHEP,"onZLegacy":OnZPickleLegacy,"Rares":RaresPickle}	
+	#~ countingShelves = {"inclusive":readPickle(name,regionsToUse.signal.inclusive.name , runRanges.name),"central": readPickle(name,regionsToUse.signal.central.name,runRanges.name), "forward":readPickle(name,regionsToUse.signal.forward.name,runRanges.name)}	
 	
 
-	makeOverviewPlot(countingShelves,"SF")	
-	makeOverviewPlotSplitted(countingShelves,"SF")	
-	makeOverviewPlotWithOnZ()	
+	#~ makeOverviewPlot(countingShelves)	
+	makeOverviewPlotNoLegacy(countingShelves)	
+	makeOverviewMllPlot(countingShelves,"highNLL",normalizeToBinWidth=True)	
+	makeOverviewMllPlot(countingShelves,"lowNLL",normalizeToBinWidth=True)	
+	#~ makeOverviewMllPlot(countingShelves,"highNLL",normalizeToBinWidth=False)	
+	#~ makeOverviewMllPlot(countingShelves,"lowNLL",normalizeToBinWidth=False)	
+	#~ makeOverviewMllPlotBkgOnly(countingShelves,"highNLL",normalizeToBinWidth=True)	
+	#~ makeOverviewMllPlotBkgOnly(countingShelves,"lowNLL",normalizeToBinWidth=True)	
+	#~ makeOverviewPlotSplitted(countingShelves,"SF")	
 main()

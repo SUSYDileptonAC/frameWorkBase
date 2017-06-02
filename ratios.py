@@ -157,29 +157,35 @@ class RatioGraph:
 			if (self.xMin < x and x < self.xMax
 					and not (len(ratios) == 0 and tempRatio == None and den == 0)):
 
-				#log.logDebug("num: %f +- %f" % (num, numError))
-				#log.logDebug("den: %f +- %f" % (den, denError))
+				#~ log.logDebug("num: %f +- %f" % (num, numError))
+				#~ log.logDebug("den: %f +- %f" % (den, denError))
+				
+				if not den == 0:
 
-				if (tempRatio != None):
-					ratio = Ratio(num, den, math.pow(numError, 2.0), math.pow(denError, 2.0), x, width)
-					tempRatio.addRatio(ratio)
-				else:
-					tempRatio = Ratio(num, den, math.pow(numError, 2.0), math.pow(denError, 2.0), x, width)
-					
-				#~ if (self.adaptiveBinning):
-					#~ print "test"
-					#~ if (tempRatio.isFullEnough()):
-						#~ print "test2"
+					if (tempRatio != None):
+						ratio = Ratio(num, den, math.pow(numError, 2.0), math.pow(denError, 2.0), x, width)
+						tempRatio.addRatio(ratio)
+					else:
+						tempRatio = Ratio(num, den, math.pow(numError, 2.0), math.pow(denError, 2.0), x, width)
+						#~ 
+					#~ if (self.adaptiveBinning):
+						#~ print "test"
+						#~ if (tempRatio.isFullEnough()):
+							#~ print "test2"
+							#~ ratios.append(tempRatio)
+							#~ tempratio = None
+					#~ else:
 						#~ ratios.append(tempRatio)
 						#~ tempratio = None
-				#~ else:
+					if (tempRatio.isFullEnough(self.adaptiveBinning)):
+						 
+						self.binMerging.append(iBin)
+						ratios.append(tempRatio)
+						tempRatio = None
+						
+					#~ self.binMerging.append(iBin)
 					#~ ratios.append(tempRatio)
-					#~ tempratio = None
-				if (tempRatio.isFullEnough(self.adaptiveBinning)):
-					 
-					self.binMerging.append(iBin)
-					ratios.append(tempRatio)
-					tempRatio = None
+					#~ tempRatio = None
 
 				
 				
@@ -343,7 +349,8 @@ class RatioGraph:
 			self.graph.SetLineWidth(2)
 			self.graph.Draw("SAMEhist")
 		else:
-			self.graph.Draw("SAMEpZ")
+			#~ self.graph.Draw("SAMEpZ")
+			self.graph.Draw("SAME pe0")
 
 		
 		

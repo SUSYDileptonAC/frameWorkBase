@@ -63,15 +63,6 @@ def setTDRStyle():
 	tdrStyle.SetPalette(NCont,array("i",palette));
 	tdrStyle.SetNumberContours(NCont);
 	
-	#~ NRGBs = 5
-	#~ NCont = 255
-	#~ stops = array("d",[0.00,0.34,0.61,0.84,1.00])
-	#~ red = array("d",[0.50,0.50,1.00,1.00,1.00])
-	#~ green = array("d",[0.50,1.00,1.00,0.60,0.50])
-	#~ blue = array("d",[1.00,1.00,0.50,0.40,0.50])
-	#~ ROOT.TColor.CreateGradientColorTable(NRGBs,stops,red,green,blue,NCont)
-	#~ tdrStyle.SetNumberContours(NCont);
-	
 	tdrStyle.SetEndErrorSize(2)
 	#  tdrStyle->SetErrorMarker(20);
 	tdrStyle.SetErrorX(0.)
@@ -108,7 +99,7 @@ def setTDRStyle():
 	# Margins:
 	tdrStyle.SetPadTopMargin(0.05)
 	tdrStyle.SetPadBottomMargin(0.14)
-	tdrStyle.SetPadLeftMargin(0.15)
+	tdrStyle.SetPadLeftMargin(0.16)
 	tdrStyle.SetPadRightMargin(0.05)
 	
 	# For the Global title:
@@ -132,7 +123,7 @@ def setTDRStyle():
 	# tdrStyle->SetTitleXSize(Float_t size = 0.02); # Another way to set the size?
 	# tdrStyle->SetTitleYSize(Float_t size = 0.02);
 	tdrStyle.SetTitleXOffset(0.95)
-	tdrStyle.SetTitleYOffset(1.1)
+	tdrStyle.SetTitleYOffset(1.3)
 	# tdrStyle->SetTitleOffset(1.1, "Y"); # Another way to set the Offset
 	
 	# For the axis labels:
