@@ -93,6 +93,7 @@ def getFilePathsAndSampleNames(path,source="",modifier = ""):
 	#~ for filePath in glob("%s/%sv*.root"%(path,versions.cmssw)):
 	for filePath in glob("%s/*.root"%(path)):
 		if source == "":
+			#~ print filePath
 			#~ sampleName = match(".*%sv.*\.processed.*\.(.*).root"%versions.cmssw, filePath).groups()[0]		
 			sampleName = match(".*\.processed.*\.(.*).root", filePath).groups()[0]		
 		else:
@@ -137,7 +138,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
                 result = TH1F(name, "", nBins, firstBin, lastBin)
         else:
                 result = TH1F(name, "", len(binning)-1, array("f",binning))
-                nBins = len(binning)
+                nBins = len(binning)-1
                 
                 
         result.Sumw2()
@@ -177,16 +178,10 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
                 #~ tree.Draw("%s"%(variable), weight, "goff", nEvents)
         
         
-        if binning == [] or binning == None:
-			la,laErr = result.GetBinContent(nBins  ),result.GetBinError(nBins  )
-			ov,ovErr = result.GetBinContent(nBins+1),result.GetBinError(nBins+1)
-			result.SetBinContent(nBins,la+ov)
-			result.SetBinError(nBins,sqrt(laErr**2+ovErr**2))
-        else:
-			la,laErr = result.GetBinContent(nBins-2  ),result.GetBinError(nBins-2)
-			ov,ovErr = result.GetBinContent(nBins-1),result.GetBinError(nBins)
-			result.SetBinContent(nBins-2,la+ov)
-			result.SetBinError(nBins-2,sqrt(laErr**2+ovErr**2))
+		la,laErr = result.GetBinContent(nBins  ),result.GetBinError(nBins  )
+		ov,ovErr = result.GetBinContent(nBins+1),result.GetBinError(nBins+1)
+		result.SetBinContent(nBins,la+ov)
+		result.SetBinError(nBins,sqrt(laErr**2+ovErr**2))
        
         if normalizeToBinWidth:
 			for i in range(0,nBins):
@@ -217,7 +212,7 @@ def create2DHistoFromTree(tree, variable, variable2, weight, nBins, firstBin, la
 	#but that would make this less readable
 	name = "%x"%(randint(0, maxint))
 	
-	if binning == []:
+	if binning == [] or binning == None:
 		result = TH2F(name, "", nBins, firstBin, lastBin, nBins2, firstBin2, lastBin2)
 	else:
 		result = TH2F(name, "", len(binning)-1, array("f",binning), len(binning2)-1, array("f",binning2))
@@ -295,16 +290,19 @@ class Process:
 					if self.additionalSelection == "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)":
 						smearDY = False
 
-					if "weightDown" in plot.cuts:
-						cut = plot.cuts.replace("weightDown*(","weightDown*(%s &&"%self.additionalSelection)            
-					elif "weightUp" in plot.cuts:
-						cut = plot.cuts.replace("weightUp*(","weightUp*(%s &&"%self.additionalSelection)                                                
-					else:
-						cut = plot.cuts.replace("weight*(","weight*(%s &&"%self.additionalSelection)            
+					#~ if "weightDown" in plot.cuts:
+						#~ cut = plot.cuts.replace("weightDown*(","weightDown*(%s &&"%self.additionalSelection)            
+					#~ elif "weightUp" in plot.cuts:
+						#~ cut = plot.cuts.replace("weightUp*(","weightUp*(%s &&"%self.additionalSelection)                                                
+					#~ else:
+						#~ cut = plot.cuts.replace("weight*(","weight*(%s &&"%self.additionalSelection)            
+					cut = plot.cuts.replace("chargeProduct < 0","chargeProduct < 0 && %s"%self.additionalSelection)            
                 else: 
 					cut = plot.cuts
 
                 weightNorm = 1./0.99
+                
+                #~ cut = plot.cuts.replace("weight*(", "(")
               
                 
                 cutsTrigger = cut.replace("chargeProduct < 0", "chargeProduct < 0 && triggerSummary > 0")
@@ -314,17 +312,18 @@ class Process:
                 else:					
 					cut = cut.replace("triggerSummary > 0 &&","")
 					
-                
+                #~ print cut
                 #~ cut = cut.replace("triggerSummary > 0 &&","")
                 
                 
                 for index, sample in enumerate(self.samples):
                         for name, tree in tree1.iteritems(): 
                                 if name == sample:
+									#~ print name
 									if doTopReweighting and "TT" in name:          
 											if TopWeightUp:
 													#~ tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*sqrt(exp(0.156-0.00137*genPtTop1)*exp(0.148-0.00129*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights,normalizeToBinWidth=normalizeToBinWidth)
-													tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.0615-0.0005*genPtTop1)*exp(0.0615-0.0005*genPtTop2))*sqrt(exp(0.0615-0.00005*genPtTop1)*exp(0.0615-0.00005*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights,normalizeToBinWidth=normalizeToBinWidth)
+													tempHist = createHistoFromTree(tree, plot.variable , "%f*sqrt(exp(0.0615-0.0005*genPtTop1)*exp(0.0615-0.0005*genPtTop2))*sqrt(exp(0.0615-0.0005*genPtTop1)*exp(0.0615-0.0005*genPtTop2))*"%weightNorm+cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights,normalizeToBinWidth=normalizeToBinWidth)
 											elif TopWeightDown:     
 													tempHist = createHistoFromTree(tree, plot.variable , cut , plot.nBins, plot.firstBin, plot.lastBin, nEvents,binning=plot.binning,doPUWeights=doPUWeights,normalizeToBinWidth=normalizeToBinWidth)
 											else:   
