@@ -237,6 +237,9 @@ def getResultsLegacy(shelve,signalRegion):
 	result["rEEOFErr"] = getattr(rEEOF,region).err
 	result["rMMOF"] = getattr(rMMOF,region).val
 	result["rMMOFErr"] = getattr(rMMOF,region).err
+	
+	result["onZPrediction"] = OnlyZPredictions.legacy.SF.central.val
+	result["onZPrediction_Err"] = OnlyZPredictions.legacy.SF.central.err
 		
 		
 	result["EdgeMassEE"] = shelve[signalRegion]["default"]["edgeMass"]["EE"]
@@ -270,14 +273,24 @@ def getResultsLegacy(shelve,signalRegion):
 	result["EdgeMassPredStatDownSF"] = result["EdgeMassPredSF"]  - yield_down*result["EdgeMassRSFOFCombined"]
 	result["EdgeMassPredSystErrSF"] = result["EdgeMassOF"]*result["EdgeMassRSFOFCombinedErr"]
 				
-	result["EdgeMassZPredSF"] = shelve["onZLegacy"]["edgeMass_SF"] - shelve["onZLegacy"]["edgeMass_OF"]
-	result["EdgeMassZPredSF_Up"] = shelve["onZLegacy"]["edgeMass_SF_Up"] - shelve["onZLegacy"]["edgeMass_OF_Up"]
-	result["EdgeMassZPredSF_Down"] = shelve["onZLegacy"]["edgeMass_SF_Down"] - shelve["onZLegacy"]["edgeMass_OF_Down"]
-	result["EdgeMassZPredErrSF"] = max(abs(result["EdgeMassZPredSF_Up"]-result["EdgeMassZPredSF"]),abs(result["EdgeMassZPredSF_Down"]-result["EdgeMassZPredSF"]))
+	#~ result["EdgeMassZPredSF"] = shelve["onZLegacy"]["edgeMass_SF"] - shelve["onZLegacy"]["edgeMass_OF"]
+	#~ result["EdgeMassZPredSF_Up"] = shelve["onZLegacy"]["edgeMass_SF_Up"] - shelve["onZLegacy"]["edgeMass_OF_Up"]
+	#~ result["EdgeMassZPredSF_Down"] = shelve["onZLegacy"]["edgeMass_SF_Down"] - shelve["onZLegacy"]["edgeMass_OF_Down"]
+	#~ result["EdgeMassZPredErrSF"] = max(abs(result["EdgeMassZPredSF_Up"]-result["EdgeMassZPredSF"]),abs(result["EdgeMassZPredSF_Down"]-result["EdgeMassZPredSF"]))
+	
+	result["EdgeMassZPredSF"] = result["onZPrediction"]*rOutIn.edgeMass.central.val
+	result["EdgeMassZPredErrSF"] = ((result["onZPrediction"]*rOutIn.edgeMass.central.err)**2 + (result["onZPrediction_Err"] * rOutIn.edgeMass.central.val)**2 )**0.5
+			
+	result["EdgeMassRarePredSF"] = shelve["Rares8TeVLegacy"]["edgeMass_SF"] - shelve["Rares8TeVLegacy"]["edgeMass_OF"]
+	result["EdgeMassRarePredSF_Up"] = shelve["Rares8TeVLegacy"]["edgeMass_SF_Up"] - shelve["Rares8TeVLegacy"]["edgeMass_OF_Up"]
+	result["EdgeMassRarePredSF_Down"] = shelve["Rares8TeVLegacy"]["edgeMass_SF_Down"] - shelve["Rares8TeVLegacy"]["edgeMass_OF_Down"]
+	result["EdgeMassRarePredErrSF"] = max(abs(result["EdgeMassRarePredSF_Up"]-result["EdgeMassRarePredSF"]),abs(result["EdgeMassRarePredSF_Down"]-result["EdgeMassRarePredSF"]))
+		
 						
-	result["EdgeMassTotalPredSF"] = result["EdgeMassPredSF"] + result["EdgeMassZPredSF"]
-	result["EdgeMassTotalPredErrUpSF"] = ( result["EdgeMassPredStatUpSF"]**2 +  result["EdgeMassPredSystErrSF"]**2 + result["EdgeMassZPredErrSF"]**2 )**0.5
-	result["EdgeMassTotalPredErrDownSF"] = ( result["EdgeMassPredStatDownSF"]**2 +  result["EdgeMassPredSystErrSF"]**2 + result["EdgeMassZPredErrSF"]**2 )**0.5
+	result["EdgeMassTotalPredSF"] = result["EdgeMassPredSF"] + result["EdgeMassZPredSF"] + result["EdgeMassRarePredSF"]
+	result["EdgeMassTotalPredErrUpSF"] = ( result["EdgeMassPredStatUpSF"]**2 +  result["EdgeMassPredSystErrSF"]**2 + result["EdgeMassZPredErrSF"]**2  + result["EdgeMassRarePredErrSF"]**2 )**0.5
+	result["EdgeMassTotalPredErrDownSF"] = ( result["EdgeMassPredStatDownSF"]**2 +  result["EdgeMassPredSystErrSF"]**2 + result["EdgeMassZPredErrSF"]**2  + result["EdgeMassRarePredErrSF"]**2 )**0.5
+				
 	
 	return result
 
@@ -764,13 +777,12 @@ mass range [GeV] & OF events & pred. fact. method & R$_{SF/OF}$ fact. method & c
 	
 def main():
 	
-	OnZPickle = loadPickles("/disk1/user/schomakers/SignalRegionOptimationStudies/shelvesMT2/OnZBG_36fb.pkl")
-	OnZPickleICHEP = loadPickles("/disk1/user/schomakers/SignalRegionOptimationStudies/shelves/OnZBG_ICHEP_36fb.pkl")
-	OnZPickleLegacy = loadPickles("/disk1/user/schomakers/SignalRegionOptimationStudies/shelves/OnZBG_legacy_36fb.pkl")
-	RaresPickle = loadPickles("/disk1/user/schomakers/SignalRegionOptimationStudies/shelvesMT2/RareOnZ_Powheg.pkl")
+	OnZPickleICHEP = loadPickles("shelves/OnZBG_ICHEPLegacy_36fb.pkl")
+	RaresPickle8TeVLegacy = loadPickles("shelves/RareOnZBG_8TeVLegacy_36fb.pkl")
+	RaresPickle = loadPickles("shelves/RareOnZBG_8TeVLegacy_36fb.pkl")
 	
 	name = "cutAndCount"
-	countingShelves= {"NLL":readPickle("cutAndCountNLL",regionsToUse.signal.inclusive.name , runRanges.name),"legacy": readPickle("cutAndCount",regionsToUse.signal.legacy.name,runRanges.name),"Rares":RaresPickle,"onZ":OnZPickle,"onZICHEP":OnZPickleICHEP,"onZLegacy":OnZPickleLegacy}	
+	countingShelves= {"NLL":readPickle("cutAndCountNLL",regionsToUse.signal.inclusive.name , runRanges.name),"legacy": readPickle("cutAndCount",regionsToUse.signal.legacy.name,runRanges.name),"Rares":RaresPickle,"onZICHEP":OnZPickleICHEP,"Rares8TeVLegacy":RaresPickle8TeVLegacy}	
 		
 	
 	produceFlavSymTable(countingShelves)
