@@ -185,16 +185,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
         result.SetBinContent(nBins,la+ov)
         result.SetBinError(nBins,sqrt(laErr**2+ovErr**2))
         
-        if binning == [] or binning == None:
-			la,laErr = result.GetBinContent(nBins  ),result.GetBinError(nBins  )
-			ov,ovErr = result.GetBinContent(nBins+1),result.GetBinError(nBins+1)
-			result.SetBinContent(nBins,la+ov)
-			result.SetBinError(nBins,sqrt(laErr**2+ovErr**2))
-        else:
-			la,laErr = result.GetBinContent(nBins-2  ),result.GetBinError(nBins-2)
-			ov,ovErr = result.GetBinContent(nBins-1),result.GetBinError(nBins)
-			result.SetBinContent(nBins-2,la+ov)
-			result.SetBinError(nBins-2,sqrt(laErr**2+ovErr**2))
+        
        
         if normalizeToBinWidth:
                 for i in range(0,nBins):
@@ -391,8 +382,8 @@ class Process:
                                         if self.additionalSelection == "(abs(motherPdgId1) != 15 || abs(motherPdgId2) != 15)":
                                                 smearDY = False
 
-					          
-					cut = plot.cuts.replace("chargeProduct < 0","chargeProduct < 0 && %s"%self.additionalSelection)            
+                                                  
+                                        cut = plot.cuts.replace("chargeProduct < 0","chargeProduct < 0 && %s"%self.additionalSelection)            
                 else: 
                                         cut = plot.cuts
 
@@ -561,7 +552,7 @@ class TheStack:
                                         for i in range(1, temphist.GetNbinsX()+1):
                                                 counts[process.label][i] = temphist.GetBinContent(i)
                         
-				
+                                
                         self.theStack.Add(temphist.Clone())
                         self.theHistogram.Add(temphist.Clone())
                         temphist2 = temphist.Clone()
