@@ -1,3 +1,5 @@
+from baseClasses import maplike
+
 class OtherPredictions:
         class MT2:
                 class SF:
@@ -193,13 +195,19 @@ class mllBinsOld:
                 high = 1000
                 
 class regionsToUse:
-        class triggerEfficiencies:
+        class triggerEfficiencies: # deprecated
                 class central: 
                         name = "HighHTExclusiveCentral"
                 class forward: 
                         name = "HighHTExclusiveForward"
                 class inclusive: 
                         name = "HighHTExclusive"
+                class met:
+                        name = "HighMETExclusive"
+                class metForward:
+                        name = "HighMETExclusiveForward"
+                class metCentral:
+                        name = "HighMETExclusiveCentral"
         class rMuE:
                 class central: 
                         name = "ZPeakControlCentral"
@@ -235,6 +243,29 @@ class regionsToUse:
                 class MoriondHighNLL: 
                         name = "SignalHighNLLHighMT2DeltaPhiJetMet"
 
+class triggerRegionNamesLists(maplike):
+        class for2016(maplike):
+                class inclusive:
+                        name = "HighHTExclusive"
+                class forward:
+                        name = "HighHTExclusive"
+                class central:
+                        name = "HighHTExclusive"
+        class for2017(maplike):
+                class inclusive:
+                        name = "HighMETExclusive"
+                class forward:
+                        name = "HighMETExclusive"
+                class central:
+                        name = "HighMETExclusive"
+        class for2018(maplike):
+                class inclusive:
+                        name = "HighMETExclusive"
+                class forward:
+                        name = "HighMETExclusive"
+                class central:
+                        name = "HighMETExclusive"
+
 class runRanges:
         name = "Run2016_36fb"
 
@@ -242,7 +273,8 @@ class backgroundLists:
         default = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
         #~ default = ["OtherSM","SingleTop","DrellYanTauTau","RareOnZ","TT_Powheg","ZJets","DrellYanNonResonant"]
         #~ default = ["TT_Powheg","DrellYan"]
-        trigger = ["TT_Powheg","DrellYan"]
+        #trigger = ["TT_Powheg","DrellYan"]
+        trigger = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
         iso = ["TT_Powheg","DrellYan"]
         #~ rSFOF = ["TT_Powheg"]
         rSFOF = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
@@ -258,12 +290,12 @@ class plotLists:
         trigger = ["trailingPtPlotTrigger","leadingPtPlotTrigger"]
         iso = ["leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","nVtxPlotTrigger"]
         #~ rSFOF = ["mllPlotRSFOF","metPlotRSFOF","nJetsPlotRSFOF","nBJetsPlotRSFOF","htPlotRSFOF","trailingPtPlotRSFOF","leadingPtPlotRSFOF","mt2PlotRSFOF","ptllPlotRSFOF","deltaPhiPlotRSFOF","sumMlbPlotRSFOF","nLLPlotRSFOF","nVtxPlotRSFOF"]
-        #~ rSFOF = ["mllPlotRSFOF","metPlotRSFOF","nJetsPlotRSFOF","nBJetsPlotRSFOF","htPlotRSFOF","trailingPtPlotRSFOF","leadingPtPlotRSFOF","mt2PlotRSFOF","ptllPlotRSFOF","deltaPhiPlotRSFOF","sumMlbPlotRSFOF","nVtxPlotRSFOF"]
-        rSFOF = ["trailingPtPlotRSFOF","leadingPtPlotRSFOF"]
+        rSFOF = ["mllPlotRSFOF","metPlotRSFOF","nJetsPlotRSFOF","nBJetsPlotRSFOF","htPlotRSFOF","trailingPtPlotRSFOF","leadingPtPlotRSFOF","mt2PlotRSFOF","ptllPlotRSFOF","deltaPhiPlotRSFOF","sumMlbPlotRSFOF","nVtxPlotRSFOF"]
+        #rSFOF = ["trailingPtPlotRSFOF","leadingPtPlotRSFOF"]
         signal = ["mllPlotROutIn"]
-        #~ rMuE = ["mllPlotRMuE","leadingPtPlotRMuE","nJetsPlotRMuE","mt2PlotRMuE","metPlotRMuE","nVtxPlotRMuE","nBJetsPlotRMuE","leadingEtaPlotRMuE","trailingPtPlotRMuE","htPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
-        #~ rMuE = ["mllPlotRMuE"]
-        rMuE = ["leadingPtPlotRMuE","trailingPtPlotRMuE"]
+        #rMuE = ["mllPlotRMuE","leadingPtPlotRMuE","nJetsPlotRMuE","mt2PlotRMuE","metPlotRMuE","nVtxPlotRMuE","nBJetsPlotRMuE","leadingEtaPlotRMuE","trailingPtPlotRMuE","htPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
+        rMuE = ["nVtxPlotRMuE",]
+        #rMuE = ["leadingPtPlotRMuE","trailingPtPlotRMuE"]
         #~ rMuE = ["trailingPtPlotRMuE"]
         rOutIn =  ["metPlotROutIn","nJetsPlotROutIn","mt2PlotROutIn"]
         fake =  ["trailingPtPlot100","tralingEtaPlot","metPlot","htPlot",]
@@ -278,5 +310,5 @@ class cutNCountXChecks:
 
 class versions:
         cmssw = "sw8026"
-        cuts = "cutsV34"
-        masterListForMC = ["Master80X_MC_Summer16.ini", "Master94X_MC.ini"]
+        cuts = "cutsV34" 
+        masterListForMC = ["Master80X_MC_Summer16.ini", "Master94X_2016_MC.ini", "Master94X_2017_MC.ini", "Master102X_2018_MC.ini"]

@@ -1,38 +1,53 @@
-class LOCATIONS2016:
+from baseClasses import maplike
+
+class locations2016:
         
-        dataSetPath = "/net/data_cms1b/user/teroerde/trees/sw8026v3014/"  
-        dataSetPathSignal = "/net/data_cms1b/user/teroerde/trees/sw8026v3014_Signal"
-        dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw8026v3014_NLL"
-        dataSetPathSignalNLL = "/net/data_cms1b/user/teroerde/trees/sw8026v3014_Signal_NLL/"
+        #dataSetPath = "/net/data_cms1b/user/teroerde/trees/sw8026v3015/"  
+        dataSetPath = "/net/data_cms1b/user/teroerde/trees/sw2016v1007/"  
+        dataSetPathSignal = "/net/data_cms1b/user/teroerde/trees/sw8026v3016_Signal/"
+        dataSetPathSignalDenominator = "/net/data_cms1b/user/teroerde/trees/sw8026v3015_Signal_counts/T6bbllsleptonDenominatorHisto.root"
+        #dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw8026v3015_NLL/"
+        #dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw8026v3015_NLL2/"
+        dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw2016v1007_NLL/"
+        dataSetPathSignalNLL = "/net/data_cms1b/user/teroerde/trees/sw8026v3016_Signal_NLL/"
 
-        dataSetPathMC = "/net/data_cms1b/user/teroerde/trees/sw8026v3014/"
-        triggerDataSetPath = "/net/data_cms1b/user/teroerde/trees/HTTrees_80X/"
+        #dataSetPathMC = "/net/data_cms1b/user/teroerde/trees/sw8026v3015/"
+        dataSetPathMC = "/net/data_cms1b/user/teroerde/trees/sw2016v1007/" 
+        triggerDataSetPath = "/net/data_cms1b/user/teroerde/trees/sw8026v3015_HT/"
 
-class LOCATIONS2017: 
-        dataSetPath = "/net/data_cms1b/user/teroerde/trees/sw9409v1004/"   
+class locations2017: 
+        dataSetPath = "/net/data_cms1b/user/teroerde/trees/sw2017v1008/"   
         dataSetPathSignal = "/net/data_cms1b/user/teroerde/trees/sw9409v1003_Signal"
-        dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw9409v1003_NLL"
+        #dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw2017v1005_NLL"
+        dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw2017v1008_NLL/"
         dataSetPathSignalNLL = "/net/data_cms1b/user/teroerde/trees/sw9409v1003_Signal_NLL/"
 
-        dataSetPathMC = "/net/data_cms1b/user/teroerde/trees/sw9409v1004/"
-        triggerDataSetPath = "/net/data_cms1b/user/teroerde/trees/sw9409v1004_HT/"
+        dataSetPathMC = "/net/data_cms1b/user/teroerde/trees/sw2017v1008/"
+        triggerDataSetPath = "/net/data_cms1b/user/teroerde/trees/sw2017v1005_MET/"
+
+
+class locations2018: 
+        dataSetPath = "/net/data_cms1b/user/teroerde/trees/sw2018v1001/"   
+        #dataSetPathSignal = "/net/data_cms1b/user/teroerde/trees/sw9409v1003_Signal"
+        #dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw2018v1001_NLL/"
+        dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw2018v1001_NLL2/"
+        #dataSetPathSignalNLL = "/net/data_cms1b/user/teroerde/trees/sw9409v1003_Signal_NLL/"
+
+        dataSetPathMC = "/net/data_cms1b/user/teroerde/trees/sw2018v1001/"
+        triggerDataSetPath = "/net/data_cms1b/user/teroerde/trees/sw2018v1001_MET/"
 
 
 
-class LOCATIONS:
+class allLocations(maplike):
         masterListPath = "/home/home4/institut_1b/teroerde/Doktorand/SUSYFramework/SubmitScripts/Input"
 
-        def __getitem__(self, key):
-                return getattr(self, "for"+key)
-
-
-locations = LOCATIONS()
-
-setattr(locations, "for2017", LOCATIONS2017)
-setattr(locations, "for2016", LOCATIONS2016)
+locations = allLocations
+locations["2016"] = locations2016
+locations["2017"] = locations2017
+locations["2018"] = locations2018
 
 # temporary ########################################
-for key,entry in LOCATIONS2016.__dict__.iteritems():
+for key,entry in locations2016.__dict__.iteritems():
         if not "__" in key:
                 setattr(locations, key, entry)
 ####################################################
