@@ -35,6 +35,50 @@ def loadPickles(path):
                         result.update(pickle.load(pklFile))
         return result
 
+def getTriggerScaleFactor(dilepton, direction, runRange):
+        from centralConfig import triggerRegionNamesLists
+        year = runRange.era
+        regionNamer = triggerRegionNamesLists[year]
+        
+        dilept = dilepton
+        if dilept == "EM":
+                dilept = "EMu"
+        elif dilept == "MM":
+                dilept = "MuMu"
+                
+        if "central" in direction.lower():
+                direct = "central"
+        elif "forward" in direction.lower():
+                direct = "forward"
+        else:
+                direct = "inclusive"
+        regionName = regionNamer[direct].name
+        
+        import os
+        # __file__ should point to the location of THIS file
+        # could also read from corrections table, but that might not be up to date...
+        fileDA = os.path.join(os.path.dirname(__file__), "shelves/triggerEff_%s_PFHT_%s.pkl"%(regionName,runRange.label))
+        fileMC = os.path.join(os.path.dirname(__file__), "shelves/triggerEff_%s_PFHT_%s_MC.pkl"%(regionName,runRange.label))
+        if os.path.isfile(fileDA) and os.path.isfile(fileMC):
+                triggerEffDA = loadPickles( fileDA )[runRange.label][dilept]["Efficiency"]
+                triggerEffMC = loadPickles( fileMC )[runRange.label][dilept]["Efficiency"]
+                if triggerEffMC != 0:
+                        sf = triggerEffDA/triggerEffMC
+                        # could implement SF uncertainty here
+                        err = 0.0
+                        return sf, err
+                else:
+                        # It should not get to this, so it would be a red flag...
+                        print "Trigger SF: MC trigger efficiency is 0?!, not scaling"
+                        return 1.0,0.0
+        else:
+                print "Trigger SF:  Trigger efficiency measurements missing! Using scale factor 1"
+                return 1.0,0.0
+        
+        
+        #getattr(corrections[year].triggerEffs, "eff%s"%(dilept)).val/getattr(corrections[year].triggerEffs, "eff%s"%(dilept)).valMC
+
+
 def readTreeFromFile(path, dileptonCombination, modifier = "",versionNr="cutsV34"):
         """
         helper functionfrom argparse import ArgumentParser
@@ -129,7 +173,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
                 result = TH1F(name, "", nBins, firstBin, lastBin)
         else:
                 result = TH1F(name, "", len(binning)-1, array("f",binning))
-                nBins = len(binning)-1
+        nBins = result.GetNbinsX()
                 
                 
         result.Sumw2()
@@ -141,6 +185,7 @@ def createHistoFromTree(tree, variable, weight, nBins, firstBin, lastBin, nEvent
                 ov,ovErr = result.GetBinContent(nBins+1),result.GetBinError(nBins+1)
                 result.SetBinContent(nBins,la+ov)
                 result.SetBinError(nBins,sqrt(laErr**2+ovErr**2))
+                result.SetBinContent(nBins+1, 0)
 
        
         if normalizeToBinWidth:

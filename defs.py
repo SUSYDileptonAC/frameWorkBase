@@ -3,7 +3,7 @@ import ROOT
 from ROOT import TMath
 import sys
 import copy
-from corrections import triggerEffs
+from corrections import corrections
 from baseClasses import maplike
 
 class runRanges:
@@ -41,7 +41,7 @@ class runRanges:
                 runCut = "&& ( (runNr >= 271036 && runNr <= 284044) || runNr ==1)"
                 label = "Run2016_36fb"
                 era = "2016"
-                weight = None #"prefireWeight"
+                weight = "prefireWeight"
                 
         class Run2016_140fb:
                 lumi = 140000.
@@ -97,6 +97,15 @@ class runRanges:
                 era = "2018"
                 weight = None
         
+        class Run2016_to_2018:
+                lumi = 59740.+41529.+35867.
+                printval = "35.9+41.5+59.7+"
+                lumiErr = 0.025*59740.
+                runCut = "" # 
+                label = "Combined"
+                era = "combined"
+                weight = None
+        
                 
 class Region:
         ### normal trees ## && metFilterSummary > 0 
@@ -104,8 +113,8 @@ class Region:
         ### trees with likelihood &&   met / caloMet < 5 && nBadMuonJets == 0 &&
         
         # && triggerSummary > 0 && metFilterSummary > 0 
-        #cut = "triggerSummary > 0 && metFilterSummary > 0  && pt > 25 && chargeProduct < 0 && (pt1 > 25 || pt2 > 25) && mll > 20 && deltaR > 0.1"
-        cut = "pt > 25 && chargeProduct < 0 && (pt1 > 25 || pt2 > 25) && mll > 20 && deltaR > 0.1"
+        #cut = "triggerSummary > 0  && pt > 25 && chargeProduct < 0 && (pt1 > 25 || pt2 > 25) && mll > 20 && deltaR > 0.1"
+        cut = "pt > 25 && chargeProduct < 0 && (pt1 > 25 || pt2 > 25) && mll > 20 && deltaR > 0.1 && metFilterSummary > 0"
         #cut = "p4.Pt() > 25 && chargeProduct < 0 && (pt1 > 25 || pt2 > 25) && mll > 20 && deltaR > 0.1"
         cutNLL = "met / caloMet < 5 && nBadMuonJets == 0 && pt > 25 && chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25))  && abs(eta1)<2.4  && abs(eta2) < 2.4 && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && mll > 20 && deltaR > 0.1"
         cutToUse = "genWeight*weight*(chargeProduct < 0 && ((pt1 > 25 && pt2 > 20) || (pt1 > 20 && pt2 > 25)) && ((abs(eta1) < 1.4 || abs(eta1) > 1.6) && (abs(eta2) < 1.4 || abs(eta2) > 1.6)) && abs(eta1)<2.4  && abs(eta2) < 2.4 && p4.M() > 20 && deltaR > 0.1)"
@@ -118,7 +127,7 @@ class Region:
         labelSubRegion = ""
         dyPrediction = {}
         logY = True
-        trigEffs = triggerEffs.inclusive
+        trigEffs = "corrections[runRange.era].triggerEffs.inclusive" # can be eval()'d
         
 class allCuts:
         class genMatchCuts:
@@ -703,6 +712,38 @@ class theVariables:
                 nBins = 30
                 labelX = "p_{T}^{trailing} [GeV]"
                 labelY = "Events / 5 GeV"      
+        class PositiveLeptonPt:
+                variable = "(charge1>0)*pt1+(charge2>0)*pt2"
+                name = "PositiveLeptonPt"
+                xMin = 0
+                xMax = 150
+                nBins = 30
+                labelX = "p_{T}^{l^{+}} [GeV]"
+                labelY = "Events / 5 GeV"      
+        class NegativeLeptonPt:
+                variable = "(charge1<0)*pt1+(charge2<0)*pt2"
+                name = "NegativeLeptonPt"
+                xMin = 0
+                xMax = 150
+                nBins = 30
+                labelX = "p_{T}^{l^{-}} [GeV]"
+                labelY = "Events / 5 GeV"      
+        class PositiveLeptonEta:
+                variable = "(charge1>0)*eta1+(charge2>0)*eta2"
+                name = "PositiveLeptonEta"
+                xMin = -2.4
+                xMax = 2.4
+                nBins = 30
+                labelX = "#eta^{l^{+}} "
+                labelY = "Events / 0.16"      
+        class NegativeLeptonEta:
+                variable = "(charge1<0)*eta1+(charge2<0)*eta2"
+                name = "NegativeLeptonEta"
+                xMin = -2.4
+                xMax = 2.4
+                nBins = 30
+                labelX = "#eta^{l^{-}}"
+                labelY = "Events / 0.16"      
         class Met:
                 variable = "met"
                 name = "MET"
@@ -775,15 +816,7 @@ class theVariables:
                 xMax = 1000
                 nBins = 25
                 labelX = "H_{T,gen} [GeV]"
-                labelY = "Events / 40 GeV"        
-        class DiffGenHT:
-                variable = "ht - genHT"
-                name = "DiffGenHT"
-                xMin = -200
-                xMax = 200
-                nBins = 40
-                labelX = "H_{T} - H_{T,gen} [GeV]"
-                labelY = "Events / 10 GeV"     
+                labelY = "Events / 40 GeV"           
         class ST:
                 variable = "ht+lepton1.Pt()+lepton2.Pt()"
                 name = "ST"
@@ -801,6 +834,15 @@ class theVariables:
                 nBins = 96
                 labelX = "m_{ll} [GeV]" 
                 labelY = "Events / 5 GeV"       
+        class MllZCand:
+                #variable = "p4.M()"
+                variable = "mll" # In case of trees with likelihood
+                name = "Mll"
+                xMin = 20
+                xMax = 200
+                nBins = 18
+                labelX = "m_{ll}^{Z cand} [GeV]" 
+                labelY = "Events / 10 GeV"       
                 #~ labelY = "Events / GeV"      # For plots normalized to bin width
                 #~ labelY = "Events / Bin"      
                 #~ labelY = "Fraction"       
@@ -868,22 +910,6 @@ class theVariables:
                 nBins = 20
                 labelX = "#Delta R_{ll}"
                 labelY = "Events / 0.2" 
-        class deltaPhiLep1Met:
-                variable = "abs((lepton1.Phi()-vMet.Phi()) - ((lepton1.Phi()-vMet.Phi()) > TMath::Pi())*2*TMath::Pi() + ((lepton1.Phi()-vMet.Phi()) < -TMath::Pi())*2*TMath::Pi())"
-                name = "DeltaPhi"
-                xMin = 0
-                xMax = 3.2
-                nBins = 32
-                labelX = "#Delta #phi_{l_{1}, p_{T}^{miss}}"
-                labelY = "Events / 0.1" 
-        class deltaPhiLep2Met:
-                variable = "abs((lepton2.Phi()-vMet.Phi()) - ((lepton2.Phi()-vMet.Phi()) > TMath::Pi())*2*TMath::Pi() + ((lepton2.Phi()-vMet.Phi()) < -TMath::Pi())*2*TMath::Pi())"
-                name = "DeltaPhi"
-                xMin = 0
-                xMax = 3.2
-                nBins = 32
-                labelX = "#Delta #phi_{l_{1}, p_{T}^{miss}}"
-                labelY = "Events / 0.1" 
         class deltaPhi:
                 variable = "abs(deltaPhi)"
                 name = "DeltaPhi"
@@ -1400,7 +1426,7 @@ class Regions:
                 latex = "Forward Signal Region"
                 name = "SignalForward"
                 logY = False
-                trigEffs = triggerEffs.forward  
+                #trigEffs = triggerEffs.forward  
                         
         class SignalForwardOld(Region):
                 cut = "((nJets >= 2 && met > 150) || (nJets>=3 && met > 100)) &&  1.6 <= TMath::Max(abs(eta1),abs(eta2)) && (%s)"%Region.cut
@@ -1410,7 +1436,7 @@ class Regions:
                 latex = "Forward Signal Region"
                 name = "SignalForward"
                 logY = False
-                trigEffs = triggerEffs.forward          
+                #trigEffs = triggerEffs.forward          
 
                         
         class SignalOneForward(Region):
@@ -1421,7 +1447,7 @@ class Regions:
                 latex = "One Forward Signal Region"
                 name = "SignalOneForward"
                 logY = False
-                trigEffs = triggerEffs.forward
+                #trigEffs = triggerEffs.forward
 
         class SignalCentral(Region):
                 cut = "(nJets >= 2 && met > 150) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
@@ -1430,7 +1456,7 @@ class Regions:
                 titel = "Central SR"
                 latex = "Central Signal Region"
                 name = "SignalCentral"
-                trigEffs = triggerEffs.central
+                #trigEffs = triggerEffs.central
                 logY = False
 
         class SignalCentralOld(Region):
@@ -1440,7 +1466,7 @@ class Regions:
                 titel = "Central SR"
                 latex = "Central Signal Region"
                 name = "SignalCentral"
-                trigEffs = triggerEffs.central
+                #trigEffs = triggerEffs.central
                 logY = False
         
         class SignalHighMT2(Region):
@@ -1517,7 +1543,7 @@ class Regions:
                 latex = "Control Region Forward"
                 name = "ControlForward"
                 logY = True
-                trigEffs = triggerEffs.forward
+                #trigEffs = triggerEffs.forward
         class ControlCentral(Region):
                 cut = "nJets == 2  && 100 < met && met < 150 && (mll < 70 || mll > 110) && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
                 labelRegion = Region.labelRegion
@@ -1526,7 +1552,7 @@ class Regions:
                 latex = "Control Region Central"
                 name = "ControlCentral"
                 logY = True
-                trigEffs = triggerEffs.central      
+                #trigEffs = triggerEffs.central      
 
         class ControlLowMT2(Region):
                 cut = "nJets == 2  && 100 < met && met < 150 && (mll < 70 || mll > 110) && MT2 < 80 && (%s)"%Region.cut
@@ -1562,7 +1588,7 @@ class Regions:
                 latex = "Control Region Forward"
                 name = "ControlForward"
                 logY = True
-                trigEffs = triggerEffs.forward
+                #trigEffs = triggerEffs.forward
         class ControlCentralOld(Region):
                 cut = "nJets == 2  && 100 < met && met < 150 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && (%s)"%Region.cut
                 labelRegion = Region.labelRegion
@@ -1571,8 +1597,36 @@ class Regions:
                 latex = "Control Region Central"
                 name = "ControlCentral"
                 logY = True
-                trigEffs = triggerEffs.central              
-                        
+                #trigEffs = triggerEffs.central              
+        
+        class ControlScaleWZTo3LNu(Region):
+                cut = "nJets >= 2 && nLightLeptons == 3 && nBJets == 0 && met > 60 && (%s)"%Region.cut
+                labelRegion = Region.labelRegion
+                labelSubRegion = "Control Region Central"               
+                titel = "CR"
+                latex = "ControlWZTo3LNu"
+                name = "ControlWZTo3LNu"
+                logY = False
+        
+        class ControlScaleTTZToLL(Region):
+                cut = "nJets >= 2 && nLightLeptons == 3 && nBJets >= 2 && met > 30 && (%s)"%Region.cut
+                labelRegion = Region.labelRegion
+                labelSubRegion = "Control Region Central"               
+                titel = "CR"
+                latex = "ControlScaleTTZToLL"
+                name = "ControlScaleTTZToLL"
+                logY = False
+        
+        class ControlScaleZZTo4L(Region):
+                cut = "nJets >= 2 && nLightLeptons == 4 && nBJets == 0 && (%s)"%Region.cut
+                labelRegion = Region.labelRegion
+                labelSubRegion = "Control Region Central"               
+                titel = "CR"
+                latex = "ControlScaleZZTo4L"
+                name = "ControlScaleZZTo4L"
+                logY = False
+        
+        
         class bTagControl(Region):
                 #~ cut = "nJets >=2 && met > 50 && nBJets >=1 && (%s)"%Region.cut
                 cut = "nJets >=2 && met > 50 && nBJets >=1 && (%s)"%Region.cut
@@ -1696,7 +1750,7 @@ class Regions:
                 logY = True
         
         class DrellYanControl(Region):
-                cut = "nJets >= 2 && met < 50 &&(%s)"%Region.cut
+                cut = "nJets >= 2 && met < 50 && MT2 > 80 &&(%s)"%Region.cut
                 #~ cut = "nJets >= 2 && met < 50 && MT2 > 80 &&(%s)"%Region.cut
                 labelRegion = Region.labelRegion
                 labelSubRegion = "Drell-Yan control region"                     
@@ -1705,7 +1759,7 @@ class Regions:
                 name = "DrellYanControl"
                 logY = True
         class DrellYanControlCentral(Region):
-                cut = "nJets >= 2 && met < 50 && abs(eta1) < 1.4 && abs(eta2) < 1.4  && MT2 > 80 &&(%s)"%Region.cut
+                cut = "nJets >= 2 && met < 50 && abs(eta1) < 1.4 && abs(eta2) < 1.4 && MT2 > 80 && (%s)"%Region.cut
                 labelRegion = Region.labelRegion
                 labelSubRegion = "Drell-Yan control region"                     
                 titel = "Drell-Yan control region central"
@@ -1713,7 +1767,7 @@ class Regions:
                 name = "DrellYanControlCentral"
                 logY = True
         class DrellYanControlForward(Region):
-                cut = "nJets >= 2 && met < 50 && 1.4 <= TMath::Max(abs(eta1),abs(eta2))  && MT2 > 80 &&(%s)"%Region.cut
+                cut = "nJets >= 2 && met < 50 && 1.4 <= TMath::Max(abs(eta1),abs(eta2)) && MT2 > 80 &&(%s)"%Region.cut
                 labelRegion = Region.labelRegion
                 labelSubRegion = "Drell-Yan control region"                     
                 titel = "Drell-Yan control region forward"
@@ -2122,8 +2176,6 @@ class thePlots:
         mllPlot5GeV = Plot(theVariables.Mll,[], binning=[56,20,300,"Events / 5 GeV", []])
         
         
-        deltaPhiLep1MetPlotC = Plot(theVariables.deltaPhiLep1Met,[])
-        deltaPhiLep2MetPlotC = Plot(theVariables.deltaPhiLep2Met,[])
         metPlotC = Plot(theVariables.Met,[], binning=[15,150,900,"Events / 50 GeV",[]])
         nJetsPlotC = Plot(theVariables.nJets,[], binning=[6,3,8,"Events",[]])
         htPlotC = Plot(theVariables.HT,[], binning=[15,100,1600,"Events / 100 GeV",[]])
@@ -2330,6 +2382,10 @@ class thePlots:
         leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[46,20,250,"Events / 5 GeV",[]])
         #~ trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[38,10,200,"Events / 5 GeV",[]])
         trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[-1,10,200,"Events / 5 GeV",range(20,100,5)+range(100,160,10)+range(160,220,20)])
+        positivePtPlotRMuE= Plot(theVariables.PositiveLeptonPt,[],binning=[-1,10,200,"Events / 5 GeV",[20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,110,120,130,140,150,160,180,200]])
+        negativePtPlotRMuE= Plot(theVariables.NegativeLeptonPt,[],binning=[-1,10,200,"Events / 5 GeV",[20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,110,120,130,140,150,160,180,200]])
+        positiveEtaPlotRMuE= Plot(theVariables.PositiveLeptonEta,[])
+        negativeEtaPlotRMuE= Plot(theVariables.NegativeLeptonEta,[])
         #~ leadingPtPlotRMuE= Plot(theVariables.LeadingPt,[],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "PU4BX50")
         #~ trailingPtPlotRMuE= Plot(theVariables.TrailingPt,[],binning=[18,10,100,"Events / 5 GeV",[]],additionalName = "PU4BX50")
         trailingPtPlotRMuELeading30 = Plot(theVariables.TrailingPt,[theCuts.ptCuts.leadingPt30],binning=[16,20,100,"Events / 5 GeV",[]],additionalName = "leadingPt30")
@@ -2384,12 +2440,19 @@ class thePlots:
         nLLPlotRSFOF = Plot(theVariables.nLL,[],binning=[-1,12,31,"Events / 10 GeV",range(12,21,1)+range(21,23,2)+range(23,26,3)+range(26,36,5)])
         
                                         
-                                
-        mllPlotROutIn = Plot(theVariables.Mll,[],binning=[2000,0,2000,"Events / 5 GeV",[]])                             
+        # plots for rOutIn measurement
+        #mllPlotROutIn = Plot(theVariables.Mll,[],binning=[2000,0,2000,"Events / 5 GeV",[]])                             
+        mllPlotROutIn = Plot(theVariables.Mll,[],binning=[2000,0,2000,"Events / Bin",range(20,85,5)+range(86, 97, 5)+range(100,2001,5)])                             
         metPlotROutIn = Plot(theVariables.Met,[],binning=[-1,0,100,"Events / 1 GeV",[0,10,20,30,40,50,60,80,100]])                              
         nJetsPlotROutIn = Plot(theVariables.nJets,[],binning=[7,-0.5,6.5,"Events / 1 GeV",[]])
         mt2PlotROutIn = Plot(theVariables.MT2,[],binning=[-1,0,120,"Events / 1 GeV",[0,10,20,30,40,50,60,70,80,100,120]])                               
-
+        
+        
+        # plots for scale factor measurement
+        mllPlotZCandScaleFactors = Plot(theVariables.MllZCand,[],binning=[18,20,200,"Events / 10 GeV",[]]) 
+        
+        
+        
         nVtxPlotWeights = Plot(theVariables.nVtx,[],binning=[60,0,60,"Events / 1",[]])          
         
         #~ mllResultPlot = Plot(theVariables.Mll,[],binning=[-1,20,500,"Events / 10 GeV",range(20,60,40)+range(60,86,26)+range(86,96,10)+range(96,150,54)+range(150,200,50)+range(200,600,100)])                
@@ -2751,7 +2814,7 @@ class Backgrounds2016:
 
         class Diboson:
                 # "ZZTo2L2Q_aMCatNLO_Summer16_25ns",
-                subprocesses = ["WWTo2L2Nu_Powheg_Summer16_25ns","WWTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L3Nu_aMCatNLO_Summer16_25ns","WZTo2L2Q_aMCatNLO_Summer16_25ns","WZTo3LNu_aMCatNLO_Summer16_25ns","ZZTo4Q_aMCatNLO_Summer16_25ns","ZZTo4L_Powheg_Summer16_25ns","ZZTo2Q2Nu_aMCatNLO_Summer16_25ns","ZZTo2L2Nu_Powheg_Summer16_25ns"]
+                subprocesses = ["WWTo2L2Nu_Powheg_Summer16_25ns","WWTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L3Nu_aMCatNLO_Summer16_25ns","WZTo2L2Q_aMCatNLO_Summer16_25ns","WZTo3LNu_Powheg_Summer16_25ns","ZZTo4Q_aMCatNLO_Summer16_25ns","ZZTo4L_Powheg_Summer16_25ns","ZZTo2Q2Nu_aMCatNLO_Summer16_25ns","ZZTo2L2Nu_Powheg_Summer16_25ns"]
                 label = "WW,WZ,ZZ"
                 fillcolor = 920
                 linecolor = ROOT.kBlack 
@@ -2788,7 +2851,7 @@ class Backgrounds2016:
                 additionalSelection = "(abs(motherPdgId1) == 23 && abs(motherPdgId2) == 23)"    
                         
         class DibosonFS:
-                subprocesses = ["WWTo2L2Nu_Powheg_Summer16_25ns","WWTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L3Nu_aMCatNLO_Summer16_25ns","WZTo3LNu_aMCatNLO_Summer16_25ns","ZZTo4Q_aMCatNLO_Summer16_25ns","ZZTo4L_Powheg_Summer16_25ns","ZZTo2Q2Nu_aMCatNLO_Summer16_25ns","ZZTo2L2Q_aMCatNLO_Summer16_25ns","ZZTo2L2Nu_Powheg_Summer16_25ns"]
+                subprocesses = ["WWTo2L2Nu_Powheg_Summer16_25ns","WWTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L3Nu_aMCatNLO_Summer16_25ns","WZTo3LNu_Powheg_Summer16_25ns","ZZTo4Q_aMCatNLO_Summer16_25ns","ZZTo4L_Powheg_Summer16_25ns","ZZTo2Q2Nu_aMCatNLO_Summer16_25ns","ZZTo2L2Q_aMCatNLO_Summer16_25ns","ZZTo2L2Nu_Powheg_Summer16_25ns"]
                 label = "WW,WZ (FS)"
                 fillcolor = ROOT.kGray+2
                 linecolor = ROOT.kBlack 
@@ -2870,6 +2933,53 @@ class Backgrounds2016:
                 uncertainty = 0.5
                 scaleFac     = 1.       
                 additionalSelection = "(abs(motherPdgId1) != 23 || abs(motherPdgId2) != 23)"    
+                
+        class WZTo3LNu:
+                subprocesses = ["WZTo3LNu_Powheg_Summer16_25ns",]
+                label = "WZTo3Lnu"
+                fillcolor = ROOT.kGreen+2
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+                
+        class ZZTo4L:
+                subprocesses = ["ZZTo4L_Powheg_Summer16_25ns",]
+                label = "ZZTo4L"
+                fillcolor = ROOT.kYellow+3
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+                
+        class ttZToLL:
+                subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Summer16_25ns",]
+                label = "t#bar{t}Z"
+                fillcolor = ROOT.kCyan-6
+                linecolor = ROOT.kBlack
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+        
+        class DibosonRest:
+                subprocesses = ["WWTo2L2Nu_Powheg_Summer16_25ns","WZTo1L1Nu2Q_aMCatNLO_Summer16_25ns","WZTo1L3Nu_aMCatNLO_Summer16_25ns","WZTo2L2Q_aMCatNLO_Summer16_25ns","ZZTo4Q_aMCatNLO_Summer16_25ns","ZZTo2Q2Nu_aMCatNLO_Summer16_25ns","ZZTo2L2Nu_Powheg_Summer16_25ns"]
+                label = "Remaining Z+#nu"
+                fillcolor = 920
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.04
+                scaleFac     = 1.       
+                additionalSelection = None   
+        
+        class RareRest:
+                subprocesses = ["ST_top_tWllChannel_5f_MadGraph_Summer16_25ns","TTZToQQ_aMCatNLO_FXFX_Summer16_25ns","TTWToLNu_aMCatNLO_FXFX_Summer16_25ns","TTWToQQ_aMCatNLO_FXFX_Summer16_25ns","TTG_aMCatNLO_FXFX_Summer16_25ns","4T_aMCatNLO_FXFX_Summer16_25ns","WZZ_aMCatNLO_FXFX_Summer16_25ns","WWZ_aMCatNLO_FXFX_Summer16_25ns","ZZZ_aMCatNLO_FXFX_Summer16_25ns","TTHToNonbb_Powheg_Summer16_25ns","TTHTobb_Powheg_Summer16_25ns","VH_ToNonbb_aMCatNLO_Summer16_25ns"]
+                label = "Other SM"
+                fillcolor = 630
+                linecolor = ROOT.kBlack
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None 
+        
+        
                 
 class Backgrounds2017:        
         class TTJets_Madgraph:
@@ -2964,8 +3074,8 @@ class Backgrounds2017:
                 additionalSelection = None
                 
         class Rare:
-                # "ST_top_tWllChannel_5f_MadGraph_Fall17_25ns" ,"TTG_aMCatNLO_FXFX_Fall17_25ns", 
-                subprocesses = ["WZZ_aMCatNLO_Fall17_25ns", "WWZ_aMCatNLO_Fall17_25ns","ZZZ_aMCatNLO_Fall17_25ns","TTZToLLNuNu_aMCatNLO_Fall17_25ns","TTZToQQ_aMCatNLO_Fall17_25ns","TTWToLNu_aMCatNLO_FXFX_Fall17_25ns","TTWToQQ_aMCatNLO_FXFX_Fall17_25ns","4T_aMCatNLO_Fall17_25ns","TTHToNonbb_Powheg_Fall17_25ns","TTHTobb_Powheg_Fall17_25ns","VH_ToNonbb_aMCatNLO_Fall17_25ns"]
+                #  , 
+                subprocesses = ["TTG_aMCatNLO_FXFX_Fall17_25ns","ST_top_tWllChannel_5f_MadGraph_Fall17_25ns", "WZZ_aMCatNLO_Fall17_25ns", "WWZ_aMCatNLO_Fall17_25ns","ZZZ_aMCatNLO_Fall17_25ns","TTZToLLNuNu_aMCatNLO_Fall17_25ns","TTZToQQ_aMCatNLO_Fall17_25ns","TTWToLNu_aMCatNLO_FXFX_Fall17_25ns","TTWToQQ_aMCatNLO_FXFX_Fall17_25ns","4T_aMCatNLO_Fall17_25ns","TTHToNonbb_Powheg_Fall17_25ns","TTHTobb_Powheg_Fall17_25ns","VH_ToNonbb_aMCatNLO_Fall17_25ns"]
                 label = "Other SM"
                 fillcolor = 630
                 linecolor = ROOT.kBlack
@@ -3004,7 +3114,7 @@ class Backgrounds2017:
 
         class Diboson:
                 #  "ZZTo4Q_aMCatNLO_Fall17_25ns",
-                subprocesses = ["ZZTo4L_Powheg_Fall17_25ns","ZZTo2Q2Nu_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Nu_Powheg_Fall17_25ns","WZTo3LNu_aMCatNLO_FXFX_Fall17_25ns","WZTo2L2Q_aMCatNLO_FXFX_Fall17_25ns","WWTo2L2Nu_Powheg_Fall17_25ns","WWTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo1L3Nu_aMCatNLO_FXFX_Fall17_25ns"]
+                subprocesses = ["ZZTo4L_Powheg_Fall17_25ns","ZZTo2Q2Nu_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Nu_Powheg_Fall17_25ns","WZTo3LNu_Powheg__Fall17_25ns","WZTo2L2Q_aMCatNLO_FXFX_Fall17_25ns","WWTo2L2Nu_Powheg_Fall17_25ns","WWTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo1L3Nu_aMCatNLO_FXFX_Fall17_25ns"]
                 label = "WW,WZ,ZZ"
                 fillcolor = 920
                 linecolor = ROOT.kBlack 
@@ -3041,7 +3151,7 @@ class Backgrounds2017:
                 additionalSelection = "(abs(motherPdgId1) == 23 && abs(motherPdgId2) == 23)"    
 
         class DibosonFS:
-                subprocesses = ["WWTo2L2Nu_Powheg_Fall17_25ns","WWTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo3LNu_aMCatNLO_FXFX_Fall17_25ns","ZZTo4L_Powheg_Fall17_25ns","ZZTo2Q2Nu_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Nu_Powheg_Fall17_25ns", "WZTo1L3Nu_aMCatNLO_FXFX_Fall17_25ns"]
+                subprocesses = ["WWTo2L2Nu_Powheg_Fall17_25ns","WWTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo3LNu_Powheg__Fall17_25ns","ZZTo4L_Powheg_Fall17_25ns","ZZTo2Q2Nu_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Nu_Powheg_Fall17_25ns", "WZTo1L3Nu_aMCatNLO_FXFX_Fall17_25ns"]
                 label = "WW,WZ (FS part)"
                 fillcolor = 920
                 linecolor = ROOT.kBlack 
@@ -3123,6 +3233,52 @@ class Backgrounds2017:
                 uncertainty = 0.5
                 scaleFac     = 1.       
                 additionalSelection = "(abs(motherPdgId1) != 23 || abs(motherPdgId2) != 23)"    
+        
+        class WZTo3LNu:
+                subprocesses = ["WZTo3LNu_Powheg_Fall17_25ns",]
+                label = "WZTo3Lnu"
+                fillcolor = ROOT.kGreen+2
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+                
+        class ZZTo4L:
+                subprocesses = ["ZZTo4L_Powheg_Fall17_25ns",]
+                label = "ZZTo4L"
+                fillcolor = ROOT.kYellow+3
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+                
+        class ttZToLL:
+                subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Fall17_25ns",]
+                label = "t#bar{t}Z"
+                fillcolor = ROOT.kCyan-6
+                linecolor = ROOT.kBlack
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+        
+        class DibosonRest:
+                subprocesses = ["ZZTo2Q2Nu_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Fall17_25ns","ZZTo2L2Nu_Powheg_Fall17_25ns","WZTo2L2Q_aMCatNLO_FXFX_Fall17_25ns","WWTo2L2Nu_Powheg_Fall17_25ns","WWTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo1L1Nu2Q_aMCatNLO_FXFX_Fall17_25ns","WZTo1L3Nu_aMCatNLO_FXFX_Fall17_25ns"]
+                label = "Remaining Z+#nu"
+                fillcolor = 920
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.04
+                scaleFac     = 1.       
+                additionalSelection = None   
+        
+        class RareRest:
+                subprocesses = ["TTG_aMCatNLO_FXFX_Fall17_25ns","ST_top_tWllChannel_5f_MadGraph_Fall17_25ns", "WZZ_aMCatNLO_Fall17_25ns", "WWZ_aMCatNLO_Fall17_25ns","ZZZ_aMCatNLO_Fall17_25ns","TTZToQQ_aMCatNLO_Fall17_25ns","TTWToLNu_aMCatNLO_FXFX_Fall17_25ns","TTWToQQ_aMCatNLO_FXFX_Fall17_25ns","4T_aMCatNLO_Fall17_25ns","TTHToNonbb_Powheg_Fall17_25ns","TTHTobb_Powheg_Fall17_25ns","VH_ToNonbb_aMCatNLO_Fall17_25ns"]
+                label = "Other SM"
+                fillcolor = 630
+                linecolor = ROOT.kBlack
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None         
+        
 
 class Backgrounds2018:        
         class TTJets_Madgraph:
@@ -3217,8 +3373,8 @@ class Backgrounds2018:
                 additionalSelection = None
                 
         class Rare:
-                # "ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns", "TTZToQQ_aMCatNLO_Autumn18_25ns",
-                subprocesses = ["TTG_aMCatNLO_FXFX_Autumn18_25ns", "WZZ_aMCatNLO_Autumn18_25ns", "WWZ_aMCatNLO_Autumn18_25ns","ZZZ_aMCatNLO_Autumn18_25ns","TTZToLLNuNu_aMCatNLO_Autumn18_25ns","TTWToLNu_aMCatNLO_FXFX_Autumn18_25ns","TTWToQQ_aMCatNLO_FXFX_Autumn18_25ns","4T_aMCatNLO_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","TTHTobb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
+                # "", "TTZToQQ_aMCatNLO_Autumn18_25ns",
+                subprocesses = ["TTG_aMCatNLO_FXFX_Autumn18_25ns", "ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns", "WZZ_aMCatNLO_Autumn18_25ns", "WWZ_aMCatNLO_Autumn18_25ns","ZZZ_aMCatNLO_Autumn18_25ns","TTZToLLNuNu_aMCatNLO_Autumn18_25ns","TTWToLNu_aMCatNLO_FXFX_Autumn18_25ns","TTWToQQ_aMCatNLO_FXFX_Autumn18_25ns","4T_aMCatNLO_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","TTHTobb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
                 label = "Other SM"
                 fillcolor = 630
                 linecolor = ROOT.kBlack
@@ -3236,8 +3392,8 @@ class Backgrounds2018:
                 additionalSelection = "(abs(motherPdgId1) == 23 && abs(motherPdgId2) == 23)"                    
                 
         class RareNonFS: 
-                # "ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns",
-                subprocesses = ["TZQ_LL_aMCatNLO_Autumn18_25ns","WZZ_aMCatNLO_FXFX_Autumn18_25ns","WWZ_aMCatNLO_FXFX_Autumn18_25ns","ZZZ_aMCatNLO_FXFX_Autumn18_25ns",]
+                # 
+                subprocesses = ["ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns", "TZQ_LL_aMCatNLO_Autumn18_25ns","WZZ_aMCatNLO_FXFX_Autumn18_25ns","WWZ_aMCatNLO_FXFX_Autumn18_25ns","ZZZ_aMCatNLO_FXFX_Autumn18_25ns",]
                 label = "Other SM"
                 fillcolor = 630
                 linecolor = ROOT.kBlack
@@ -3246,8 +3402,8 @@ class Backgrounds2018:
                 additionalSelection = "(abs(motherPdgId1) == 23 && abs(motherPdgId2) == 23)"                    
                 
         class RareFS:
-                # "ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns", 
-                subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Autumn18_25ns","TTZToQQ_aMCatNLO_FXFX_Autumn18_25ns","TTWToLNu_aMCatNLO_FXFX_Autumn18_25ns","TTWToQQ_aMCatNLO_FXFX_Autumn18_25ns","TTG_aMCatNLO_FXFX_Autumn18_25ns","4T_aMCatNLO_FXFX_Autumn18_25ns","WZZ_aMCatNLO_FXFX_Autumn18_25ns","WWZ_aMCatNLO_FXFX_Autumn18_25ns","ZZZ_aMCatNLO_FXFX_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","TTHTobb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
+                # 
+                subprocesses = ["ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns", "TTZToLLNuNu_aMCatNLO_FXFX_Autumn18_25ns","TTZToQQ_aMCatNLO_FXFX_Autumn18_25ns","TTWToLNu_aMCatNLO_FXFX_Autumn18_25ns","TTWToQQ_aMCatNLO_FXFX_Autumn18_25ns","TTG_aMCatNLO_FXFX_Autumn18_25ns","4T_aMCatNLO_FXFX_Autumn18_25ns","WZZ_aMCatNLO_FXFX_Autumn18_25ns","WWZ_aMCatNLO_FXFX_Autumn18_25ns","ZZZ_aMCatNLO_FXFX_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","TTHTobb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
                 label = "Other FS SM"
                 fillcolor = 630
                 linecolor = ROOT.kBlack
@@ -3256,8 +3412,8 @@ class Backgrounds2018:
                 additionalSelection = "!(abs(motherPdgId1) == 23 && abs(motherPdgId2) == 23)"                   
 
         class Diboson:
-                #  "ZZTo4Q_aMCatNLO_Fall17_25ns", "ZZTo4L_Powheg_Autumn18_25ns", "ZZTo2Q2Nu_aMCatNLO_FXFX_Autumn18_25ns", "ZZTo2L2Nu_Powheg_Autumn18_25ns", "WZTo3LNu_aMCatNLO_FXFX_Autumn18_25ns", "WZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns", "WWTo2L2Nu_Powheg_Autumn18_25ns", "WWTo1L1Nu2Q_aMCatNLO_FXFX_Autumn18_25ns", "WZTo1L1Nu2Q_aMCatNLO_FXFX_Autumn18_25ns", "WZTo1L3Nu_aMCatNLO_FXFX_Autumn18_25ns"
-                subprocesses = ["ZZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns",]
+                #  "ZZTo4Q_aMCatNLO_Fall17_25ns", "WZTo1L1Nu2Q_aMCatNLO_FXFX_Autumn18_25ns",
+                subprocesses = ["ZZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns", "ZZTo4L_Powheg_Autumn18_25ns", "ZZTo2Q2Nu_aMCatNLO_FXFX_Autumn18_25ns", "ZZTo2L2Nu_Powheg_Autumn18_25ns", "WZTo3LNu_Powheg__Autumn18_25ns", "WZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns", "WWTo2L2Nu_Powheg_Autumn18_25ns", "WWTo1L1Nu2Q_aMCatNLO_FXFX_Autumn18_25ns",  "WZTo1L3Nu_aMCatNLO_FXFX_Autumn18_25ns"]
                 label = "WW,WZ,ZZ"
                 fillcolor = 920
                 linecolor = ROOT.kBlack 
@@ -3267,8 +3423,8 @@ class Backgrounds2018:
                                 
                         
         class DibosonNonFS:
-                #"ZZTo4L_Powheg_Autumn18_25ns", ,"ZZTo2L2Nu_Powheg_Autumn18_25ns"
-                subprocesses = ["WZTo2L2Q_aMCatNLO_Autumn18_25ns","WZTo3LNu_Powheg_Autumn18_25ns","ZZTo2L2Q_aMCatNLO_Autumn18_25ns"]
+                #
+                subprocesses = ["ZZTo4L_Powheg_Autumn18_25ns", "ZZTo2L2Nu_Powheg_Autumn18_25ns","WZTo2L2Q_aMCatNLO_Autumn18_25ns","WZTo3LNu_Powheg_Autumn18_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns"]
                 label = "WW,WZ,ZZ"
                 fillcolor = 920
                 linecolor = ROOT.kBlack 
@@ -3277,8 +3433,8 @@ class Backgrounds2018:
                 additionalSelection = "(abs(motherPdgId1) == 23 && abs(motherPdgId2) == 23)"    
                         
         class ZZNonFS:
-                # "ZZTo4L_Powheg_Autumn18_25ns", ,"ZZTo2L2Nu_Powheg_Autumn18_25ns"
-                subprocesses = ["ZZTo2L2Q_aMCatNLO_Autumn18_25ns"]
+                # 
+                subprocesses = ["ZZTo4L_Powheg_Autumn18_25ns", "ZZTo2L2Nu_Powheg_Autumn18_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns"]
                 label = "ZZ"
                 fillcolor = 920
                 linecolor = ROOT.kBlack 
@@ -3295,8 +3451,8 @@ class Backgrounds2018:
                 scaleFac     = 1.       
                 additionalSelection = "(abs(motherPdgId1) == 23 && abs(motherPdgId2) == 23)"    
                         
-        class DibosonFS: # "ZZTo4L_Powheg_Autumn18_25ns",,"ZZTo2L2Nu_Powheg_Autumn18_25ns"
-                subprocesses = ["WWTo2L2Nu_Powheg_Autumn18_25ns","WWTo1L1Nu2Q_aMCatNLO_Autumn18_25ns","WZTo1L1Nu2Q_aMCatNLO_Autumn18_25ns","WZTo1L3Nu_aMCatNLO_Autumn18_25ns","WZTo3LNu_aMCatNLO_Autumn18_25ns","ZZTo4Q_aMCatNLO_Autumn18_25ns","ZZTo2Q2Nu_aMCatNLO_Autumn18_25ns","ZZTo2L2Q_aMCatNLO_Autumn18_25ns"]
+        class DibosonFS: #  "WZTo1L1Nu2Q_aMCatNLO_Autumn18_25ns",
+                subprocesses = ["ZZTo4L_Powheg_Autumn18_25ns","ZZTo2L2Nu_Powheg_Autumn18_25ns","WWTo2L2Nu_Powheg_Autumn18_25ns","WWTo1L1Nu2Q_aMCatNLO_FXFX_Autumn18_25ns","WZTo1L3Nu_aMCatNLO_FXFX_Autumn18_25ns","WZTo3LNu_Powheg__Autumn18_25ns","ZZTo4Q_aMCatNLO_Autumn18_25ns","ZZTo2Q2Nu_aMCatNLO_Autumn18_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns"]
                 label = "WW,WZ (FS part)"
                 fillcolor = 920
                 linecolor = ROOT.kBlack 
@@ -3354,7 +3510,7 @@ class Backgrounds2018:
                 
         class ZJets:
                 #"ZZTo4L_Powheg_Autumn18_25ns",
-                subprocesses = ["ZJets_Madgraph_Autumn18_25ns","AStar_Madgraph_Autumn18_25ns","WZTo2L2Q_aMCatNLO_Autumn18_25ns","ZZTo2L2Q_aMCatNLO_Autumn18_25ns","ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns","TZQ_LL_aMCatNLO_Autumn18_25ns","WZZ_aMCatNLO_FXFX_Autumn18_25ns","WWZ_aMCatNLO_FXFX_Autumn18_25ns","ZZZ_aMCatNLO_FXFX_Autumn18_25ns","TTZToLLNuNu_aMCatNLO_FXFX_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
+                subprocesses = ["ZJets_Madgraph_Autumn18_25ns","AStar_Madgraph_Autumn18_25ns","WZTo2L2Q_aMCatNLO_Autumn18_25ns","ZZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns","ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns","TZQ_LL_aMCatNLO_Autumn18_25ns","WZZ_aMCatNLO_FXFX_Autumn18_25ns","WWZ_aMCatNLO_FXFX_Autumn18_25ns","ZZZ_aMCatNLO_FXFX_Autumn18_25ns","TTZToLLNuNu_aMCatNLO_FXFX_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
                 label = "Z + jets"
                 fillcolor = 401
                 linecolor = 401 
@@ -3371,14 +3527,61 @@ class Backgrounds2018:
                 scaleFac     = 1.       
                 additionalSelection = "!(abs(motherPdgId1) == 15 && abs(motherPdgId2) == 15) && !(abs(motherPdgId1) == 22 && abs(motherPdgId2) != 22) && !(abs(motherPdgId1) == 23 && abs(motherPdgId2) == 23)"
                 
-        class OtherSM:
-                subprocesses = ["WWTo2L2Nu_Powheg_Autumn18_25ns","WWTo1L1Nu2Q_aMCatNLO_Autumn18_25ns","WZTo3LNu_Powheg_Autumn18_25ns","WZTo1L1Nu2Q_aMCatNLO_Autumn18_25ns","WZTo1L3Nu_aMCatNLO_Autumn18_25ns","ZZTo2Q2Nu_aMCatNLO_Autumn18_25ns","ZZTo4Q_aMCatNLO_Autumn18_25ns","WWZ_aMCatNLO_FXFX_Autumn18_25ns","WZZ_aMCatNLO_FXFX_Autumn18_25ns","TTZToLLNuNu_aMCatNLO_FXFX_Autumn18_25ns","TTZToQQ_aMCatNLO_FXFX_Autumn18_25ns","TZQ_LL_aMCatNLO_Autumn18_25ns","TTWToLNu_aMCatNLO_FXFX_Autumn18_25ns","TTWToQQ_aMCatNLO_FXFX_Autumn18_25ns","TTG_aMCatNLO_FXFX_Autumn18_25ns","4T_aMCatNLO_FXFX_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","TTHTobb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
+        class OtherSM: # "WZTo1L1Nu2Q_aMCatNLO_Autumn18_25ns",
+                subprocesses = ["WWTo2L2Nu_Powheg_Autumn18_25ns","WWTo1L1Nu2Q_aMCatNLO_FXFX_Autumn18_25ns","WZTo3LNu_Powheg_Autumn18_25ns","WZTo1L3Nu_aMCatNLO_FXFX_Autumn18_25ns","ZZTo2Q2Nu_aMCatNLO_Autumn18_25ns","ZZTo4Q_aMCatNLO_Autumn18_25ns","WWZ_aMCatNLO_FXFX_Autumn18_25ns","WZZ_aMCatNLO_FXFX_Autumn18_25ns","TTZToLLNuNu_aMCatNLO_FXFX_Autumn18_25ns","TTZToQQ_aMCatNLO_FXFX_Autumn18_25ns","TZQ_LL_aMCatNLO_Autumn18_25ns","TTWToLNu_aMCatNLO_FXFX_Autumn18_25ns","TTWToQQ_aMCatNLO_FXFX_Autumn18_25ns","TTG_aMCatNLO_FXFX_Autumn18_25ns","4T_aMCatNLO_FXFX_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","TTHTobb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
                 label = "Other SM"
                 fillcolor = 630
                 linecolor = ROOT.kBlack
                 uncertainty = 0.5
                 scaleFac     = 1.       
-                additionalSelection = "(abs(motherPdgId1) != 23 || abs(motherPdgId2) != 23)"    
+                additionalSelection = "(abs(motherPdgId1) != 23 || abs(motherPdgId2) != 23)" 
+                
+        class WZTo3LNu:
+                subprocesses = ["WZTo3LNu_Powheg_Autumn18_25ns",]
+                label = "WZTo3Lnu"
+                fillcolor = ROOT.kGreen+2
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+                
+        class ZZTo4L:
+                subprocesses = ["ZZTo4L_Powheg_Autumn18_25ns",]
+                label = "ZZTo4L"
+                fillcolor = ROOT.kYellow+3
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+                
+        class ttZToLL:
+                subprocesses = ["TTZToLLNuNu_aMCatNLO_FXFX_Autumn18_25ns",]
+                label = "t#bar{t}Z"
+                fillcolor = ROOT.kCyan-6
+                linecolor = ROOT.kBlack
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None
+        
+        class DibosonRest:
+                subprocesses = ["ZZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns", "ZZTo2Q2Nu_aMCatNLO_FXFX_Autumn18_25ns", "ZZTo2L2Nu_Powheg_Autumn18_25ns", "WZTo2L2Q_aMCatNLO_FXFX_Autumn18_25ns", "WWTo2L2Nu_Powheg_Autumn18_25ns", "WWTo1L1Nu2Q_aMCatNLO_FXFX_Autumn18_25ns",  "WZTo1L3Nu_aMCatNLO_FXFX_Autumn18_25ns"]
+                label = "Remaining Z+#nu"
+                fillcolor = 920
+                linecolor = ROOT.kBlack 
+                uncertainty = 0.04
+                scaleFac     = 1.       
+                additionalSelection = None   
+        
+        class RareRest:
+                subprocesses = ["TTG_aMCatNLO_FXFX_Autumn18_25ns", "ST_top_tWllChannel_5f_MadGraph_Autumn18_25ns", "WZZ_aMCatNLO_Autumn18_25ns", "WWZ_aMCatNLO_Autumn18_25ns","ZZZ_aMCatNLO_Autumn18_25ns","TTWToLNu_aMCatNLO_FXFX_Autumn18_25ns","TTWToQQ_aMCatNLO_FXFX_Autumn18_25ns","4T_aMCatNLO_Autumn18_25ns","TTHToNonbb_Powheg_Autumn18_25ns","TTHTobb_Powheg_Autumn18_25ns","VH_ToNonbb_aMCatNLO_Autumn18_25ns"]
+                label = "Other SM"
+                fillcolor = 630
+                linecolor = ROOT.kBlack
+                uncertainty = 0.5
+                scaleFac     = 1.       
+                additionalSelection = None 
+        
+        
 
       
 class Backgrounds(maplike):

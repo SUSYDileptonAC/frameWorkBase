@@ -2,7 +2,7 @@
 import pickle
 import os
 import sys
-from centralConfig import regionsToUse, baselineTrigger, runRanges, systematics
+from centralConfig import regionsToUse, baselineTrigger, runRanges, systematics, triggerRegionNamesLists
 
 def readPickle(name,regionName,runName,MC=False):
         
@@ -42,7 +42,7 @@ def getROutInClass(classTemplate,shelve,shelveMC,massRange,combination,label):
         return classTemplate%(label,shelve[label]["rOutIn_%s_%s"%(massRange,combination)],( shelve[label]["rOutIn_%s_Syst%s"%(massRange,combination)]**2 + shelve[label]["rOutIn_%s_Err%s"%(massRange,combination)]**2 )**0.5 , shelveMC[label]["rOutIn_%s_%s"%(massRange,combination)],( shelveMC[label]["rOutIn_%s_Syst%s"%(massRange,combination)]**2 + shelveMC[label]["rOutIn_%s_Err%s"%(massRange,combination)]**2 )**0.5)        
 
 
-def getTriggerClass(classTemplate,shelve,shelveMC,combination,label):
+def getTriggerClass(classTemplate,shelve,shelveMC,combination,label,year):
 #~ def getTriggerClass(classTemplate,shelve,combination,label):
         
         
@@ -52,30 +52,30 @@ def getTriggerClass(classTemplate,shelve,shelveMC,combination,label):
                 otherLabel = "effMM"
         else:
                 otherLabel = "effEM"
-        return classTemplate%(otherLabel,shelve[label][runRanges.name][combination]["Efficiency"] , (systematics.trigger.central.val**2 + max(shelve[label][runRanges.name][combination]["UncertaintyUp"] , shelve[label][runRanges.name][combination]["UncertaintyDown"]  )**2)**0.5 ,shelveMC[label][runRanges.name][combination]["Efficiency"] , (systematics.trigger.central.val**2 + max(shelveMC[label][runRanges.name][combination]["UncertaintyUp"] , shelveMC[label][runRanges.name][combination]["UncertaintyDown"]  )**2)**0.5)
-        #~ return classTemplate%(otherLabel,shelve[label][runRanges.name][combination]["Efficiency"] , (systematics.trigger.central.val**2 + max(shelve[label][runRanges.name][combination]["UncertaintyUp"] , shelve[label][runRanges.name][combination]["UncertaintyDown"]  )**2)**0.5 )
+        return classTemplate%(otherLabel,shelve[label][runRanges[year].name][combination]["Efficiency"] , (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges[year].name][combination]["UncertaintyUp"] , shelve[label][runRanges[year].name][combination]["UncertaintyDown"]  )**2)**0.5 ,shelveMC[label][runRanges[year].name][combination]["Efficiency"] , (systematics.trigger[year].central.val**2 + max(shelveMC[label][runRanges[year].name][combination]["UncertaintyUp"] , shelveMC[label][runRanges[year].name][combination]["UncertaintyDown"]  )**2)**0.5)
+        #~ return classTemplate%(otherLabel,shelve[label][runRanges.name][combination]["Efficiency"] , (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges.name][combination]["UncertaintyUp"] , shelve[label][runRanges.name][combination]["UncertaintyDown"]  )**2)**0.5 )
 
 
-def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False):
+def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False,year=2016):
 #~ def getRSFOFTrigClass(classTemplate,shelve,label,returnNumbers=False):
         
         
-                effEE = shelve[label][runRanges.name]["EE"]["Efficiency"] 
-                effMM = shelve[label][runRanges.name]["MuMu"]["Efficiency"] 
-                effEM = shelve[label][runRanges.name]["EMu"]["Efficiency"] 
-                errEE = (systematics.trigger.central.val**2 + max(shelve[label][runRanges.name]["EE"]["UncertaintyUp"] , shelve[label][runRanges.name]["EE"]["UncertaintyDown"]  )**2)**0.5
-                errMM = (systematics.trigger.central.val**2 + max(shelve[label][runRanges.name]["MuMu"]["UncertaintyUp"] , shelve[label][runRanges.name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
-                errEM = (systematics.trigger.central.val**2 + max(shelve[label][runRanges.name]["EMu"]["UncertaintyUp"] , shelve[label][runRanges.name]["EMu"]["UncertaintyDown"]  )**2)**0.5
+                effEE = shelve[label][runRanges[year].name]["EE"]["Efficiency"] 
+                effMM = shelve[label][runRanges[year].name]["MuMu"]["Efficiency"] 
+                effEM = shelve[label][runRanges[year].name]["EMu"]["Efficiency"] 
+                errEE = (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges[year].name]["EE"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["EE"]["UncertaintyDown"]  )**2)**0.5
+                errMM = (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges[year].name]["MuMu"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
+                errEM = (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges[year].name]["EMu"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["EMu"]["UncertaintyDown"]  )**2)**0.5
         
                 err = (errEE**2/(2*effEE*effMM)**2+ errMM**2/(2*effEE*effMM)**2 + errEM**2/(effEM)**2)**0.5
                 val = (effEE*effMM)**0.5/effEM
         
-                effEEMC = shelveMC[label][runRanges.name]["EE"]["Efficiency"] 
-                effMMMC = shelveMC[label][runRanges.name]["MuMu"]["Efficiency"] 
-                effEMMC = shelveMC[label][runRanges.name]["EMu"]["Efficiency"] 
-                errEEMC = (systematics.trigger.central.val**2 + max(shelveMC[label][runRanges.name]["EE"]["UncertaintyUp"] , shelveMC[label][runRanges.name]["EE"]["UncertaintyDown"]  )**2)**0.5
-                errMMMC = (systematics.trigger.central.val**2 + max(shelveMC[label][runRanges.name]["MuMu"]["UncertaintyUp"] , shelveMC[label][runRanges.name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
-                errEMMC = (systematics.trigger.central.val**2 + max(shelveMC[label][runRanges.name]["EMu"]["UncertaintyUp"] , shelveMC[label][runRanges.name]["EMu"]["UncertaintyDown"]  )**2)**0.5
+                effEEMC = shelveMC[label][runRanges[year].name]["EE"]["Efficiency"] 
+                effMMMC = shelveMC[label][runRanges[year].name]["MuMu"]["Efficiency"] 
+                effEMMC = shelveMC[label][runRanges[year].name]["EMu"]["Efficiency"] 
+                errEEMC = (systematics.trigger[year].central.val**2 + max(shelveMC[label][runRanges[year].name]["EE"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["EE"]["UncertaintyDown"]  )**2)**0.5
+                errMMMC = (systematics.trigger[year].central.val**2 + max(shelveMC[label][runRanges[year].name]["MuMu"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
+                errEMMC = (systematics.trigger[year].central.val**2 + max(shelveMC[label][runRanges[year].name]["EMu"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["EMu"]["UncertaintyDown"]  )**2)**0.5
         
                 errMC = val*(errEEMC**2/(2*effMMMC)**2+ errMMMC**2/(2*effMMMC)**2 + errEMMC**2/(effEMMC)**2)**0.5
                 valMC = (effEEMC*effMMMC)**0.5/effEMMC
@@ -90,7 +90,7 @@ def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False):
                         #~ return classTemplate%(label, val, err)
 
 ### Old factoritation method using constant rMuE                        
-def getRSFOFFactClassOld(classTemplate,shelve,shelveMC,shelvesRMuE,shelvesRMuEMC,label,combination,returnNumbers=False):
+def getRSFOFFactClassOld(classTemplate,shelve,shelveMC,shelvesRMuE,shelvesRMuEMC,label,combination,returnNumbers=False,year=2016):
 #~ def getRSFOFFactClassOld(classTemplate,shelve,shelvesRMuE,shelvesRMuEMC,label,combination,returnNumbers=False):
         inputs = {}
         inputs["rMuE"] = shelvesRMuE[label]["rMuE"]
@@ -117,7 +117,7 @@ def getRSFOFFactClassOld(classTemplate,shelve,shelveMC,shelvesRMuE,shelvesRMuEMC
                 result["fromRMuEMC"] = 0.5*(1./inputs["rMuEMC"])
                 result["fromRMuEErrMC"] = inputs["rMuEErrMC"]
 
-        result["fromTrigger"], result["fromTriggerErr"] , result["fromTriggerMC"], result["fromTriggerErrMC"] = getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=True)
+        result["fromTrigger"], result["fromTriggerErr"] , result["fromTriggerMC"], result["fromTriggerErrMC"] = getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=True, year=year)
         #~ result["fromTrigger"], result["fromTriggerErr"] = getRSFOFTrigClass(classTemplate,shelve,label,returnNumbers=True)
 
 
@@ -132,7 +132,7 @@ def getRSFOFFactClassOld(classTemplate,shelve,shelveMC,shelvesRMuE,shelvesRMuEMC
         return classTemplate%(combination, result["fromAC"], result["fromACErr"], result["fromACMC"], result["fromACErrMC"] )
         
 
-def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,shelvesRMuE,shelvesRMuEMC,label,combination):
+def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,shelvesRMuE,shelvesRMuEMC,label,combination,year):
 #~ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelvesRMuE,shelvesRMuEMC,label,combination):
 
         inputs = {}
@@ -173,7 +173,7 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
                 result["fromRMuEMC"] = 0.5*(1./inputs["rMuEMC"])
                 result["fromRMuEErrMC"] = inputs["rMuEErrMC"]
 
-        result["fromTrigger"], result["fromTriggerErr"] , result["fromTriggerMC"], result["fromTriggerErrMC"] = getRSFOFTrigClass(classTemplate,shelveTrigger,shelveTriggerMC,label,returnNumbers=True)
+        result["fromTrigger"], result["fromTriggerErr"] , result["fromTriggerMC"], result["fromTriggerErrMC"] = getRSFOFTrigClass(classTemplate,shelveTrigger,shelveTriggerMC,label,returnNumbers=True,year=year)
         #~ result["fromTrigger"], result["fromTriggerErr"] = getRSFOFTrigClass(classTemplate,shelveTrigger,label,returnNumbers=True)
 
 
@@ -186,9 +186,9 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
         
         
         result["fromETH"] = inputs["RSFOF"]
-        result["fromETHErr"] = (inputs["RSFOFErr"]**2 + (getattr(systematics.rSFOF,label).val * inputs["RSFOF"]) **2 )**0.5
+        result["fromETHErr"] = (inputs["RSFOFErr"]**2 + (getattr(systematics.rSFOF[year],label).val * inputs["RSFOF"]) **2 )**0.5
         result["fromETHMC"] = inputs["RSFOFMC"]
-        result["fromETHErrMC"] = (inputs["RSFOFErrMC"]**2 + (getattr(systematics.rSFOF,label).val * inputs["RSFOFMC"]) **2 )**0.5
+        result["fromETHErrMC"] = (inputs["RSFOFErrMC"]**2 + (getattr(systematics.rSFOF[year],label).val * inputs["RSFOFMC"]) **2 )**0.5
         
                 
         
@@ -203,8 +203,25 @@ def getRSFOFClass(classTemplate,shelve,shelveMC,shelveTrigger,shelveTriggerMC,sh
         
                 
 def main():
-
-
+        import sys
+        from ConfigParser import ConfigParser
+        import argparse 
+        
+        parser = argparse.ArgumentParser(description='Produce correction file')
+        parser.add_argument("-y", "--year", dest="year", action="store", default="2016",
+                                                  help="Corrections from which year to save")
+        parser.add_argument("-C", "--combine", action="store_true", dest="combine", default=False,
+                                                  help="Write corrections from combination of multiple years")
+        args = parser.parse_args()
+        
+        if not args.combine:
+                year = args.year
+                runRangeName = runRanges[year].name
+        else:
+                year = "Combined"
+                runRangeName = "Combined"
+        
+        
         classTemplate = """
                 class %s:
                         val = %f
@@ -229,8 +246,8 @@ def main():
                         val = %f
                         err = %f
 """
-
-        r = """
+        if not args.combine:
+                r = """
 ### central config file for all correction factors used in the dilepton edge search. This file was autogenerated.
 
 %s
@@ -254,148 +271,119 @@ def main():
 %s              
 
 """
+        else:
+                r = """
+### central config file for all correction factors used in the dilepton edge search. This file was autogenerated.
+
+%s
+"""
 
         rOutInPart = """
 
 class rOutIn:
         class mass20To60:
                 %s
-                %s
-                %s
-                        
+        
         class mass60To86:
                 %s
-                %s
-                %s
-                        
+     
         class mass96To150:
                 %s
-                %s
-                %s
-                        
+                
         class mass150To200:
                 %s
-                %s
-                %s
-                        
+        
         class mass200To300:
                 %s
-                %s
-                %s
-                        
+        
         class mass300To400:
                 %s
-                %s
-                %s
-                        
+        
         class mass400:
                 %s
-                %s
-                %s
-                        
         
-                        
-
-        
-
+      
 """     
 
 
-        shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name)}
-        shelvesROutInMC = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRanges.name,MC=True),"central": readPickle("rOutIn",regionsToUse.rOutIn.central.name,runRanges.name,MC=True), "forward":readPickle("rOutIn",regionsToUse.rOutIn.forward.name,runRanges.name,MC=True)}
+        shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRangeName)}
+        shelvesROutInMC = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRangeName,MC=True)}
 
         
         rOutInTuple = []
-        #~ for combination in ["SF","EE","MM"]:
         for combination in ["SF"]:
-                #~ for massRange in ["LowMass","HighMass","BelowZ","AboveZ"]:
                 for massRange in ["mass20To60","mass60To86","mass96To150","mass150To200","mass200To300","mass300To400","mass400"]:
-                        for label in ["inclusive","central","forward"]:
+                        for label in ["inclusive",]: #"central","forward"
                                 rOutInTuple.append(getROutInClass(classTemplate,shelvesROutIn,shelvesROutInMC,massRange,combination,label))
 
         rOutInPartFinal = rOutInPart%tuple(rOutInTuple)
         
-        
+        if not args.combine:
                 
-        rSFOFDirectPart = """
+                rSFOFDirectPart = """
 
 ### Direct measurement of RSFOF 
 class rSFOFDirect:
 %s      
-%s
-%s
-        
-        
+              
 """     
-        shelvesRSFOF = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name)}
-        shelvesRSFOFMC = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name,MC=True),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name,MC=True), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name,MC=True)}
-        
+                shelvesRSFOF = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRangeName)}
+                shelvesRSFOFMC = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRangeName,MC=True)}
+                
 
-        classRSFOFDirectInclusive = classTemplate%("inclusive",shelvesRSFOF["inclusive"]["rSFOF"] , (shelvesRSFOF["inclusive"]["rSFOFErr"]**2 +(shelvesRSFOF["inclusive"]["rSFOF"]*systematics.rSFOF.inclusive.val)**2)**0.5 ,shelvesRSFOFMC["inclusive"]["rSFOF"] ,(shelvesRSFOFMC["inclusive"]["rSFOFErr"]**2 +(shelvesRSFOFMC["inclusive"]["rSFOF"]*systematics.rSFOF.inclusive.val)**2)**0.5)
-        classRSFOFDirectCentral = classTemplate%("central",shelvesRSFOF["central"]["rSFOF"] , (shelvesRSFOF["central"]["rSFOFErr"]**2 +(shelvesRSFOF["central"]["rSFOF"]*systematics.rSFOF.central.val)**2)**0.5 ,shelvesRSFOFMC["central"]["rSFOF"] ,(shelvesRSFOFMC["central"]["rSFOFErr"]**2 +(shelvesRSFOFMC["central"]["rSFOF"]*systematics.rSFOF.central.val)**2)**0.5)
-        classRSFOFDirectForward = classTemplate%("forward",shelvesRSFOF["forward"]["rSFOF"] , (shelvesRSFOF["forward"]["rSFOFErr"]**2 +(shelvesRSFOF["forward"]["rSFOF"]*systematics.rSFOF.forward.val)**2)**0.5 ,shelvesRSFOFMC["forward"]["rSFOF"] ,(shelvesRSFOFMC["forward"]["rSFOFErr"]**2 +(shelvesRSFOFMC["forward"]["rSFOF"]*systematics.rSFOF.forward.val)**2)**0.5)
-        
-        
-        rSFOFDirectPartFinal = rSFOFDirectPart%(classRSFOFDirectInclusive , classRSFOFDirectCentral, classRSFOFDirectForward)   
-        
-        
-        
-        rMuELeptonPtPart = """
+                classRSFOFDirectInclusive = classTemplate%("inclusive",shelvesRSFOF["inclusive"]["rSFOF"] , (shelvesRSFOF["inclusive"]["rSFOFErr"]**2 +(shelvesRSFOF["inclusive"]["rSFOF"]*systematics.rSFOF[year].inclusive.val)**2)**0.5 ,shelvesRSFOFMC["inclusive"]["rSFOF"] ,(shelvesRSFOFMC["inclusive"]["rSFOFErr"]**2 +(shelvesRSFOFMC["inclusive"]["rSFOF"]*systematics.rSFOF[year].inclusive.val)**2)**0.5)
+                #classRSFOFDirectCentral = classTemplate%("central",shelvesRSFOF["central"]["rSFOF"] , (shelvesRSFOF["central"]["rSFOFErr"]**2 +(shelvesRSFOF["central"]["rSFOF"]*systematics.rSFOF[year].central.val)**2)**0.5 ,shelvesRSFOFMC["central"]["rSFOF"] ,(shelvesRSFOFMC["central"]["rSFOFErr"]**2 +(shelvesRSFOFMC["central"]["rSFOF"]*systematics.rSFOF[year].central.val)**2)**0.5)
+                #classRSFOFDirectForward = classTemplate%("forward",shelvesRSFOF["forward"]["rSFOF"] , (shelvesRSFOF["forward"]["rSFOFErr"]**2 +(shelvesRSFOF["forward"]["rSFOF"]*systematics.rSFOF[year].forward.val)**2)**0.5 ,shelvesRSFOFMC["forward"]["rSFOF"] ,(shelvesRSFOFMC["forward"]["rSFOFErr"]**2 +(shelvesRSFOFMC["forward"]["rSFOF"]*systematics.rSFOF[year].forward.val)**2)**0.5)
+                
+                
+                rSFOFDirectPartFinal = rSFOFDirectPart%(classRSFOFDirectInclusive)   
+                
+                
+                
+                rMuELeptonPtPart = """
         
 ### New rMuE factorization
 
 class rMuELeptonPt:
-%s      
-%s
-%s      
+%s          
 
 
 """     
-        shelvesRMuELeptonPt = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRanges.name),"central": readPickle("rMuE_correctionParameters",regionsToUse.rMuE.central.name,runRanges.name), "forward":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.forward.name,runRanges.name)}
-        shelvesRMuELeptonPtMC = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRanges.name,MC=True),"central": readPickle("rMuE_correctionParameters",regionsToUse.rMuE.central.name,runRanges.name,MC=True), "forward":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.forward.name,runRanges.name,MC=True)}
+                shelvesRMuELeptonPt = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRangeName)}
+                shelvesRMuELeptonPtMC = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRangeName,MC=True)}
+                        
+                classRMuELeptonPtInclusive = classTemplateRMuELeptonPt%("inclusive",shelvesRMuELeptonPt["inclusive"]["offset"], shelvesRMuELeptonPt["inclusive"]["offsetErr"], shelvesRMuELeptonPt["inclusive"]["falling"], shelvesRMuELeptonPt["inclusive"]["fallingErr"], shelvesRMuELeptonPtMC["inclusive"]["offset"], shelvesRMuELeptonPtMC["inclusive"]["offsetErr"], shelvesRMuELeptonPtMC["inclusive"]["falling"], shelvesRMuELeptonPtMC["inclusive"]["fallingErr"])
+                #classRMuELeptonPtCentral = classTemplateRMuELeptonPt%("central",shelvesRMuELeptonPt["central"]["offset"], shelvesRMuELeptonPt["central"]["offsetErr"], shelvesRMuELeptonPt["central"]["falling"], shelvesRMuELeptonPt["central"]["fallingErr"], shelvesRMuELeptonPtMC["central"]["offset"], shelvesRMuELeptonPtMC["central"]["offsetErr"], shelvesRMuELeptonPtMC["central"]["falling"], shelvesRMuELeptonPtMC["central"]["fallingErr"])
+                #classRMuELeptonPtForward = classTemplateRMuELeptonPt%("forward",shelvesRMuELeptonPt["forward"]["offset"], shelvesRMuELeptonPt["forward"]["offsetErr"], shelvesRMuELeptonPt["forward"]["falling"], shelvesRMuELeptonPt["forward"]["fallingErr"], shelvesRMuELeptonPtMC["forward"]["offset"], shelvesRMuELeptonPtMC["forward"]["offsetErr"], shelvesRMuELeptonPtMC["forward"]["falling"], shelvesRMuELeptonPtMC["forward"]["fallingErr"])
                 
-        classRMuELeptonPtInclusive = classTemplateRMuELeptonPt%("inclusive",shelvesRMuELeptonPt["inclusive"]["offset"], shelvesRMuELeptonPt["inclusive"]["offsetErr"], shelvesRMuELeptonPt["inclusive"]["falling"], shelvesRMuELeptonPt["inclusive"]["fallingErr"], shelvesRMuELeptonPtMC["inclusive"]["offset"], shelvesRMuELeptonPtMC["inclusive"]["offsetErr"], shelvesRMuELeptonPtMC["inclusive"]["falling"], shelvesRMuELeptonPtMC["inclusive"]["fallingErr"])
-        classRMuELeptonPtCentral = classTemplateRMuELeptonPt%("central",shelvesRMuELeptonPt["central"]["offset"], shelvesRMuELeptonPt["central"]["offsetErr"], shelvesRMuELeptonPt["central"]["falling"], shelvesRMuELeptonPt["central"]["fallingErr"], shelvesRMuELeptonPtMC["central"]["offset"], shelvesRMuELeptonPtMC["central"]["offsetErr"], shelvesRMuELeptonPtMC["central"]["falling"], shelvesRMuELeptonPtMC["central"]["fallingErr"])
-        classRMuELeptonPtForward = classTemplateRMuELeptonPt%("forward",shelvesRMuELeptonPt["forward"]["offset"], shelvesRMuELeptonPt["forward"]["offsetErr"], shelvesRMuELeptonPt["forward"]["falling"], shelvesRMuELeptonPt["forward"]["fallingErr"], shelvesRMuELeptonPtMC["forward"]["offset"], shelvesRMuELeptonPtMC["forward"]["offsetErr"], shelvesRMuELeptonPtMC["forward"]["falling"], shelvesRMuELeptonPtMC["forward"]["fallingErr"])
-        
-        
-        rMuELeptonPtPartFinal = rMuELeptonPtPart%(classRMuELeptonPtInclusive , classRMuELeptonPtCentral, classRMuELeptonPtForward)
                 
-        rMuEPart = """
+                rMuELeptonPtPartFinal = rMuELeptonPtPart%(classRMuELeptonPtInclusive)
+                        
+                rMuEPart = """
 ### rMuE for the old factorization method
 
 class rMuE:
-%s      
-%s
-%s      
+%s         
 
 
 """     
-        shelvesRMuE = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRanges.name),"central": readPickle("rMuE",regionsToUse.rMuE.central.name,runRanges.name), "forward":readPickle("rMuE",regionsToUse.rMuE.forward.name,runRanges.name)}
-        shelvesRMuEMC = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRanges.name,MC=True),"central": readPickle("rMuE",regionsToUse.rMuE.central.name,runRanges.name,MC=True), "forward":readPickle("rMuE",regionsToUse.rMuE.forward.name,runRanges.name,MC=True)}
+                shelvesRMuE = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRangeName)}
+                shelvesRMuEMC = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRangeName,MC=True)}
+                        
+                classRMuEInclusive = classTemplate%("inclusive",shelvesRMuE["inclusive"]["rMuE"] , (shelvesRMuE["inclusive"]["rMuEStatErr"]**2 + shelvesRMuE["inclusive"]["rMuESystErrOld"]**2)**0.5 ,shelvesRMuEMC["inclusive"]["rMuE"] , (shelvesRMuEMC["inclusive"]["rMuEStatErr"]**2 + shelvesRMuEMC["inclusive"]["rMuESystErrOld"]**2)**0.5)
+                #classRMuECentral = classTemplate%("central",shelvesRMuE["central"]["rMuE"] , (shelvesRMuE["central"]["rMuEStatErr"]**2 + shelvesRMuE["central"]["rMuESystErrOld"]**2)**0.5 ,shelvesRMuEMC["central"]["rMuE"] , (shelvesRMuEMC["central"]["rMuEStatErr"]**2 + shelvesRMuEMC["central"]["rMuESystErrOld"]**2)**0.5)
+                #classRMuEForward = classTemplate%("forward",shelvesRMuE["forward"]["rMuE"] , (shelvesRMuE["forward"]["rMuEStatErr"]**2 + shelvesRMuE["forward"]["rMuESystErrOld"]**2)**0.5 ,shelvesRMuEMC["forward"]["rMuE"] , (shelvesRMuEMC["forward"]["rMuEStatErr"]**2 + shelvesRMuEMC["forward"]["rMuESystErrOld"]**2)**0.5)
                 
-        classRMuEInclusive = classTemplate%("inclusive",shelvesRMuE["inclusive"]["rMuE"] , (shelvesRMuE["inclusive"]["rMuEStatErr"]**2 + shelvesRMuE["inclusive"]["rMuESystErrOld"]**2)**0.5 ,shelvesRMuEMC["inclusive"]["rMuE"] , (shelvesRMuEMC["inclusive"]["rMuEStatErr"]**2 + shelvesRMuEMC["inclusive"]["rMuESystErrOld"]**2)**0.5)
-        classRMuECentral = classTemplate%("central",shelvesRMuE["central"]["rMuE"] , (shelvesRMuE["central"]["rMuEStatErr"]**2 + shelvesRMuE["central"]["rMuESystErrOld"]**2)**0.5 ,shelvesRMuEMC["central"]["rMuE"] , (shelvesRMuEMC["central"]["rMuEStatErr"]**2 + shelvesRMuEMC["central"]["rMuESystErrOld"]**2)**0.5)
-        classRMuEForward = classTemplate%("forward",shelvesRMuE["forward"]["rMuE"] , (shelvesRMuE["forward"]["rMuEStatErr"]**2 + shelvesRMuE["forward"]["rMuESystErrOld"]**2)**0.5 ,shelvesRMuEMC["forward"]["rMuE"] , (shelvesRMuEMC["forward"]["rMuEStatErr"]**2 + shelvesRMuEMC["forward"]["rMuESystErrOld"]**2)**0.5)
-        
-        
-        rMuEPartFinal = rMuEPart%(classRMuEInclusive , classRMuECentral, classRMuEForward)
-        
+                
+                rMuEPartFinal = rMuEPart%(classRMuEInclusive)
+                
 
-        shelvesTrigger = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name)}
-        shelvesTriggerMC = {"inclusive":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.inclusive.name , runRanges.name, baselineTrigger.name,MC=True),"central": readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.central.name,runRanges.name, baselineTrigger.name,MC=True), "forward":readTriggerPickle("triggerEff",regionsToUse.triggerEfficiencies.forward.name,runRanges.name, baselineTrigger.name,MC=True)}
-        
-        triggerPart = """
+                shelvesTrigger = {"inclusive":readTriggerPickle("triggerEff",triggerRegionNamesLists[year].inclusive.name , runRangeName, baselineTrigger.name)}
+                shelvesTriggerMC = {"inclusive":readTriggerPickle("triggerEff",triggerRegionNamesLists[year].inclusive.name , runRangeName, baselineTrigger.name,MC=True)}
+                
+                triggerPart = """
 
-class triggerEffs:
-        class central:
-                %s      
-                %s
-                %s              
-        class forward:
-                %s      
-                %s
-                %s                                      
+class triggerEffs:                                  
         class inclusive:
                 %s      
                 %s
@@ -403,47 +391,34 @@ class triggerEffs:
         
         
 """     
-        triggerEffList = []
-        for label in ["central","forward","inclusive"]:
-                for combination in ["EE","MuMu","EMu"]:
-                        triggerEffList.append(getTriggerClass(classTemplate,shelvesTrigger,shelvesTriggerMC,combination,label))
-                        #~ triggerEffList.append(getTriggerClass(classTemplateTrigger,shelvesTrigger,combination,label))
-                        
-        triggerPartFinal = triggerPart%tuple(triggerEffList)            
-        
-        rSFOFTrigPart = """
+                triggerEffList = []
+                for label in ["inclusive",]: # "central","forward",
+                        for combination in ["EE","MuMu","EMu"]:
+                                triggerEffList.append(getTriggerClass(classTemplate,shelvesTrigger,shelvesTriggerMC,combination,label,year))
+                                #~ triggerEffList.append(getTriggerClass(classTemplateTrigger,shelvesTrigger,combination,label))
+                                
+                triggerPartFinal = triggerPart%tuple(triggerEffList)            
+                
+                rSFOFTrigPart = """
         
 class rSFOFTrig:
 %s      
-%s
-%s
         
         
 """     
 
-        rSFOFTrigList = []
-        for label in ["central","forward","inclusive"]:
-                        rSFOFTrigList.append(getRSFOFTrigClass(classTemplate,shelvesTrigger,shelvesTriggerMC,label))
-                        #~ rSFOFTrigList.append(getRSFOFTrigClass(classTemplateTrigger,shelvesTrigger,label))
-                        
-        rSFOFTrigPartFinal = rSFOFTrigPart%tuple(rSFOFTrigList)         
-        
+                rSFOFTrigList = []
+                for label in ["inclusive",]: # "central","forward",
+                                rSFOFTrigList.append(getRSFOFTrigClass(classTemplate,shelvesTrigger,shelvesTriggerMC,label, year=year))
+                                #~ rSFOFTrigList.append(getRSFOFTrigClass(classTemplateTrigger,shelvesTrigger,label))
+                                
+                rSFOFTrigPartFinal = rSFOFTrigPart%tuple(rSFOFTrigList)         
 
-
-
-        rSFOFFactOldPart = """
+                rSFOFFactOldPart = """
         
 ### R_SFOF using the old factorization method
         
-class rSFOFFactOld:
-        class central:
-                %s      
-                %s
-                %s              
-        class forward:
-                %s      
-                %s
-                %s                                      
+class rSFOFFactOld:                                   
         class inclusive:
                 %s      
                 %s
@@ -451,65 +426,60 @@ class rSFOFFactOld:
         
 """     
 
-        rSFOFFactList = []
-        for label in ["central","forward","inclusive"]:
-                        for combination in ["SF","EE","MM"]:
-                                rSFOFFactList.append(getRSFOFFactClassOld(classTemplate,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,combination))
-                                #~ rSFOFFactList.append(getRSFOFFactClassOld(classTemplate,shelvesTrigger,shelvesRMuE,shelvesRMuEMC,label,combination))
-                        
-        rSFOFFactOldPartFinal = rSFOFFactOldPart%tuple(rSFOFFactList)           
-        
+                rSFOFFactList = []
+                for label in ["inclusive",]:
+                                for combination in ["SF","EE","MM"]:
+                                        rSFOFFactList.append(getRSFOFFactClassOld(classTemplate,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,combination,year=year))
+                                        #~ rSFOFFactList.append(getRSFOFFactClassOld(classTemplate,shelvesTrigger,shelvesRMuE,shelvesRMuEMC,label,combination))
+                                
+                rSFOFFactOldPartFinal = rSFOFFactOldPart%tuple(rSFOFFactList)           
+                
 
-        shelvesRSFOF = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name)}
-        shelvesRSFOFMC = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRanges.name,MC=True),"central": readPickle("rSFOF",regionsToUse.rSFOF.central.name,runRanges.name,MC=True), "forward":readPickle("rSFOF",regionsToUse.rSFOF.forward.name,runRanges.name,MC=True)}
-        
-        rSFOFList = []
-        for label in ["central","forward","inclusive"]:
-                        rSFOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,"SF"))
-                        #~ rSFOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesRMuE,shelvesRMuEMC,label,"SF"))
-        
-        rSFOFPart  = """
+                shelvesRSFOF = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRangeName)}
+                shelvesRSFOFMC = {"inclusive":readPickle("rSFOF",regionsToUse.rSFOF.inclusive.name , runRangeName,MC=True)}
+                
+                rSFOFList = []
+                for label in ["inclusive",]: # "central","forward",
+                                rSFOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,"SF",year))
+                                #~ rSFOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesRMuE,shelvesRMuEMC,label,"SF"))
+                
+                rSFOFPart  = """
         
 ### R_SFOF combination using the old factorization method
 
 class rSFOF:
-%s      
-%s
-%s      
+%s           
 """     
-        rSFOFPartFinal = rSFOFPart%tuple(rSFOFList)
-        
-        rEEOFList = []
-        for label in ["central","forward","inclusive"]:
-                        rEEOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,"EE"))
-                        #~ rEEOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesRMuE,shelvesRMuEMC,label,"EE"))
-        
-        rEEOFPart  = """
+                rSFOFPartFinal = rSFOFPart%tuple(rSFOFList)
+                
+                rEEOFList = []
+                for label in ["inclusive",]: # "central","forward",
+                                rEEOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,"EE",year))
+                                #~ rEEOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesRMuE,shelvesRMuEMC,label,"EE"))
+                
+                rEEOFPart  = """
 class rEEOF:
-%s      
-%s
-%s      
+%s          
 """     
-        rEEOFPartFinal = rEEOFPart%tuple(rEEOFList)
-        
-        rMMOFList = []
-        for label in ["central","forward","inclusive"]:
-                        rMMOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,"MM"))
-                        #~ rMMOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesRMuE,shelvesRMuEMC,label,"MM"))
-        
-        rMMOFPart  = """
+                rEEOFPartFinal = rEEOFPart%tuple(rEEOFList)
+                
+                rMMOFList = []
+                for label in ["inclusive",]: # "central","forward",
+                                rMMOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesTriggerMC,shelvesRMuE,shelvesRMuEMC,label,"MM",year))
+                                #~ rMMOFList.append(getRSFOFClass(classTemplate,shelvesRSFOF,shelvesRSFOFMC,shelvesTrigger,shelvesRMuE,shelvesRMuEMC,label,"MM"))
+                
+                rMMOFPart  = """
 class rMMOF:
-%s      
-%s
-%s      
+%s           
 """     
-        rMMOFPartFinal = rMMOFPart%tuple(rMMOFList)
+                rMMOFPartFinal = rMMOFPart%tuple(rMMOFList)
 
-
-
-        finalFile = r%(rOutInPartFinal,rSFOFDirectPartFinal,rMuELeptonPtPartFinal,rMuEPartFinal,rSFOFTrigPartFinal,rSFOFFactOldPartFinal,rSFOFPartFinal,rEEOFPartFinal,rMMOFPartFinal,triggerPartFinal)
-
-        corrFile = open("corrections.py", "w")
+                finalFile = r%(rOutInPartFinal,rSFOFDirectPartFinal,rMuELeptonPtPartFinal,rMuEPartFinal,rSFOFTrigPartFinal,rSFOFFactOldPartFinal,rSFOFPartFinal,rEEOFPartFinal,rMMOFPartFinal,triggerPartFinal)
+        
+        else:
+                finalFile = r%(rOutInPartFinal)
+        
+        corrFile = open("corrections%s.py"%(year), "w")
         corrFile.write(finalFile)
         corrFile.close()        
         

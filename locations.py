@@ -27,21 +27,21 @@ class locations2017:
 
 
 class locations2018: 
-        dataSetPath = "/net/data_cms1b/user/teroerde/trees/sw2018v1001/"   
+        dataSetPath = "/net/data_cms1b/user/teroerde/trees/sw2018v1008/"   
         #dataSetPathSignal = "/net/data_cms1b/user/teroerde/trees/sw9409v1003_Signal"
         #dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw2018v1001_NLL/"
-        dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw2018v1001_NLL2/"
+        dataSetPathNLL = "/net/data_cms1b/user/teroerde/trees/sw2018v1008_NLL/"
         #dataSetPathSignalNLL = "/net/data_cms1b/user/teroerde/trees/sw9409v1003_Signal_NLL/"
 
-        dataSetPathMC = "/net/data_cms1b/user/teroerde/trees/sw2018v1001/"
+        dataSetPathMC = "/net/data_cms1b/user/teroerde/trees/sw2018v1008/"
         triggerDataSetPath = "/net/data_cms1b/user/teroerde/trees/sw2018v1001_MET/"
 
 
 
-class allLocations(maplike):
+class locations(maplike):
         masterListPath = "/home/home4/institut_1b/teroerde/Doktorand/SUSYFramework/SubmitScripts/Input"
 
-locations = allLocations
+
 locations["2016"] = locations2016
 locations["2017"] = locations2017
 locations["2018"] = locations2018

@@ -97,35 +97,107 @@ class zPredictions:
 
 
 class systematics:
-        class rSFOF:
-                class inclusive:
-                        val = 0.04
-                class central:
-                        val = 0.04
-                class forward:
-                        val = 0.06      
-        class rMuE:
-                class inclusive:
-                        val = 0.1
-                class central:
-                        val = 0.1
-                class forward:
-                        val = 0.1       
-        class trigger:
-                class inclusive:
-                        val = 0.03
-                class central:
-                        val = 0.03
-                class forward:
-                        val = 0.03
-        class rOutIn:
-                class old:
-                        val = 0.25
-                class massBelow150:
-                        val = 0.5               
-                class massAbove150:
-                        val = 1.                
-                        
+        class rSFOF(maplike):
+                class for2016:
+                        class inclusive:
+                                val = 0.04
+                        class central:
+                                val = 0.04
+                        class forward:
+                                val = 0.06      
+                class for2017:
+                        class inclusive:
+                                val = 0.04
+                        class central:
+                                val = 0.04
+                        class forward:
+                                val = 0.06      
+                class for2018:
+                        class inclusive:
+                                val = 0.04
+                        class central:
+                                val = 0.04
+                        class forward:
+                                val = 0.06      
+        class rMuE(maplike):
+                class for2016:
+                        class inclusive:
+                                val = 0.1
+                        class central:
+                                val = 0.1
+                        class forward:
+                                val = 0.1       
+                class for2017:
+                        class inclusive:
+                                val = 0.1
+                        class central:
+                                val = 0.1
+                        class forward:
+                                val = 0.1       
+                class for2018:
+                        class inclusive:
+                                val = 0.1
+                        class central:
+                                val = 0.1
+                        class forward:
+                                val = 0.1       
+        class trigger(maplike):
+                class for2016:
+                        class inclusive:
+                                val = 0.03
+                        class central:
+                                val = 0.03
+                        class forward:
+                                val = 0.03
+                class for2017:
+                        class inclusive:
+                                val = 0.03
+                        class central:
+                                val = 0.03
+                        class forward:
+                                val = 0.03
+                class for2018:
+                        class inclusive:
+                                val = 0.03
+                        class central:
+                                val = 0.03
+                        class forward:
+                                val = 0.03
+        class rOutIn(maplike):
+                class for2016:
+                        class old:
+                                val = 0.25
+                        class massBelow150:
+                                val = 0.5               
+                        class massAbove150:
+                                val = 1.                
+                class for2017:
+                        class old:
+                                val = 0.25
+                        class massBelow150:
+                                val = 0.5               
+                        class massAbove150:
+                                val = 1.                
+                class for2017:
+                        class old:
+                                val = 0.25
+                        class massBelow150:
+                                val = 0.5               
+                        class massAbove150:
+                                val = 1.                
+                class for2018:
+                        class old:
+                                val = 0.25
+                        class massBelow150:
+                                val = 0.5               
+                        class massAbove150:
+                                val = 1.                
+                class combined:
+                        class massBelow150:
+                                val = 0.5               
+                        class massAbove150:
+                                val = 1.                
+                                
 class mllBins:
         
         class mass20To60:
@@ -266,8 +338,17 @@ class triggerRegionNamesLists(maplike):
                 class central:
                         name = "HighMETExclusive"
 
-class runRanges:
-        name = "Run2016_36fb"
+# era to runRange
+class runRanges(maplike):
+        class for2016(maplike):
+                name = "Run2016_36fb"
+        class for2017(maplike):
+                name = "Run2017_42fb"
+        class for2018(maplike):
+                name = "Run2018_60fb"
+runRanges.name = runRanges["2016"].name
+
+
 
 class backgroundLists:
         default = ["Rare","SingleTop","TT_Powheg","Diboson","DrellYanTauTau","DrellYan"]
@@ -293,8 +374,9 @@ class plotLists:
         rSFOF = ["mllPlotRSFOF","metPlotRSFOF","nJetsPlotRSFOF","nBJetsPlotRSFOF","htPlotRSFOF","trailingPtPlotRSFOF","leadingPtPlotRSFOF","mt2PlotRSFOF","ptllPlotRSFOF","deltaPhiPlotRSFOF","sumMlbPlotRSFOF","nVtxPlotRSFOF"]
         #rSFOF = ["trailingPtPlotRSFOF","leadingPtPlotRSFOF"]
         signal = ["mllPlotROutIn"]
-        #rMuE = ["mllPlotRMuE","leadingPtPlotRMuE","nJetsPlotRMuE","mt2PlotRMuE","metPlotRMuE","nVtxPlotRMuE","nBJetsPlotRMuE","leadingEtaPlotRMuE","trailingPtPlotRMuE","htPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
-        rMuE = ["nVtxPlotRMuE",]
+        rMuE = ["negativePtPlotRMuE", "positivePtPlotRMuE", "positiveEtaPlotRMuE", "negativeEtaPlotRMuE", "mllPlotRMuE","leadingPtPlotRMuE","nJetsPlotRMuE","mt2PlotRMuE","metPlotRMuE","nVtxPlotRMuE","nBJetsPlotRMuE","leadingEtaPlotRMuE","trailingPtPlotRMuE","htPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
+        #rMuE = ["positiveEtaPlotRMuE", "negativeEtaPlotRMuE",]
+        #rMuE = ["nVtxPlotRMuE",]
         #rMuE = ["leadingPtPlotRMuE","trailingPtPlotRMuE"]
         #~ rMuE = ["trailingPtPlotRMuE"]
         rOutIn =  ["metPlotROutIn","nJetsPlotROutIn","mt2PlotROutIn"]
