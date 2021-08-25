@@ -7,6 +7,11 @@ import ROOT
 import ratios
 
 from setTDRStyle import setTDRStyle
+style = setTDRStyle() 
+style.SetPadLeftMargin(0.13)
+style.SetTitleYOffset(0.9)
+style.SetPadTopMargin(0.0675)
+
 from helpers import *    
 
 ################## SUMMARY OF CLASS plotTemplate #######################
@@ -263,17 +268,18 @@ class LatexLabel:
 class CMSLabel(LatexLabel):
     name = "latexCMS"
     text = "CMS"
-    posX = 0.19 
-    posY = 0.89
-    size = 0.06
+    posX = 0.15
+    posY = 0.9125
+    size = 0.08
+    align = 13
     font = 61
     
 class CMSExtraLabel(LatexLabel):
     name = "latexCMSExtra"
     text = None
-    posX = 0.19
-    posY = 0.85
-    simPosY = 0.82
+    posX = 0.15
+    posY = 0.815
+    simPosY = 0.80
     #size = 0.045
     size = 0.035
     font = 52
@@ -294,6 +300,8 @@ class CMSExtraLabel(LatexLabel):
             text = "Preliminary"
         elif self.template.forTWIKI:
             text = "Unpublished"    
+        elif self.template.additional:
+            text = "Supplementary"    
         return text
     def get_posY(self):
         if self.template.personalWork and not self.template.plotData:
@@ -301,13 +309,14 @@ class CMSExtraLabel(LatexLabel):
         else:
             return self.posY
     def is_drawn(self):
-        return self.template.personalWork or not self.template.plotData or self.template.preliminary or self.template.forTWIKI
+        return self.template.personalWork or not self.template.plotData or self.template.preliminary or self.template.forTWIKI or self.template.additional
 
 class LumiLabel(LatexLabel):
     name = "latexLumi"
     text = None
     posX = None
-    posY = 0.96
+    posY = 0.9475
+    size = 0.055
     align = 31
     
     def get_text(self):
@@ -387,9 +396,14 @@ class plotTemplate:
         self.fileTypes = ["pdf"]
         self.dilepton = None
         
+        self.canvasSizeX = 800
+        self.canvasSizeY = 800
+        
         self.logX = False
         self.logY = False
         self.logZ = False
+        self.labeledAxisX = False
+        self.labeledAxisY = False
         self.redrawPrimary = True
         self.maximumScale = 1.3
         self.minimumScale = 1.0
@@ -433,6 +447,9 @@ class plotTemplate:
         self.efficiencyLabel = "efficiency"
         self.ratioMin = 0
         self.ratioMax = 2
+        self.ratioTitleOffset = None
+        self.ratioTitleSize = None
+        self.ratioLabelSize = None
         self.efficiencyMin = 0
         self.efficiencyMax = 1.2
         self.ratioErrsSize = []
@@ -462,6 +479,7 @@ class plotTemplate:
         self.residualZeroLineColor = ROOT.kBlack
         
         self.forTWIKI = False
+        self.additional = False
         self.preliminary = False
         self.personalWork = True
         self.plotData = False
@@ -477,7 +495,7 @@ class plotTemplate:
         self.ratioErrsHist = []
         
         self.ratioPairs = []
-        setTDRStyle() 
+        
         
         self.labels = {}
         self.addLabel(CMSLabel      ())
@@ -538,13 +556,20 @@ class plotTemplate:
     def saveAs(self,fileName):
         ensurePathExists(self.pathName)
         for typ in self.fileTypes:
-            self.canvas.Print(self.pathName+fileName+"."+typ)
+            fn = self.pathName+fileName+"."+typ
+            self.canvas.Print(fn)
+            if typ == "eps": # if TMathText is used, these cannot by saved as pdf by root
+                import os
+                from locations import locations
+                os.system("sed -i 's/STIX/STIXX/' %s"%(fn))
+                os.system("%s %s"%(locations.epsToPdfPath, fn))
+                os.remove(fn)
     
-    def setPrimaryPlot(self,hist, drawOption, label=None):
-        self.primaryPlot = (hist, drawOption, label)
+    def setPrimaryPlot(self,hist, drawOption, label=None, legOption=None):
+        self.primaryPlot = (hist, drawOption, label, legOption)
     
-    def addSecondaryPlot(self,hist, drawOption="", label = None):
-        self.secondaryPlots.append((hist, drawOption, label))
+    def addSecondaryPlot(self,hist, drawOption="", label = None, legOption=None):
+        self.secondaryPlots.append((hist, drawOption, label, legOption))
         
     def addResidualPlot(self, h1, h2, resRange=None, color=ROOT.kBlack, markerStyle=20, markerSize=1, fillColor=ROOT.kWhite, errList=None, options=""):
         self.residualPlots.append((h1, h2, resRange, color, markerStyle, markerSize, fillColor, errList, options))
@@ -553,8 +578,8 @@ class plotTemplate:
         self.secondaryPlots = []
     
     def drawCanvas(self):
-        self.canvas = ROOT.TCanvas("hCanvas%d"%(countNumbersUp()), "", 800,800)
-        
+        self.canvas = ROOT.TCanvas("hCanvas%d"%(countNumbersUp()), "", self.canvasSizeX,self.canvasSizeY)
+                
         doRatioPad = any((self.hasRatio, self.hasEfficiency, self.hasResidual, self.hasBottomWindow))
         
         if doRatioPad:
@@ -562,17 +587,19 @@ class plotTemplate:
         else:
             self.plotPad = ROOT.TPad("plotPad","plotPad",0,0,1,1)
         self.plotPad.UseCurrentStyle()
-        self.plotPad.Draw()  
+        #self.plotPad.Draw()  
         
         if doRatioPad:
             self.ratioPad = ROOT.TPad("ratioPad","ratioPad",0,0,1,self.ratioPadHeight)
             self.ratioPad.UseCurrentStyle()
-            self.ratioPad.Draw()
+            #self.ratioPad.Draw()
          
         if doRatioPad:
             self.plotPad.SetTopMargin    (self.marginTop)
             self.plotPad.SetLeftMargin   (self.marginLeft)
             self.plotPad.SetRightMargin  (self.marginRight)
+            #self.plotPad.SetBottomMargin(0.14)
+            #self.ratioPad.SetTopMargin(0.05)
             self.ratioPad.SetBottomMargin(self.marginBottom)
             self.ratioPad.SetLeftMargin  (self.marginLeft)
             self.ratioPad.SetRightMargin (self.marginRight)
@@ -581,7 +608,11 @@ class plotTemplate:
             self.plotPad.SetLeftMargin  (self.marginLeft)
             self.plotPad.SetRightMargin (self.marginRight)
             self.plotPad.SetBottomMargin(self.marginBottom)
-            
+        
+        self.plotPad.Draw()  
+        if doRatioPad:
+            self.ratioPad.Draw()  
+        
         self.plotPad.cd()  
         
         if self.logX:
@@ -645,8 +676,17 @@ class plotTemplate:
                         graph.hAxis.GetXaxis().SetNdivisions(self.primaryPlot[0].GetXaxis().GetNdivisions())
                     else:
                         graph.hAxis.GetXaxis().SetNdivisions(self.nDivX)
+                    graph.hAxis.GetYaxis().SetNdivisions(408)
+                        
+                    if self.ratioLabelSize !=None:
+                        graph.hAxis.GetYaxis().SetLabelSize(self.ratioLabelSize)
+                    if self.ratioTitleSize !=None:
+                        graph.hAxis.GetYaxis().SetTitleSize(self.ratioTitleSize)
+                    if self.ratioTitleOffset !=None:
+                        graph.hAxis.GetYaxis().SetTitleOffset(self.ratioTitleOffset)
+                    graph.hAxis.GetYaxis().CenterTitle()
                 else:
-                    graph.draw(ROOT.gPad,False,False,True,chi2Pos=0.8)
+                    graph.draw(self.ratioPad,False,False,True,chi2Pos=0.8)
                 graph.graph.SetMarkerStyle(markerstyle)
                 
         elif self.hasEfficiency:
@@ -883,7 +923,15 @@ class plotTemplate:
             else:
                 maximumZ = (self.maximumZ)
                 
-        self.axisField = ROOT.TH2F("hAxis%d"%(countNumbersUp()), ";x;y;z", 20, minimumX, maximumX, 10, minimumY, maximumY)    
+        self.axisField = ROOT.TH2F("hAxis%d"%(countNumbersUp()), ";x;y;z", self.primaryPlot[0].GetXaxis().GetNbins(), minimumX, maximumX, self.primaryPlot[0].GetYaxis().GetNbins(), minimumY, maximumY)    
+        
+        if self.labeledAxisX:
+            for i in range(1, self.primaryPlot[0].GetXaxis().GetNbins()+1):
+                self.axisField.GetXaxis().SetBinLabel(i, self.primaryPlot[0].GetXaxis().GetBinLabel(i))
+        if self.labeledAxisY:
+            for i in range(1, self.primaryPlot[0].GetYaxis().GetNbins()+1):
+                self.axisField.GetYaxis().SetBinLabel(i, self.primaryPlot[0].GetYaxis().GetBinLabel(i))
+        
         
         if self.labelX != None:
             self.axisField.GetXaxis().SetTitle(self.labelX)
@@ -916,7 +964,7 @@ class plotTemplate:
         
         self.primaryPlot[0].Draw(self.primaryPlot[1]+"same")
        
-        for plot, drawStyle, label in self.secondaryPlots:
+        for plot, drawStyle, label, legOption in self.secondaryPlots:
             plot.Draw(drawStyle+"same")
          
         if self.redrawPrimary:
@@ -950,9 +998,12 @@ class plotTemplate:
             self.legend.SetFillStyle(self.legendFillStyle)
             self.legend.SetFillColor(self.legendFillColor)
             
-            for plot, drawOption, label in [self.primaryPlot]+self.secondaryPlots:
+            for plot, drawOption, label, legOption in [self.primaryPlot]+self.secondaryPlots:
                 if label != None:
                     drawOpt = drawOption.replace("hist","l")
+                    drawOpt = drawOpt.replace("02","F")
+                    if legOption != None:
+                        drawOpt = legOption
                     self.legend.AddEntry(plot, label, drawOpt)
             
             self.legend.Draw("same")

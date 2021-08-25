@@ -46,6 +46,14 @@ def readPickle(name,regionName,runName,MC=False):
                         print "shelves/%s_%s_%s.pkl not found, exiting"%(name,regionName,runName)               
                         sys.exit()
 
+        return result  
+         
+def readScaleFactorPickle(name,runName, background):
+        if os.path.isfile("shelves/%s_%s_%s.pkl"%(name,runName,background)):
+                result = pickle.load(open("shelves/%s_%s_%s.pkl"%(name,runName,background),"rb"))
+        else:
+                print "shelves/%s_%s_%s.pkl not found, exiting"%(name,runName,background)               
+                sys.exit()
         return result   
 
 def readTriggerPickle(name,regionName,runName,source,MC=False):
@@ -156,42 +164,9 @@ def produceRMuETable():
 
         template = r"        %s       &  %d                   & %d              &  %.3f$\pm$%.3f$\pm$%.3f    \\" +"\n"
         
-        shelvesRMuE = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRange),"central": readPickle("rMuE",regionsToUse.rMuE.central.name,runRange), "forward":readPickle("rMuE",regionsToUse.rMuE.forward.name,runRange)}
-        shelvesRMuEMC = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRange,MC=True),"central": readPickle("rMuE",regionsToUse.rMuE.central.name,runRange,MC=True), "forward":readPickle("rMuE",regionsToUse.rMuE.forward.name,runRange,MC=True)}
+        shelvesRMuE = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRange),}
+        shelvesRMuEMC = {"inclusive":readPickle("rMuE",regionsToUse.rMuE.inclusive.name , runRange,MC=True)}
 
-        tableTemplate = """
-\\begin{table}[hbtp]
- \\renewcommand{\\arraystretch}{1.3}
- \setlength{\\belowcaptionskip}{6pt}
- \centering
- \caption{Result of the calculation of \\rmue. Shown are the observed event yields in the Drell--Yan control region for the central and forward lepton selection in the \EE and \MM channels and the resulting values of \rmue. The same quantaties derived from simulation are shown for comparison.}
-  \label{tab:rMuE}
-  \\begin{tabular}{l| ccc }
-
-                                                        & $N_{\mu\mu}$ &  $N_{ee}$ & $\\rmue \\pm \sigma_{\\text{stat.}} \\pm \sigma_{\\text{syst.}}$ \\\\ \n    
-    \hline
-                                                        & \multicolumn{3}{c}{Central}  \\\\ \n
-    \hline
-%s
-%s
-\hline
-                                                        & \multicolumn{3}{c}{Forward}  \\\\ \n
-    \hline
-%s
-%s
-  \end{tabular}
-\end{table}
-
-
-"""
-        
-        dataCentral = template%("Data",shelvesRMuE["central"]["nMM"],shelvesRMuE["central"]["nEE"],shelvesRMuE["central"]["rMuE"],shelvesRMuE["central"]["rMuEStatErr"],shelvesRMuE["central"]["rMuESystErrOld"])
-        dataForward = template%("Data",shelvesRMuE["forward"]["nMM"],shelvesRMuE["forward"]["nEE"],shelvesRMuE["forward"]["rMuE"],shelvesRMuE["forward"]["rMuEStatErr"],shelvesRMuE["forward"]["rMuESystErrOld"])
-        mcCentral = template%("MC",shelvesRMuEMC["central"]["nMM"],shelvesRMuEMC["central"]["nEE"],shelvesRMuEMC["central"]["rMuE"],shelvesRMuEMC["central"]["rMuEStatErr"],shelvesRMuEMC["central"]["rMuESystErrOld"])
-        mcForward = template%("MC",shelvesRMuEMC["forward"]["nMM"],shelvesRMuEMC["forward"]["nEE"],shelvesRMuEMC["forward"]["rMuE"],shelvesRMuEMC["forward"]["rMuEStatErr"],shelvesRMuEMC["forward"]["rMuESystErrOld"])
-        table = tableTemplate%(dataCentral,mcCentral,dataForward,mcForward)
-        
-        saveTable(table,"rMuE_result_seperated_%s"%(runRange))
 
         tableTemplate = """
 \\begin{table}[hbtp]
@@ -221,48 +196,14 @@ def produceRMuETable():
         saveTable(table,"rMuE_result_%s"%(runRange))
         
         
-        templateFitParameters = r"        %s       &  %.3f$\pm$%.3f  &  %.2f$\pm$%.2f    \\" +"\n"
+        templateFitParameters = r" %s &    %s       &  %.3f$\pm$%.3f&  %.3f$\pm$%.3f&  %.3f$\pm$%.3f&  %.3f$\pm$%.3f&  %.3f$\pm$%.3f  &  %.3f$\pm$%.3f    \\" +"\n"
         
-        shelvesRMuEFitParameters = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRange),"central": readPickle("rMuE_correctionParameters",regionsToUse.rMuE.central.name,runRange), "forward":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.forward.name,runRange)}
-        shelvesRMuEFitParametersMC = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRange,MC=True),"central": readPickle("rMuE_correctionParameters",regionsToUse.rMuE.central.name,runRange,MC=True), "forward":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.forward.name,runRange,MC=True)}
+        shelvesRMuEFitParameters = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRange)}
+        shelvesRMuEFitParametersMC = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRange,MC=True)}
 
         
         
-        tableTemplate = """
-\\begin{table}[hbtp]
- \\renewcommand{\\arraystretch}{1.3}
- \setlength{\\belowcaptionskip}{6pt}
- \centering
- \caption{Result of the fit of \\rmue as a function of the \pt of the trailing lepton in the Drell--Yan control region for the central and forward lepton selection. 
- The same quantaties derived from simulation are shown for comparison. Only statistical uncertainties are given.}
-  \label{tab:rMuEFitParameters}
-  \\begin{tabular}{l| cc }
-
-                                                        & $a$ & $b$ \\\\ \n    
-    \hline
-                                                        & \multicolumn{2}{c}{Central}  \\\\ \n
-    \hline
-%s
-%s
-\hline
-                                                        & \multicolumn{2}{c}{Forward}  \\\\ \n
-    \hline
-%s
-%s
-  \end{tabular}
-\end{table}
-
-
-"""
         
-        dataCentral = templateFitParameters%("Data",shelvesRMuEFitParameters["central"]["offset"],shelvesRMuEFitParameters["central"]["offsetErr"],shelvesRMuEFitParameters["central"]["falling"],shelvesRMuEFitParameters["central"]["fallingErr"])
-        dataForward = templateFitParameters%("Data",shelvesRMuEFitParameters["forward"]["offset"],shelvesRMuEFitParameters["forward"]["offsetErr"],shelvesRMuEFitParameters["forward"]["falling"],shelvesRMuEFitParameters["forward"]["fallingErr"])
-        mcCentral = templateFitParameters%("MC",shelvesRMuEFitParametersMC["central"]["offset"],shelvesRMuEFitParametersMC["central"]["offsetErr"],shelvesRMuEFitParametersMC["central"]["falling"],shelvesRMuEFitParametersMC["central"]["fallingErr"])
-        mcForward = templateFitParameters%("MC",shelvesRMuEFitParametersMC["forward"]["offset"],shelvesRMuEFitParametersMC["forward"]["offsetErr"],shelvesRMuEFitParametersMC["forward"]["falling"],shelvesRMuEFitParametersMC["forward"]["fallingErr"])
-        table = tableTemplate%(dataCentral,mcCentral,dataForward,mcForward)
-        
-        saveTable(table,"rMuE_fitParameters_seperated_%s"%(runRange))
-
         tableTemplate = """
 \\begin{table}[hbtp]
  \\renewcommand{\\arraystretch}{1.3}
@@ -271,9 +212,9 @@ def produceRMuETable():
  \caption{Result of the fit of \\rmue as a function of the \pt of the trailing lepton in the Drell--Yan control region. 
  The same quantaties derived from simulation are shown for comparison. Only statistical uncertainties are given.}
    \label{tab:rMuEFitParameters}
-  \\begin{tabular}{l| cc }
+  \\begin{tabular}{l|l| cccccc }
 
-                                                        & $a$ & $b$ \\\\ \n    
+                                                   &   & $r_{\mu/e}^0$ & $a_1$ & $b_1$ & $a_2$ & $c_1$ & $c_2$ \\\\ \n    
     \hline
 %s
 %s
@@ -282,10 +223,31 @@ def produceRMuETable():
 
 
 """
+
         
-        data = templateFitParameters%("Data",shelvesRMuEFitParameters["inclusive"]["offset"],shelvesRMuEFitParameters["inclusive"]["offsetErr"],shelvesRMuEFitParameters["inclusive"]["falling"],shelvesRMuEFitParameters["inclusive"]["fallingErr"])
-        mc = templateFitParameters%("MC",shelvesRMuEFitParametersMC["inclusive"]["offset"],shelvesRMuEFitParametersMC["inclusive"]["offsetErr"],shelvesRMuEFitParametersMC["inclusive"]["falling"],shelvesRMuEFitParametersMC["inclusive"]["fallingErr"])
         
+        from defs import getRunRange
+        
+        
+        data = templateFitParameters%("\multirow{2}{*}{%s}"%(getRunRange(runRange).era),"Data",
+        shelvesRMuEFitParameters["inclusive"]["norm"],shelvesRMuEFitParameters["inclusive"]["normErr"],
+        shelvesRMuEFitParameters["inclusive"]["ptOffset"],shelvesRMuEFitParameters["inclusive"]["ptOffsetErr"],
+        shelvesRMuEFitParameters["inclusive"]["ptFalling"],shelvesRMuEFitParameters["inclusive"]["ptFallingErr"],
+        shelvesRMuEFitParameters["inclusive"]["etaParabolaBase"],shelvesRMuEFitParameters["inclusive"]["etaParabolaBaseErr"],
+        shelvesRMuEFitParameters["inclusive"]["etaParabolaMinus"],shelvesRMuEFitParameters["inclusive"]["etaParabolaMinusErr"],
+        shelvesRMuEFitParameters["inclusive"]["etaParabolaPlus"],shelvesRMuEFitParameters["inclusive"]["etaParabolaPlusErr"],
+        )
+        
+        mc = templateFitParameters%("","MC",
+        shelvesRMuEFitParametersMC["inclusive"]["norm"],shelvesRMuEFitParametersMC["inclusive"]["normErr"],
+        shelvesRMuEFitParametersMC["inclusive"]["ptOffset"],shelvesRMuEFitParametersMC["inclusive"]["ptOffsetErr"],
+        shelvesRMuEFitParametersMC["inclusive"]["ptFalling"],shelvesRMuEFitParametersMC["inclusive"]["ptFallingErr"],
+        shelvesRMuEFitParametersMC["inclusive"]["etaParabolaBase"],shelvesRMuEFitParametersMC["inclusive"]["etaParabolaBaseErr"],
+        shelvesRMuEFitParametersMC["inclusive"]["etaParabolaMinus"],shelvesRMuEFitParametersMC["inclusive"]["etaParabolaMinusErr"],
+        shelvesRMuEFitParametersMC["inclusive"]["etaParabolaPlus"],shelvesRMuEFitParametersMC["inclusive"]["etaParabolaPlusErr"],
+        )
+        
+
         table = tableTemplate%(data,mc)
         
         saveTable(table,"rMuE_fitParameters_%s"%(runRange))
@@ -585,6 +547,38 @@ def produceCombinedRSFOFTable():
         saveTable(table,"rSFOF_combinationOld_result")
 
 
+
+def produceSimulationScaleFactorTable():
+        shelvesWZ = readScaleFactorPickle("scaleFactor", runRange, "WZTo3LNu")
+        shelvesZZ = readScaleFactorPickle("scaleFactor", runRange, "ZZTo4L")
+        shelvesTTZ = readScaleFactorPickle("scaleFactor", runRange, "ttZToLL")
+        
+        tableTemplate = r"""
+\begin{table}[hbp] \caption{3-lepton, 4-lepton and  $t\bar{t}Z$ control regions. Signal MC is $WZ\rightarrow $3l$\nu$ in the 3-lepton region, $ZZ\rightarrow$4l in the 4-lepton region and $t\bar{t}Z\rightarrow$2l2$\nu$ in the $t\bar{t}Z$ region} 
+\centering 
+\renewcommand{\arraystretch}{1.2} 
+\begin{tabular}{l||l|ccc}
+                       &                & WZ CR & ZZ CR & ttZ CR \\ \hline\hline
+ \multirow{5}{*}{%s}   & signal MC      &  $%.2f \pm %.2f$   &   $%.2f \pm %.2f$  &  $%.2f \pm  %.2f$  \\ \cline{2-5}
+                       & background MC  &  $%.2f \pm %.2f$   &   $%.2f \pm %.2f$  &  $%.2f \pm  %.2f$  \\ \cline{2-5}\cline{2-5}
+                       & \textbf{data}           &  \textbf{%d}              &   \textbf{%d}             &  \textbf{%d}              \\ \cline{2-5}
+                       & data-bkg.      &  $%.2f \pm %.2f$   &   $%.2f \pm %.2f$  &  $%.2f \pm  %.2f$  \\ \cline{2-5}\cline{2-5}
+                       &(data-bkg.)/sig.&  $%.2f \pm %.2f$   &   $%.2f \pm %.2f$  &  $%.2f \pm  %.2f$  \\ \hline\hline
+\end{tabular}  
+\label{tab:ScaleFactors}
+\end{table}
+"""
+        tab = tableTemplate%( getRunRange(runRange).era,
+                        shelvesWZ["WZTo3LNu"],shelvesWZ["WZTo3LNuErr"],shelvesZZ["ZZTo4L"],shelvesZZ["ZZTo4LErr"],shelvesTTZ["ttZToLL"],shelvesTTZ["ttZToLL"],
+                        shelvesWZ["background"],shelvesWZ["backgroundErr"],shelvesZZ["background"],shelvesZZ["backgroundErr"],shelvesTTZ["background"],shelvesTTZ["backgroundErr"],
+                        int(shelvesWZ["Data"]),int(shelvesZZ["Data"]),int(shelvesTTZ["Data"]),
+                        shelvesWZ["signalYield"],shelvesWZ["signalYieldErr"],shelvesZZ["signalYield"],shelvesZZ["signalYieldErr"],shelvesTTZ["signalYield"],shelvesTTZ["signalYieldErr"],
+                        shelvesWZ["scaleFac"],shelvesWZ["scaleFacStatErr"],shelvesZZ["scaleFac"],shelvesZZ["scaleFacStatErr"],shelvesTTZ["scaleFac"],shelvesTTZ["scaleFacStatErr"]
+        )
+        
+        saveTable(tab, "ScaleFactors_%s"%(runRange))
+        
+        
 def produceTriggerEffTables():
         era = getRunRange(runRange).era
         
@@ -594,10 +588,12 @@ def produceTriggerEffTables():
 
 
         tableTemplate =r"""
-\begin{table}[hbp] \caption{Trigger efficiency values for data and MC with OS, $p_T>25(20)\,\GeV$ and $H_T>200\,\GeV$.} 
+\begin{table}[hbp] \caption{Trigger efficiency values for data and MC with OS, $p_T>25(20)\,\GeV$ and $p_T^\text{miss}>130\,\GeV$.} 
 \centering 
 \renewcommand{\arraystretch}{1.2} 
 \begin{tabular}{l|c|c|c|c|c|c}  
+
+& \multicolumn{6}{c}{%s data set} \\\hline
 
 &\multicolumn{3}{c|}{Data} &\multicolumn{3}{c}{MC} \\   
 
@@ -606,7 +602,7 @@ def produceTriggerEffTables():
 %s 
 \hline
 %s 
-
+\hline
  
 \end{tabular}  
 \label{tab:TriggerEffValues}
@@ -660,7 +656,7 @@ def produceTriggerEffTables():
                                                                 )
 
 
-        saveTable(tableTemplate%(table,RTLine), "TriggerEffsExclusive_Inclusive_%s"%(runRange))
+        saveTable(tableTemplate%(era,table,RTLine), "TriggerEffsExclusive_Inclusive_%s"%(runRange))
 
 
 
@@ -674,7 +670,7 @@ def main():
 
         parser.add_argument("-C", "--combine", action="store_true", dest="combine", default=False,
                                                   help="Use combination of years")
-        parser.add_argument("-r", "--runRange", action="store", dest="runRange", default=runRanges.name,
+        parser.add_argument("-r", "--runRange", action="store", dest="runRange", default="Run2016_36fb",
                                                   help="which runRange to use")
         
 
@@ -692,12 +688,13 @@ def main():
                         process = subprocess.Popen(bashCommand.split())         
         else:   
                 if not args.combine:
-                        pass
+                        #pass
                         #produceRMuETable()
                         #produceRSFOFTable()
                         produceTriggerEffTables()
+                        # produceSimulationScaleFactorTable()
                         #produceFactorizationTable()
                         #produceCombinedRSFOFTable()
-                produceROutInTable()
+                # produceROutInTable()
 
 main()

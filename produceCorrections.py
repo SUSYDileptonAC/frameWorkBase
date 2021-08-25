@@ -52,7 +52,7 @@ def getTriggerClass(classTemplate,shelve,shelveMC,combination,label,year):
                 otherLabel = "effMM"
         else:
                 otherLabel = "effEM"
-        return classTemplate%(otherLabel,shelve[label][runRanges[year].name][combination]["Efficiency"] , (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges[year].name][combination]["UncertaintyUp"] , shelve[label][runRanges[year].name][combination]["UncertaintyDown"]  )**2)**0.5 ,shelveMC[label][runRanges[year].name][combination]["Efficiency"] , (systematics.trigger[year].central.val**2 + max(shelveMC[label][runRanges[year].name][combination]["UncertaintyUp"] , shelveMC[label][runRanges[year].name][combination]["UncertaintyDown"]  )**2)**0.5)
+        return classTemplate%(otherLabel,shelve[label][runRanges[year].name][combination]["Efficiency"] , (systematics.trigger[year].inclusive.val**2 + max(shelve[label][runRanges[year].name][combination]["UncertaintyUp"] , shelve[label][runRanges[year].name][combination]["UncertaintyDown"]  )**2)**0.5 ,shelveMC[label][runRanges[year].name][combination]["Efficiency"] , (systematics.trigger[year].inclusive.val**2 + max(shelveMC[label][runRanges[year].name][combination]["UncertaintyUp"] , shelveMC[label][runRanges[year].name][combination]["UncertaintyDown"]  )**2)**0.5)
         #~ return classTemplate%(otherLabel,shelve[label][runRanges.name][combination]["Efficiency"] , (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges.name][combination]["UncertaintyUp"] , shelve[label][runRanges.name][combination]["UncertaintyDown"]  )**2)**0.5 )
 
 
@@ -63,9 +63,9 @@ def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False,ye
                 effEE = shelve[label][runRanges[year].name]["EE"]["Efficiency"] 
                 effMM = shelve[label][runRanges[year].name]["MuMu"]["Efficiency"] 
                 effEM = shelve[label][runRanges[year].name]["EMu"]["Efficiency"] 
-                errEE = (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges[year].name]["EE"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["EE"]["UncertaintyDown"]  )**2)**0.5
-                errMM = (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges[year].name]["MuMu"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
-                errEM = (systematics.trigger[year].central.val**2 + max(shelve[label][runRanges[year].name]["EMu"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["EMu"]["UncertaintyDown"]  )**2)**0.5
+                errEE = (systematics.trigger[year].inclusive.val**2 + max(shelve[label][runRanges[year].name]["EE"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["EE"]["UncertaintyDown"]  )**2)**0.5
+                errMM = (systematics.trigger[year].inclusive.val**2 + max(shelve[label][runRanges[year].name]["MuMu"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
+                errEM = (systematics.trigger[year].inclusive.val**2 + max(shelve[label][runRanges[year].name]["EMu"]["UncertaintyUp"] , shelve[label][runRanges[year].name]["EMu"]["UncertaintyDown"]  )**2)**0.5
         
                 err = (errEE**2/(2*effEE*effMM)**2+ errMM**2/(2*effEE*effMM)**2 + errEM**2/(effEM)**2)**0.5
                 val = (effEE*effMM)**0.5/effEM
@@ -73,9 +73,9 @@ def getRSFOFTrigClass(classTemplate,shelve,shelveMC,label,returnNumbers=False,ye
                 effEEMC = shelveMC[label][runRanges[year].name]["EE"]["Efficiency"] 
                 effMMMC = shelveMC[label][runRanges[year].name]["MuMu"]["Efficiency"] 
                 effEMMC = shelveMC[label][runRanges[year].name]["EMu"]["Efficiency"] 
-                errEEMC = (systematics.trigger[year].central.val**2 + max(shelveMC[label][runRanges[year].name]["EE"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["EE"]["UncertaintyDown"]  )**2)**0.5
-                errMMMC = (systematics.trigger[year].central.val**2 + max(shelveMC[label][runRanges[year].name]["MuMu"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
-                errEMMC = (systematics.trigger[year].central.val**2 + max(shelveMC[label][runRanges[year].name]["EMu"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["EMu"]["UncertaintyDown"]  )**2)**0.5
+                errEEMC = (systematics.trigger[year].inclusive.val**2 + max(shelveMC[label][runRanges[year].name]["EE"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["EE"]["UncertaintyDown"]  )**2)**0.5
+                errMMMC = (systematics.trigger[year].inclusive.val**2 + max(shelveMC[label][runRanges[year].name]["MuMu"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["MuMu"]["UncertaintyDown"]  )**2)**0.5
+                errEMMC = (systematics.trigger[year].inclusive.val**2 + max(shelveMC[label][runRanges[year].name]["EMu"]["UncertaintyUp"] , shelveMC[label][runRanges[year].name]["EMu"]["UncertaintyDown"]  )**2)**0.5
         
                 errMC = val*(errEEMC**2/(2*effMMMC)**2+ errMMMC**2/(2*effMMMC)**2 + errEMMC**2/(effEMMC)**2)**0.5
                 valMC = (effEEMC*effMMMC)**0.5/effEMMC
@@ -231,15 +231,31 @@ def main():
 """
         classTemplateRMuELeptonPt = """
                 class %s:
-                        offset = %f
-                        offsetErr = %f
-                        falling = %f
-                        fallingErr = %f
+                        ptOffset = %f
+                        ptOffsetErr = %f
+                        ptFalling = %f
+                        ptFallingErr = %f
+                        etaParabolaBase = %f
+                        etaParabolaBaseErr = %f
+                        etaParabolaMinus = %f
+                        etaParabolaMinusErr = %f
+                        etaParabolaPlus = %f
+                        etaParabolaPlusErr = %f
+                        norm = %f
+                        normErr = %f
                         
-                        offsetMC = %f
-                        offsetErrMC = %f
-                        fallingMC = %f
-                        fallingErrMC = %f
+                        ptOffsetMC = %f
+                        ptOffsetErrMC = %f
+                        ptFallingMC = %f
+                        ptFallingErrMC = %f
+                        etaParabolaBaseMC = %f
+                        etaParabolaBaseErrMC = %f
+                        etaParabolaMinusMC = %f
+                        etaParabolaMinusErrMC = %f
+                        etaParabolaPlusMC = %f
+                        etaParabolaPlusErrMC = %f
+                        normMC = %f
+                        normErrMC = %f
 """
         classTemplateTrigger = """
                 class %s:
@@ -249,8 +265,6 @@ def main():
         if not args.combine:
                 r = """
 ### central config file for all correction factors used in the dilepton edge search. This file was autogenerated.
-
-%s
         
 %s
         
@@ -277,8 +291,8 @@ def main():
 
 %s
 """
-
-        rOutInPart = """
+        if args.combine:
+                rOutInPart = """
 
 class rOutIn:
         class mass20To60:
@@ -306,17 +320,17 @@ class rOutIn:
 """     
 
 
-        shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRangeName)}
-        shelvesROutInMC = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRangeName,MC=True)}
+                shelvesROutIn = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRangeName)}
+                shelvesROutInMC = {"inclusive":readPickle("rOutIn",regionsToUse.rOutIn.inclusive.name , runRangeName,MC=True)}
 
-        
-        rOutInTuple = []
-        for combination in ["SF"]:
-                for massRange in ["mass20To60","mass60To86","mass96To150","mass150To200","mass200To300","mass300To400","mass400"]:
-                        for label in ["inclusive",]: #"central","forward"
-                                rOutInTuple.append(getROutInClass(classTemplate,shelvesROutIn,shelvesROutInMC,massRange,combination,label))
+                
+                rOutInTuple = []
+                for combination in ["SF"]:
+                        for massRange in ["mass20To60","mass60To86","mass96To150","mass150To200","mass200To300","mass300To400","mass400"]:
+                                for label in ["inclusive",]: #"central","forward"
+                                        rOutInTuple.append(getROutInClass(classTemplate,shelvesROutIn,shelvesROutInMC,massRange,combination,label))
 
-        rOutInPartFinal = rOutInPart%tuple(rOutInTuple)
+                rOutInPartFinal = rOutInPart%tuple(rOutInTuple)
         
         if not args.combine:
                 
@@ -351,8 +365,17 @@ class rMuELeptonPt:
 """     
                 shelvesRMuELeptonPt = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRangeName)}
                 shelvesRMuELeptonPtMC = {"inclusive":readPickle("rMuE_correctionParameters",regionsToUse.rMuE.inclusive.name , runRangeName,MC=True)}
-                        
-                classRMuELeptonPtInclusive = classTemplateRMuELeptonPt%("inclusive",shelvesRMuELeptonPt["inclusive"]["offset"], shelvesRMuELeptonPt["inclusive"]["offsetErr"], shelvesRMuELeptonPt["inclusive"]["falling"], shelvesRMuELeptonPt["inclusive"]["fallingErr"], shelvesRMuELeptonPtMC["inclusive"]["offset"], shelvesRMuELeptonPtMC["inclusive"]["offsetErr"], shelvesRMuELeptonPtMC["inclusive"]["falling"], shelvesRMuELeptonPtMC["inclusive"]["fallingErr"])
+                
+                pars = shelvesRMuELeptonPt["inclusive"]
+                #pars["norm"] = pars["norm"]**0.5
+                #pars["normErr"] = 0.5 * pars["normErr"] / pars["norm"]
+                
+                parsMC = shelvesRMuELeptonPtMC["inclusive"]
+                #parsMC["norm"] = parsMC["norm"]**0.5
+                #parsMC["normErr"] = 0.5 * parsMC["normErr"] / parsMC["norm"]
+                
+                
+                classRMuELeptonPtInclusive = classTemplateRMuELeptonPt%("inclusive",pars["ptOffset"], pars["ptOffsetErr"], pars["ptFalling"], pars["ptFallingErr"], pars["etaParabolaBase"], pars["etaParabolaBaseErr"], pars["etaParabolaMinus"], pars["etaParabolaMinusErr"], pars["etaParabolaPlus"], pars["etaParabolaPlusErr"], pars["norm"], pars["normErr"],  parsMC["ptOffset"], parsMC["ptOffsetErr"], parsMC["ptFalling"], parsMC["ptFallingErr"], parsMC["etaParabolaBase"], parsMC["etaParabolaBaseErr"], parsMC["etaParabolaMinus"], parsMC["etaParabolaMinusErr"], parsMC["etaParabolaPlus"], parsMC["etaParabolaPlusErr"], parsMC["norm"], parsMC["normErr"])
                 #classRMuELeptonPtCentral = classTemplateRMuELeptonPt%("central",shelvesRMuELeptonPt["central"]["offset"], shelvesRMuELeptonPt["central"]["offsetErr"], shelvesRMuELeptonPt["central"]["falling"], shelvesRMuELeptonPt["central"]["fallingErr"], shelvesRMuELeptonPtMC["central"]["offset"], shelvesRMuELeptonPtMC["central"]["offsetErr"], shelvesRMuELeptonPtMC["central"]["falling"], shelvesRMuELeptonPtMC["central"]["fallingErr"])
                 #classRMuELeptonPtForward = classTemplateRMuELeptonPt%("forward",shelvesRMuELeptonPt["forward"]["offset"], shelvesRMuELeptonPt["forward"]["offsetErr"], shelvesRMuELeptonPt["forward"]["falling"], shelvesRMuELeptonPt["forward"]["fallingErr"], shelvesRMuELeptonPtMC["forward"]["offset"], shelvesRMuELeptonPtMC["forward"]["offsetErr"], shelvesRMuELeptonPtMC["forward"]["falling"], shelvesRMuELeptonPtMC["forward"]["fallingErr"])
                 
@@ -474,7 +497,7 @@ class rMMOF:
 """     
                 rMMOFPartFinal = rMMOFPart%tuple(rMMOFList)
 
-                finalFile = r%(rOutInPartFinal,rSFOFDirectPartFinal,rMuELeptonPtPartFinal,rMuEPartFinal,rSFOFTrigPartFinal,rSFOFFactOldPartFinal,rSFOFPartFinal,rEEOFPartFinal,rMMOFPartFinal,triggerPartFinal)
+                finalFile = r%(rSFOFDirectPartFinal,rMuELeptonPtPartFinal,rMuEPartFinal,rSFOFTrigPartFinal,rSFOFFactOldPartFinal,rSFOFPartFinal,rEEOFPartFinal,rMMOFPartFinal,triggerPartFinal)
         
         else:
                 finalFile = r%(rOutInPartFinal)

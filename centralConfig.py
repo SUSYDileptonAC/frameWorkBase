@@ -12,87 +12,44 @@ class OtherPredictions:
                         class highNLL:
                                 val = 52.5
                                 err = 52.5*0.25
-                                
-        class ICHEP:
-                class SF:
-                        class inclusive:
-                                val = 45.3
-                                err = 8.0
-                        class lowNLL:
-                                val = 45.3
-                                err = 8.0
-                        class highNLL:
-                                val = 45.3
-                                err = 8.0
-                
-        class legacy:
-                class SF:
-                        class central:
-                                val = 45.3
-                                err = 8.0
                 
 
 class OnlyZPredictions:
         class MT2:
                 class SF:
-                        class inclusive:
-                                val = 19.4
-                                err = 11.7
-                        class lowNLL:
-                                val = 19.4 * 0.36
-                                err = 11.7 * 0.36
-                        class highNLL:
-                                val = 19.4 * 0.64
-                                err = 11.7 * 0.64
+                        class zeroB:  
+                                class inclusive:
+                                        val = 148.1#144.8
+                                        err = 54.9
+                                class lowNLL:
+                                        val = 148.1*0.72
+                                        err = 54.9*0.72
+                                class highNLL:
+                                        val = 148.1*0.28
+                                        err = 54.9*0.28
+                        class oneB:
+                                class inclusive:
+                                        val = 93.3#85.0
+                                        err = 36.2
+                                class lowNLL:
+                                        val = 93.3*0.72
+                                        err = 36.2*0.72
+                                class highNLL:
+                                        val = 93.3*0.28
+                                        err = 36.2*0.28
                                 
-        class ICHEP:
-                class SF:
-                        class inclusive:
-                                val = 45.3
-                                err = 8.0
-                        class lowNLL:
-                                val = 45.3
-                                err = 8.0
-                        class highNLL:
-                                val = 45.3
-                                err = 8.0
-                
-        class legacy:
-                class SF:
-                        class central:
-                                val = 45.3
-                                err = 8.0
+                                
                 
 
 class zPredictions:
-        class MT2:
+        # only used when dicing toys. Update this from fit pkls before doing toy studies
+        class Fit:
                 class SF:
                         class inclusive:
-                                val = 100.4
-                                err = 28.5
-                        class lowNLL:
-                                val = 100.4 * 0.36
-                                err = 28.5 * 0.36
-                        class highNLL:
-                                val = 100.4 * 0.64
-                                err = 28.5 * 0.64
-        class ICHEP:
-                class SF:
-                        class inclusive:
-                                val = 188.8
-                                err = 44.2
-                        class lowNLL:
-                                val = 188.8 * 0.65
-                                err = 44.2 * 0.65
-                        class highNLL:
-                                val = 188.8 * 0.35
-                                err = 44.2 * 0.35
-                                
-        class legacy:
-                class SF:
-                        class central:
-                                val = 391.5
-                                err = 38.5
+                                val = 448 # for data
+                                #val = 414 # for MC
+                                err = 0
+
                         
 
 
@@ -100,27 +57,22 @@ class systematics:
         class rSFOF(maplike):
                 class for2016:
                         class inclusive:
-                                val = 0.04
-                        class central:
-                                val = 0.04
-                        class forward:
-                                val = 0.06      
+                                val = 0.04    
                 class for2017:
                         class inclusive:
                                 val = 0.04
-                        class central:
-                                val = 0.04
-                        class forward:
-                                val = 0.06      
                 class for2018:
                         class inclusive:
                                 val = 0.04
-                        class central:
-                                val = 0.04
-                        class forward:
-                                val = 0.06      
+  
         class rMuE(maplike):
                 class for2016:
+                        class flat:
+                                val = 0.05
+                        class ptdep:
+                                val = 0.05
+                        class etadep:
+                                val = 0.05
                         class inclusive:
                                 val = 0.1
                         class central:
@@ -128,6 +80,12 @@ class systematics:
                         class forward:
                                 val = 0.1       
                 class for2017:
+                        class flat:
+                                val = 0.05
+                        class ptdep:
+                                val = 0.05
+                        class etadep:
+                                val = 0.05
                         class inclusive:
                                 val = 0.1
                         class central:
@@ -135,6 +93,12 @@ class systematics:
                         class forward:
                                 val = 0.1       
                 class for2018:
+                        class flat:
+                                val = 0.05
+                        class ptdep:
+                                val = 0.05
+                        class etadep:
+                                val = 0.05
                         class inclusive:
                                 val = 0.1
                         class central:
@@ -145,23 +109,11 @@ class systematics:
                 class for2016:
                         class inclusive:
                                 val = 0.03
-                        class central:
-                                val = 0.03
-                        class forward:
-                                val = 0.03
                 class for2017:
                         class inclusive:
                                 val = 0.03
-                        class central:
-                                val = 0.03
-                        class forward:
-                                val = 0.03
                 class for2018:
                         class inclusive:
-                                val = 0.03
-                        class central:
-                                val = 0.03
-                        class forward:
                                 val = 0.03
         class rOutIn(maplike):
                 class for2016:
@@ -193,6 +145,8 @@ class systematics:
                         class massAbove150:
                                 val = 1.                
                 class combined:
+                        class mass20To60:
+                                val = 0.5              
                         class massBelow150:
                                 val = 0.5               
                         class massAbove150:
@@ -273,7 +227,7 @@ class regionsToUse:
                 class forward: 
                         name = "HighHTExclusiveForward"
                 class inclusive: 
-                        name = "HighHTExclusive"
+                        name = "HighMETExclusive"
                 class met:
                         name = "HighMETExclusive"
                 class metForward:
@@ -318,11 +272,11 @@ class regionsToUse:
 class triggerRegionNamesLists(maplike):
         class for2016(maplike):
                 class inclusive:
-                        name = "HighHTExclusive"
+                        name = "HighMETExclusive"
                 class forward:
-                        name = "HighHTExclusive"
+                        name = "HighMETExclusive"
                 class central:
-                        name = "HighHTExclusive"
+                        name = "HighMETExclusive"
         class for2017(maplike):
                 class inclusive:
                         name = "HighMETExclusive"
@@ -346,7 +300,8 @@ class runRanges(maplike):
                 name = "Run2017_42fb"
         class for2018(maplike):
                 name = "Run2018_60fb"
-runRanges.name = runRanges["2016"].name
+#runRanges.name = runRanges["2016"].name
+runRanges.allNames = [runRanges["2016"]["name"], runRanges["2017"]["name"], runRanges["2018"]["name"]]
 
 
 
@@ -367,15 +322,18 @@ class plotLists:
         #~ default = ["mllPlot","metPlot","htPlot","tralingEtaPlot","trailingPtPlot","nJetsPlot","nBJetsPlot","nVtxPlot","deltaPhiPlot","ptllPlot","sumMlbPlot","leadingPtPlot","mt2Plot"]
         #~ default = ["mllPlot","metPlot","nJetsPlot","mt2Plot"]
         default = ["mllPlot"]
-        #~ trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","leadingEtaPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger","ptllPlotTrigger","deltaPhiPlotTrigger","sumMlbPlotTrigger","mt2PlotTrigger"]
-        trigger = ["trailingPtPlotTrigger","leadingPtPlotTrigger"]
+        trigger = ["nBJetsPlotTrigger","nJetsPlotTrigger","leadingPtPlotTrigger","leadingEtaPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","htPlotTrigger","metPlotTrigger","nVtxPlotTrigger","tralingEtaPlotTrigger","ptllPlotTrigger","deltaPhiPlotTrigger","sumMlbPlotTrigger","mt2PlotTrigger"]
+        #trigger = ["mllPlotTrigger",]
+        #trigger = ["trailingPtPlotTrigger","leadingPtPlotTrigger"]
         iso = ["leadingPtPlotTrigger","trailingPtPlotTrigger","mllPlotTrigger","nVtxPlotTrigger"]
         #~ rSFOF = ["mllPlotRSFOF","metPlotRSFOF","nJetsPlotRSFOF","nBJetsPlotRSFOF","htPlotRSFOF","trailingPtPlotRSFOF","leadingPtPlotRSFOF","mt2PlotRSFOF","ptllPlotRSFOF","deltaPhiPlotRSFOF","sumMlbPlotRSFOF","nLLPlotRSFOF","nVtxPlotRSFOF"]
         rSFOF = ["mllPlotRSFOF","metPlotRSFOF","nJetsPlotRSFOF","nBJetsPlotRSFOF","htPlotRSFOF","trailingPtPlotRSFOF","leadingPtPlotRSFOF","mt2PlotRSFOF","ptllPlotRSFOF","deltaPhiPlotRSFOF","sumMlbPlotRSFOF","nVtxPlotRSFOF"]
         #rSFOF = ["trailingPtPlotRSFOF","leadingPtPlotRSFOF"]
         signal = ["mllPlotROutIn"]
         rMuE = ["negativePtPlotRMuE", "positivePtPlotRMuE", "positiveEtaPlotRMuE", "negativeEtaPlotRMuE", "mllPlotRMuE","leadingPtPlotRMuE","nJetsPlotRMuE","mt2PlotRMuE","metPlotRMuE","nVtxPlotRMuE","nBJetsPlotRMuE","leadingEtaPlotRMuE","trailingPtPlotRMuE","htPlotRMuE","tralingEtaPlotRMuE","deltaRPlotRMuE","ptllPlotRMuE","deltaPhiPlotRMuE","sumMlbPlotRMuE"]
-        #rMuE = ["positiveEtaPlotRMuE", "negativeEtaPlotRMuE",]
+        #rMuE = ["leadingPtPlotRMuE","negativePtPlotRMuE", "positivePtPlotRMuE", "positiveEtaPlotRMuE", "negativeEtaPlotRMuE",]
+        #rMuE = ["leadingPtPlotRMuE",]
+        #rMuE = ["negativePtPlotRMuE", "positivePtPlotRMuE", "positiveEtaPlotRMuE", "negativeEtaPlotRMuE",]
         #rMuE = ["nVtxPlotRMuE",]
         #rMuE = ["leadingPtPlotRMuE","trailingPtPlotRMuE"]
         #~ rMuE = ["trailingPtPlotRMuE"]
@@ -391,6 +349,7 @@ class cutNCountXChecks:
 
 
 class versions:
-        cmssw = "sw8026"
-        cuts = "cutsV34" 
-        masterListForMC = ["Master80X_MC_Summer16.ini", "Master94X_2016_MC.ini", "Master94X_2017_MC.ini", "Master102X_2018_MC.ini"]
+        cmssw = "sw8026" # Shouldnt be used anymore, remove where possible
+        cuts = "cutsV34" # Shouldnt be used anymore, remove where possible
+        masterListForMC = [ "Master94X_2016_MC.ini", "Master94X_2017_MC.ini", "Master102X_2018_MC.ini"] # "Master80X_MC_Summer16.ini",
+        signalCrossSections = {"T6bbllslepton":"sbottom_xsecs.ini", "T6qqllslepton":"squarks_xsecs.ini"}

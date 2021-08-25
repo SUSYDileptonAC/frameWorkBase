@@ -7,65 +7,65 @@ class rOutIn:
         class mass20To60:
                 
                 class inclusive:
-                        val = 0.057262
-                        err = 0.028694
-                        valMC = 0.055020
-                        errMC = 0.027569
+                        val = 0.057076
+                        err = 0.028601
+                        valMC = 0.057394
+                        errMC = 0.028753
 
-        
+                
         class mass60To86:
-                
+                        
                 class inclusive:
-                        val = 0.117247
-                        err = 0.058687
-                        valMC = 0.110493
-                        errMC = 0.055306
+                        val = 0.115154
+                        err = 0.057640
+                        valMC = 0.113827
+                        errMC = 0.056971
 
-     
+             
         class mass96To150:
-                
+                        
                 class inclusive:
-                        val = 0.158782
-                        err = 0.079457
-                        valMC = 0.146692
-                        errMC = 0.073408
+                        val = 0.159214
+                        err = 0.079674
+                        valMC = 0.142944
+                        errMC = 0.071532
 
-                
+                        
         class mass150To200:
-                
+                        
                 class inclusive:
-                        val = 0.015066
-                        err = 0.015103
-                        valMC = 0.014810
-                        errMC = 0.014844
+                        val = 0.015550
+                        err = 0.015586
+                        valMC = 0.014355
+                        errMC = 0.014388
 
-        
+                
         class mass200To300:
-                
+                        
                 class inclusive:
-                        val = 0.011206
-                        err = 0.011247
-                        valMC = 0.010373
-                        errMC = 0.010413
+                        val = 0.011741
+                        err = 0.011780
+                        valMC = 0.010520
+                        errMC = 0.010556
 
-        
+                
         class mass300To400:
-                
+                        
                 class inclusive:
-                        val = 0.003114
-                        err = 0.003160
-                        valMC = 0.004182
-                        errMC = 0.004218
+                        val = 0.002834
+                        err = 0.002887
+                        valMC = 0.003745
+                        errMC = 0.003781
 
-        
+                
         class mass400:
-                
+                        
                 class inclusive:
-                        val = 0.004759
-                        err = 0.004791
-                        valMC = 0.006758
-                        errMC = 0.006790
+                        val = 0.004654
+                        err = 0.004687
+                        valMC = 0.005575
+                        errMC = 0.005607
 
+                
+              
         
-      
-
